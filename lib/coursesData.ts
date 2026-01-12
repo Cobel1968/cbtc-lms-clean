@@ -26,6 +26,5 @@ export interface Course {
   prerequisites_fr?: string;
   curriculum?: any;
 }
-// This will be populated from Supabase in the actual app
 export const coursesData: Course[] = [];
 export default coursesData;
