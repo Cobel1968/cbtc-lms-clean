@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CBTC‑LMS | Integrated Manufacturing & QA Course</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f5f7fa; color: #1f2937; }
+    header { background: #111827; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; }
+    main { padding: 2rem; }
+    .module { background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    .flex { display: flex; gap: 2rem; }
+    .column { flex: 1; }
+    select, button, textarea { width: 100%; padding: 0.5rem; margin-top: 0.5rem; }
+    .badge { display: inline-block; background: #2563eb; color: white; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.8rem; }
+    .alert { background: #fee2e2; padding: 0.8rem; border-radius: 6px; color: #991b1b; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>CBTC‑LMS · Cobel Engine</div>
+  <div>
+    Language:
+    <select id="langSwitcher" onchange="switchLang()">
+      <option value="en">EN</option>
+      <option value="fr">FR</option>
+    </select>
+  </div>
+</header>
+
+<main>
+
+<!-- COURSE ACTORS OVERVIEW -->
+<section class="module">
+  <h2 data-en="Course Actors & Interactions" data-fr="Acteurs du Cours & Interactions"></h2>
+  <p data-en="This course is designed as an interactive ecosystem where each actor plays a defined role in a closed-loop system." 
+     data-fr="Ce cours est conçu comme un écosystème interactif où chaque acteur joue un rôle défini dans un système en boucle fermée."></p>
+
+  <ul>
+    <li><strong data-en="Student" data-fr="Apprenant"></strong> — <span data-en="Performs physical tasks, writes SOPs, submits handwritten work." data-fr="Réalise des tâches physiques, rédige des procédures, soumet des documents manuscrits."></span></li>
+    <li><strong data-en="Instructor" data-fr="Formateur"></strong> — <span data-en="Supervises learning, receives friction alerts, intervenes when needed." data-fr="Supervise l’apprentissage, reçoit des alertes de friction, intervient si nécessaire."></span></li>
+    <li><strong data-en="AI Engine (cobel-engine)" data-fr="Moteur IA (cobel-engine)"></strong> — <span data-en="Validates skills, optimizes learning paths, enforces bilingual consistency." data-fr="Valide les compétences, optimise les parcours, garantit la cohérence bilingue."></span></li>
+    <li><strong data-en="Payment Gateway" data-fr="Passerelle de Paiement"></strong> — <span data-en="Controls access and initializes student metrics." data-fr="Contrôle l’accès et initialise les métriques apprenant."></span></li>
+    <li><strong data-en="Administrator" data-fr="Administrateur"></strong> — <span data-en="Monitors throughput, ROI, and system integrity." data-fr="Surveille le rendement, le ROI et l’intégrité du système."></span></li>
+    <li><strong data-en="Certification Authority" data-fr="Autorité de Certification"></strong> — <span data-en="Issues AI-validated certificates with QR verification." data-fr="Délivre des certificats validés par IA avec QR de vérification."></span></li>
+  </ul>
+</section>
+
+<!-- ACTOR INTERACTION FLOW -->
+<section class="module">
+  <h2 data-en="Interaction Flow" data-fr="Flux d’Interaction"></h2>
+  <ol>
+    <li data-en="Student unlocks course via payment." data-fr="L’apprenant débloque le cours via paiement."></li>
+    <li data-en="AI engine initializes bilingual and skill metrics." data-fr="Le moteur IA initialise les métriques bilingues et de compétences."></li>
+    <li data-en="Student performs manufacturing + QA tasks." data-fr="L’apprenant réalise des tâches de fabrication et qualité."></li>
+    <li data-en="Student submits SOPs and handwritten documents." data-fr="L’apprenant soumet des procédures et documents manuscrits."></li>
+    <li data-en="AI evaluates, adapts learning path, triggers alerts." data-fr="L’IA évalue, adapte le parcours et déclenche des alertes."></li>
+    <li data-en="Instructor intervenes if friction detected." data-fr="Le formateur intervient si une friction est détectée."></li>
+    <li data-en="Administrator monitors system performance." data-fr="L’administrateur surveille la performance du système."></li>
+    <li data-en="Certification issued upon validated mastery." data-fr="Certification délivrée après validation des compétences."></li>
+  </ol>
+</section>
+
+<!-- ACTOR → API RESPONSIBILITY MAP -->
+<section class="module">
+  <h2 data-en="Actor to API Responsibility Map" data-fr="Correspondance Acteurs / API"></h2>
+
+  <h3>Student</h3>
+  <ul>
+    <li><code>/api/checkout</code> — course access & payment validation</li>
+    <li><code>/api/submit-sop</code> — SOP submission (machine-readable)</li>
+    <li><code>/api/analyze-handwriting</code> — upload & analyze handwritten work</li>
+    <li><code>/api/student-metrics</code> — retrieve learning progress</li>
+  </ul>
+
+  <h3>AI Engine (cobel-engine)</h3>
+  <ul>
+    <li><code>lib/cobel-engine.ts</code> — core logic & rules</li>
+    <li><code>/api/evaluate-sop</code> — QA & structure validation</li>
+    <li><code>/api/adapt-path</code> — path expansion/compression</li>
+    <li><code>/api/bilingual-validate</code> — FR/EN semantic alignment</li>
+  </ul>
+
+  <h3>Instructor</h3>
+  <ul>
+    <li><code>/api/friction-alerts</code> — receive intervention signals</li>
+    <li><code>/api/manual-override</code> — human correction & approval</li>
+  </ul>
+
+  <h3>Administrator</h3>
+  <ul>
+    <li><code>/api/admin-dashboard</code> — throughput & ROI metrics</li>
+    <li><code>/api/user-audit</code> — compliance & traceability</li>
+  </ul>
+
+  <h3>Certification Authority</h3>
+  <ul>
+    <li><code>/api/generate-certificate</code> — AI-validated certificate</li>
+    <li><code>/api/verify-qr</code> — public verification endpoint</li>
+  </ul>
+</section>
+
+<!-- API STUBS (ARCHITECTURAL PLACEHOLDERS) -->
+<section class="module">
+  <h2 data-en="API Stubs (Wired, Non-Executable)" data-fr="Stubs API (Connectés, Non Exécutables)"></h2>
+  <pre>
+/api/checkout
+POST → validate payment → initialize student metrics
+
+/api/submit-sop
+POST → cobelEngine.validateSOP(input)
+
+/api/analyze-handwriting
+POST → cobelEngine.analyzeHandwriting(image)
+
+/api/adapt-path
+POST → cobelEngine.adjustLearningPath(metrics)
+
+/api/generate-certificate
+POST → cobelEngine.issueCertificate(studentId)
+  </pre>
+</section>
+
+<!-- DATA CONTRACTS -->
+<section class="module">
+  <h2 data-en="Data Contracts (Schemas)" data-fr="Contrats de Données (Schémas)"></h2>
+  <pre>
+StudentMetrics {
+  bilingualFluency: number;
+  handwritingAccuracy: number;
+  timeSaved: number;
+  qaComplianceScore: number;
+}
+
+SOPSubmission {
+  language: 'FR' | 'EN';
+  steps: string[];
+  isoReferences: string[];
+}
+
+HandwritingResult {
+  accuracy: number;
+  legibilityScore: number;
+  recommendedPath: 'EXPAND' | 'COMPRESS';
+}
+  </pre>
+</section>
+
+<!-- GOVERNANCE RULES -->
+<section class="module">
+  <h2 data-en="Governance Rules" data-fr="Règles de Gouvernance"></h2>
+  <ul>
+    <li data-en="AI may adapt learning paths but cannot certify alone." data-fr="L’IA peut adapter les parcours mais ne peut certifier seule."></li>
+    <li data-en="Instructor approval required for edge cases." data-fr="Validation formateur requise pour les cas limites."></li>
+    <li data-en="All certifications are auditable and traceable." data-fr="Toutes les certifications sont auditables et traçables."></li>
+    <li data-en="Bilingual lexicon overrides subjective interpretation." data-fr="Le lexique bilingue prime sur l’interprétation subjective."></li>
+  </ul>
+</section>
+
+<!-- TRUST & EVIDENCE LAYER -->
+<section class="module">
+  <h2 data-en="Trust & Evidence Layer" data-fr="Couche de Confiance & Preuves"></h2>
+  <p data-en="All critical decisions are logged as verifiable evidence." data-fr="Toutes les décisions critiques sont enregistrées comme preuves vérifiables."></p>
+
+  <h3 data-en="Evidence Logs" data-fr="Journaux de Preuves"></h3>
+  <ul>
+    <li data-en="SOP submissions stored with hash and timestamp." data-fr="Procédures stockées avec empreinte et horodatage."></li>
+    <li data-en="Handwriting analysis results archived." data-fr="Résultats d’analyse manuscrite archivés."></li>
+    <li data-en="Learning path decisions logged." data-fr="Décisions de parcours enregistrées."></li>
+  </ul>
+
+  <h3 data-en="Decision Hashing" data-fr="Empreintes de Décision"></h3>
+  <ul>
+    <li data-en="Each AI decision generates a cryptographic hash." data-fr="Chaque décision IA génère une empreinte cryptographique."></li>
+    <li data-en="Hashes embedded in certificates." data-fr="Empreintes intégrées aux certificats."></li>
+  </ul>
+
+  <h3 data-en="Appeal & Dispute Flow" data-fr="Processus d’Appel & Litige"></h3>
+  <ol>
+    <li data-en="Student submits appeal." data-fr="L’apprenant soumet un recours."></li>
+    <li data-en="Instructor reviews evidence logs." data-fr="Le formateur examine les preuves."></li>
+    <li data-en="Admin authorizes override if justified." data-fr="L’administrateur autorise une dérogation si justifiée."></li>
+    <li data-en="Final decision recorded and hashed." data-fr="Décision finale enregistrée et horodatée."></li>
+  </ol>
+</section>

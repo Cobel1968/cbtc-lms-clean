@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 1A: What's Wrong? | Maintenance Budget Course</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f7ff;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(to right, #1e3c72, #2a5298);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.2rem;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        
+        .lesson-info {
+            display: flex;
+            justify-content: space-around;
+            background-color: #e8f1ff;
+            padding: 15px;
+            font-weight: bold;
+            border-bottom: 2px solid #2a5298;
+        }
+        
+        .lesson-info div {
+            text-align: center;
+        }
+        
+        .lesson-info span {
+            display: block;
+            color: #1e3c72;
+            font-size: 1.1rem;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px dashed #ccc;
+        }
+        
+        h2 {
+            color: #1e3c72;
+            border-left: 5px solid #2a5298;
+            padding-left: 15px;
+            margin-top: 0;
+        }
+        
+        h3 {
+            color: #2a5298;
+        }
+        
+        .grammar-box {
+            background-color: #f8fbff;
+            border-left: 4px solid #4d7cfe;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .example {
+            background-color: #eef5ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .highlight {
+            background-color: #fffacd;
+            padding: 3px 5px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .image-item {
+            border: 2px solid #d1e3ff;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: white;
+            transition: transform 0.3s;
+        }
+        
+        .image-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 7px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .image-item img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .image-caption {
+            padding: 15px;
+            text-align: center;
+            background-color: #f8fbff;
+        }
+        
+        .interactive-exercise {
+            background-color: #e6f2ff;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 30px 0;
+        }
+        
+        .sentence-builder {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .word-option {
+            background-color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: move;
+            border: 2px solid #a3c4ff;
+            font-weight: bold;
+            user-select: none;
+        }
+        
+        .word-option.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+        }
+        
+        .word-option.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .sentence-area {
+            min-height: 100px;
+            background-color: white;
+            border: 2px dashed #a3c4ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        button {
+            background-color: #2a5298;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            margin: 5px;
+        }
+        
+        button:hover {
+            background-color: #1e3c72;
+        }
+        
+        .check-button {
+            background-color: #28a745;
+        }
+        
+        .check-button:hover {
+            background-color: #218838;
+        }
+        
+        .reset-button {
+            background-color: #6c757d;
+        }
+        
+        .reset-button:hover {
+            background-color: #5a6268;
+        }
+        
+        .feedback {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .feedback.correct {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            display: block;
+        }
+        
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            display: block;
+        }
+        
+        .translation {
+            font-style: italic;
+            color: #666;
+            margin-top: 5px;
+            font-size: 0.95rem;
+            border-left: 2px solid #ccc;
+            padding-left: 10px;
+        }
+        
+        .vocabulary-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .vocab-item {
+            padding: 12px;
+            background-color: #f8fbff;
+            border-radius: 8px;
+            border: 1px solid #d1e3ff;
+        }
+        
+        .french-hint {
+            background-color: #fff8e1;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        @media (max-width: 768px) {
+            .image-grid, .vocabulary-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .lesson-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .image-grid, .vocabulary-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Maintenance Budget Negotiation Course</h1>
+            <div class="subtitle">English for Professional Communication</div>
+            <div class="subtitle">Lesson 1A: "What's Wrong?" - Describing Problems</div>
+        </header>
+        
+        <div class="lesson-info">
+            <div><span>Grammar Focus:</span> There is / There are</div>
+            <div><span>Level:</span> Beginner (IELTS &lt; 4.5)</div>
+            <div><span>For:</span> French-speaking Students</div>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h2>Lesson Objective</h2>
+                <p>By the end of this lesson, you will be able to describe maintenance problems in an office using <span class="highlight">"There is"</span> and <span class="highlight">"There are"</span> correctly.</p>
+                
+                <div class="french-hint">
+                    <strong>Pour nos étudiants francophones:</strong> En français, on utilise "Il y a" pour "There is/There are". Cette leçon vous aide à utiliser la forme correcte en anglais (singulier/pluriel).
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Grammar Rule: There is / There are</h2>
+                
+                <div class="grammar-box">
+                    <h3>Singular (Une chose) → Use "There <span class="highlight">is</span>"</h3>
+                    <div class="example">
+                        <strong>There is</strong> a broken chair.<br>
+                        <span class="translation">Il y a une chaise cassée.</span>
+                    </div>
+                    <div class="example">
+                        <strong>There is</strong> a problem.<br>
+                        <span class="translation">Il y a un problème.</span>
+                    </div>
+                    <div class="example">
+                        <strong>There is</strong> a leak in the bathroom.<br>
+                        <span class="translation">Il y a une fuite dans la salle de bain.</span>
+                    </div>
+                </div>
+                
+                <div class="grammar-box">
+                    <h3>Plural (Plusieurs choses) → Use "There <span class="highlight">are</span>"</h3>
+                    <div class="example">
+                        <strong>There are</strong> three broken chairs.<br>
+                        <span class="translation">Il y a trois chaises cassées.</span>
+                    </div>
+                    <div class="example">
+                        <strong>There are</strong> some problems.<br>
+                        <span class="translation">Il y a quelques problèmes.</span>
+                    </div>
+                    <div class="example">
+                        <strong>There are</strong> old computers in the office.<br>
+                        <span class="translation">Il y a des vieux ordinateurs dans le bureau.</span>
+                    </div>
+                </div>
+                
+                <div class="grammar-box">
+                    <h3>Remember!</h3>
+                    <ul>
+                        <li>Use <span class="highlight">"a"</span> or <span class="highlight">"an"</span> with singular nouns: <strong>There is <span class="highlight">a</span> broken window.</strong></li>
+                        <li>Use numbers or <span class="highlight">"some"</span> with plural nouns: <strong>There are <span class="highlight">two</span> broken windows.</strong></li>
+                        <li>With plural nouns, add <span class="highlight">"s"</span> to the noun: <strong>chair</strong> → <strong>chair<span class="highlight">s</span></strong></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Vocabulary: Common Maintenance Problems</h2>
+                
+                <div class="vocabulary-list">
+                    <div class="vocab-item">
+                        <strong>leak</strong><br>
+                        <span class="translation">une fuite</span>
+                    </div>
+                    <div class="vocab-item">
+                        <strong>crack</strong><br>
+                        <span class="translation">une fissure</span>
+                    </div>
+                    <div class="vocab-item">
+                        <strong>stain</strong><br>
+                        <span class="translation">une tache</span>
+                    </div>
+                    <div class="vocab-item">
+                        <strong>problem / issue</strong><br>
+                        <span class="translation">un problème</span>
+                    </div>
+                    <div class="vocab-item">
+                        <strong>light</strong><br>
+                        <span class="translation">une lumière</span>
+                    </div>
+                    <div class="vocab-item">
+                        <strong>door</strong><br>
+                        <span class="translation">une porte</span>
+                    </div>
+                    <div class="vocab-item">
+                        <strong>window</strong><br>
+                        <span class="translation">une fenêtre</span>
+                    </div>
+                    <div class="vocab-item">
+                        <strong>computer</strong><br>
+                        <span class="translation">un ordinateur</span>
+                    </div>
+                    <div class="vocab-item">
+                        <strong>printer</strong><br>
+                        <span class="translation">une imprimante</span>
+                    </div>
+                    <div class="vocab-item">
+                        <strong>chair</strong><br>
+                        <span class="translation">une chaise</span>
+                    </div>
+                    <div class="vocab-item">
+                        <strong>desk</strong><br>
+                        <span class="translation">un bureau</span>
+                    </div>
+                    <div class="vocab-item">
+                        <strong>air conditioner</strong><br>
+                        <span class="translation">un climatiseur</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Practice: Look at the Office</h2>
+                <p>Here are pictures of problems in an office. Describe each picture using <strong>"There is"</strong> or <strong>"There are"</strong>.</p>
+                
+                <div class="image-grid">
+                    <div class="image-item">
+                        <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Broken office chair">
+                        <div class="image-caption">
+                            <strong>Example:</strong> There is a broken chair.
+                        </div>
+                    </div>
+                    <div class="image-item">
+                        <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Old computer">
+                        <div class="image-caption">
+                            <strong>Your turn:</strong> There ______ an old computer.
+                        </div>
+                    </div>
+                    <div class="image-item">
+                        <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Three broken lights">
+                        <div class="image-caption">
+                            <strong>Your turn:</strong> There ______ three broken lights.
+                        </div>
+                    </div>
+                    <div class="image-item">
+                        <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Leaking pipe">
+                        <div class="image-caption">
+                            <strong>Your turn:</strong> There ______ a leak.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="french-hint">
+                    <strong>Indice:</strong> Regardez si le nom est singulier (une chose) ou pluriel (plusieurs choses).<br>
+                    Singular: chair, computer, leak → <strong>There is</strong><br>
+                    Plural: lights, chairs, computers → <strong>There are</strong>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Interactive Exercise: Build Correct Sentences</h2>
+                <p>Drag and drop words to create correct sentences about office problems.</p>
+                
+                <div class="interactive-exercise">
+                    <h3>Sentence Builder 1</h3>
+                    <p>Describe this picture: A single broken printer in the office.</p>
+                    
+                    <div class="sentence-builder" id="word-options-1">
+                        <div class="word-option" data-word="There" data-correct="true">There</div>
+                        <div class="word-option" data-word="is" data-correct="true">is</div>
+                        <div class="word-option" data-word="are" data-correct="false">are</div>
+                        <div class="word-option" data-word="a" data-correct="true">a</div>
+                        <div class="word-option" data-word="broken" data-correct="true">broken</div>
+                        <div class="word-option" data-word="printer" data-correct="true">printer</div>
+                        <div class="word-option" data-word="printers" data-correct="false">printers</div>
+                        <div class="word-option" data-word="in" data-correct="true">in</div>
+                        <div class="word-option" data-word="the" data-correct="true">the</div>
+                        <div class="word-option" data-word="office" data-correct="true">office.</div>
+                    </div>
+                    
+                    <div class="sentence-area" id="sentence-area-1">
+                        <p>Drag words here to build your sentence...</p>
+                    </div>
+                    
+                    <div class="feedback" id="feedback-1"></div>
+                    
+                    <button class="check-button" onclick="checkSentence(1)">Check My Sentence</button>
+                    <button class="reset-button" onclick="resetExercise(1)">Reset</button>
+                </div>
+                
+                <div class="interactive-exercise">
+                    <h3>Sentence Builder 2</h3>
+                    <p>Describe this picture: Five old computers in the IT room.</p>
+                    
+                    <div class="sentence-builder" id="word-options-2">
+                        <div class="word-option" data-word="There" data-correct="true">There</div>
+                        <div class="word-option" data-word="is" data-correct="false">is</div>
+                        <div class="word-option" data-word="are" data-correct="true">are</div>
+                        <div class="word-option" data-word="five" data-correct="true">five</div>
+                        <div class="word-option" data-word="old" data-correct="true">old</div>
+                        <div class="word-option" data-word="computer" data-correct="false">computer</div>
+                        <div class="word-option" data-word="computers" data-correct="true">computers</div>
+                        <div class="word-option" data-word="in" data-correct="true">in</div>
+                        <div class="word-option" data-word="the" data-correct="true">the</div>
+                        <div class="word-option" data-word="IT" data-correct="true">IT</div>
+                        <div class="word-option" data-word="room" data-correct="true">room.</div>
+                    </div>
+                    
+                    <div class="sentence-area" id="sentence-area-2">
+                        <p>Drag words here to build your sentence...</p>
+                    </div>
+                    
+                    <div class="feedback" id="feedback-2"></div>
+                    
+                    <button class="check-button" onclick="checkSentence(2)">Check My Sentence</button>
+                    <button class="reset-button" onclick="resetExercise(2)">Reset</button>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Real Practice for Your Role-play</h2>
+                <p>Imagine you are the Maintenance Manager. You need to tell the Finance Manager about problems in the office. Write 5 sentences using "There is" or "There are".</p>
+                
+                <div class="example">
+                    <p><strong>Example list for your role-play:</strong></p>
+                    <ol>
+                        <li>There is a broken air conditioner in the main office.</li>
+                        <li>There are three old printers.</li>
+                        <li>There is a leak in the bathroom.</li>
+                        <li>There are five broken chairs in the conference room.</li>
+                        <li>There is a problem with the security door.</li>
+                    </ol>
+                </div>
+                
+                <div class="french-hint">
+                    <strong>Pour votre rôle:</strong> Préparez votre propre liste en français, puis traduisez en utilisant "There is/There are".<br>
+                    Exemple: "Il y a une fuite dans le couloir" → "There is a leak in the hallway."
+                </div>
+                
+                <p><strong>Your turn:</strong> Write your 5 sentences here (on paper or in a document):</p>
+                <ol>
+                    <li>__________________________________________________</li>
+                    <li>__________________________________________________</li>
+                    <li>__________________________________________________</li>
+                    <li>__________________________________________________</li>
+                    <li>__________________________________________________</li>
+                </ol>
+                
+                <button onclick="showAnswers()">Show Example Answers</button>
+                <div id="example-answers" style="display:none; margin-top: 20px; background-color: #eef5ff; padding: 15px; border-radius: 8px;">
+                    <h3>Example Answers:</h3>
+                    <ol>
+                        <li>There is a cracked window in reception.</li>
+                        <li>There are two slow computers in accounting.</li>
+                        <li>There is a stain on the meeting room carpet.</li>
+                        <li>There are some broken lights in the hallway.</li>
+                        <li>There is an issue with the heating system.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Maintenance Budget Negotiation Course - Lesson 1A: "What's Wrong?"</p>
+            <p>Next Lesson: 1B - "How bad is it?" Using adjectives to describe problems</p>
+        </footer>
+    </div>
+
+    <script>
+        // Make word options draggable
+        document.querySelectorAll('.word-option').forEach(item => {
+            item.addEventListener('dragstart', dragStart);
+            item.setAttribute('draggable', 'true');
+        });
+        
+        // Make sentence areas droppable
+        document.querySelectorAll('.sentence-area').forEach(area => {
+            area.addEventListener('dragover', dragOver);
+            area.addEventListener('drop', drop);
+        });
+        
+        let draggedWord = null;
+        
+        function dragStart(e) {
+            draggedWord = e.target;
+            e.dataTransfer.setData('text/plain', e.target.textContent);
+        }
+        
+        function dragOver(e) {
+            e.preventDefault();
+        }
+        
+        function drop(e) {
+            e.preventDefault();
+            if (draggedWord && e.target.classList.contains('sentence-area')) {
+                // Create a new word element in the sentence area
+                const newWord = document.createElement('div');
+                newWord.className = 'word-option';
+                newWord.textContent = draggedWord.textContent;
+                newWord.setAttribute('data-word', draggedWord.getAttribute('data-word'));
+                newWord.setAttribute('data-correct', draggedWord.getAttribute('data-correct'));
+                newWord.setAttribute('draggable', 'false');
+                
+                // Remove the "Drag words here" message if it exists
+                if (e.target.querySelector('p')) {
+                    e.target.innerHTML = '';
+                }
+                
+                e.target.appendChild(newWord);
+                draggedWord = null;
+            }
+        }
+        
+        function checkSentence(exerciseNum) {
+            const sentenceArea = document.getElementById(`sentence-area-${exerciseNum}`);
+            const feedback = document.getElementById(`feedback-${exerciseNum}`);
+            const words = sentenceArea.querySelectorAll('.word-option');
+            
+            if (words.length === 0) {
+                feedback.textContent = "Please build a sentence first by dragging words.";
+                feedback.className = "feedback incorrect";
+                return;
+            }
+            
+            // Build the sentence from the words
+            let sentence = '';
+            let allCorrect = true;
+            
+            words.forEach(word => {
+                sentence += word.textContent + ' ';
+                
+                // Check if this word is correct for the sentence
+                if (word.getAttribute('data-correct') === 'false') {
+                    word.classList.add('incorrect');
+                    allCorrect = false;
+                } else {
+                    word.classList.add('correct');
+                }
+            });
+            
+            if (allCorrect) {
+                feedback.innerHTML = `<strong>Excellent!</strong> "${sentence.trim()}" is correct!<br>`;
+                if (exerciseNum === 1) {
+                    feedback.innerHTML += `Remember: "printer" is singular, so we use "There <strong>is</strong> a broken printer."`;
+                } else {
+                    feedback.innerHTML += `Remember: "computers" is plural, so we use "There <strong>are</strong> five old computers."`;
+                }
+                feedback.className = "feedback correct";
+            } else {
+                feedback.innerHTML = `<strong>Almost there!</strong> Check the words highlighted in red.<br>`;
+                if (exerciseNum === 1) {
+                    feedback.innerHTML += `Hint: "printer" is singular (one printer). Use "There is" for singular.`;
+                } else {
+                    feedback.innerHTML += `Hint: "computers" is plural (more than one). Use "There are" for plural.`;
+                }
+                feedback.className = "feedback incorrect";
+            }
+        }
+        
+        function resetExercise(exerciseNum) {
+            const sentenceArea = document.getElementById(`sentence-area-${exerciseNum}`);
+            const feedback = document.getElementById(`feedback-${exerciseNum}`);
+            const wordOptions = document.getElementById(`word-options-${exerciseNum}`);
+            
+            // Reset sentence area
+            sentenceArea.innerHTML = '<p>Drag words here to build your sentence...</p>';
+            
+            // Reset feedback
+            feedback.textContent = '';
+            feedback.className = "feedback";
+            
+            // Reset word option styles
+            wordOptions.querySelectorAll('.word-option').forEach(word => {
+                word.classList.remove('correct', 'incorrect');
+            });
+        }
+        
+        function showAnswers() {
+            document.getElementById('example-answers').style.display = 'block';
+        }
+        
+        // Initialize the first exercise with a simple example
+        window.onload = function() {
+            // Add some initial instruction
+            console.log("Lesson 1A loaded. Practice using 'There is' for singular and 'There are' for plural.");
+        }
+    </script>
+</body>
+</html>

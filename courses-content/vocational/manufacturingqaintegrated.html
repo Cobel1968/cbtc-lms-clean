@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CBTCLMS | Integrated Manufacturing & QA Course</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f5f7fa; color: #1f2937; }
+    header { background: #111827; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; }
+    main { padding: 2rem; }
+    .module { background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    .flex { display: flex; gap: 2rem; }
+    .column { flex: 1; }
+    select, button, textarea { width: 100%; padding: 0.5rem; margin-top: 0.5rem; }
+    .badge { display: inline-block; background: #2563eb; color: white; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.8rem; }
+    .alert { background: #fee2e2; padding: 0.8rem; border-radius: 6px; color: #991b1b; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>CBTCLMS  Cobel Engine</div>
+  <div>
+    Language:
+    <select id="langSwitcher" onchange="switchLang()">
+      <option value="en">EN</option>
+      <option value="fr">FR</option>
+    </select>
+  </div>
+</header>
+
+<main>
+
+<!-- COURSE ACTORS OVERVIEW -->
+<section class="module">
+  <h2 data-en="Course Actors & Interactions" data-fr="Acteurs du Cours & Interactions"></h2>
+  <p data-en="This course is designed as an interactive ecosystem where each actor plays a defined role in a closed-loop system." 
+     data-fr="Ce cours est conçu comme un écosystème interactif où chaque acteur joue un rôle défini dans un système en boucle fermée."></p>
+
+  <ul>
+    <li><strong data-en="Student" data-fr="Apprenant"></strong>  <span data-en="Performs physical tasks, writes SOPs, submits handwritten work." data-fr="Réalise des tâches physiques, rédige des procédures, soumet des documents manuscrits."></span></li>
+    <li><strong data-en="Instructor" data-fr="Formateur"></strong>  <span data-en="Supervises learning, receives friction alerts, intervenes when needed." data-fr="Supervise l'apprentissage, reçoit des alertes de friction, intervient si nécessaire."></span></li>
+    <li><strong data-en="AI Engine (cobel-engine)" data-fr="Moteur IA (cobel-engine)"></strong>  <span data-en="Validates skills, optimizes learning paths, enforces bilingual consistency." data-fr="Valide les compétences, optimise les parcours, garantit la cohérence bilingue."></span></li>
+    <li><strong data-en="Payment Gateway" data-fr="Passerelle de Paiement"></strong>  <span data-en="Controls access and initializes student metrics." data-fr="Contrôle l'accès et initialise les métriques apprenant."></span></li>
+    <li><strong data-en="Administrator" data-fr="Administrateur"></strong>  <span data-en="Monitors throughput, ROI, and system integrity." data-fr="Surveille le rendement, le ROI et l'intégrité du système."></span></li>
+    <li><strong data-en="Certification Authority" data-fr="Autorité de Certification"></strong>  <span data-en="Issues AI-validated certificates with QR verification." data-fr="Délivre des certificats validés par IA avec QR de vérification."></span></li>
+  </ul>
+</section>
+
+<!-- REST OF YOUR HTML CONTENT -->
+
+</main>
+</body>
+</html>
