@@ -6,7 +6,6 @@
     "dev": "next dev",
     "check": "node scripts/check-case.js",
     "fix-case": "node scripts/fix-filenames.js",
-    "prebuild": "node scripts/check-case.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
