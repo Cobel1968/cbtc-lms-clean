@@ -115,7 +115,7 @@ export default function GraduationPredictor({
       <p className="mt-4 text-[10px] text-slate-400 italic">
         * <bilingualtext 
             text={{ 
-              fr: "CalculÃ© dynamiquement via le Cobel AI Engine.", 
+              fr: "Calculé dynamiquement via le Cobel AI Engine.", 
               en: "Dynamically calculated via the Cobel AI Engine." 
             }} 
           />

@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { Search, Filter, BookOpen, Users, Clock, Star, ChevronRight, Zap, GraduationCap } from 'lucide-react';
 import { coursesData, getCoursesByCategory, getCoursesByLevel, sortCourses } from '@/lib/coursesData';
 import type { CourseCategory, CourseLevel, SortOption } from '@/lib/types';
-import { useLanguage } from '../contexts/languagecontext';
+import { useLanguage } from '@/app/contexts/LanguageContext';
 import { translations } from '@/lib/translations';
 import bilingualtext from '../components/bilingualtext';
 import Link from 'next/link';

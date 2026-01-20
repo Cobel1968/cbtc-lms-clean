@@ -1,12 +1,12 @@
-'use client';
+﻿'use client';
 
-import { calculate_friction_index, friction_data } from '@/lib/friction_engine';
+import { calculate_friction_index, friction_data } from '@/lib/frictionengine';
 import { AlertCircle, ArrowRightLeft, BookOpen } from 'lucide-react';
 
 const mock_vocational_data: friction_data[] = [
   { term: 'circuit breaker / disjoncteur', category: 'electrical', english_score: 45, french_score: 95, attempts: 3 },
-  { term: 'front desk / rÃƒÂ©ception', category: 'hospitality', english_score: 88, french_score: 92, attempts: 1 },
-  { term: 'torque wrench / clÃƒÂ© dynamomÃƒÂ©trique', category: 'mechanical', english_score: 30, french_score: 85, attempts: 5 },
+  { term: 'front desk / rÃƒÆ’Ã‚Â©ception', category: 'hospitality', english_score: 88, french_score: 92, attempts: 1 },
+  { term: 'torque wrench / clÃƒÆ’Ã‚Â© dynamomÃƒÆ’Ã‚Â©trique', category: 'mechanical', english_score: 30, french_score: 85, attempts: 5 },
 ];
 
 export default function bilingual_friction_report() {
@@ -33,7 +33,7 @@ export default function bilingual_friction_report() {
               </div>
               <div>
                 <h3 className="font-black text-slate-800 uppercase text-lg leading-none mb-1">{item.term}</h3>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{item.category} Ã¢â‚¬Â¢ {item.attempts} assessments</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{item.category} ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ {item.attempts} assessments</p>
               </div>
             </div>
 

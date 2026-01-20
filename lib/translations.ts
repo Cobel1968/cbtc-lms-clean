@@ -31,7 +31,7 @@ export const translations: Record<Language, Translations> = {
     },
     hero: {
       title: 'Transformez votre avenir avec CBTC',
-      subtitle: "Des formations de qualitÃ© en technologie, langues et business en CÃ´te d'Ivoire",
+      subtitle: "Des formations de qualité en technologie, langues et business en Côte d'Ivoire",
       cta: 'Commencer maintenant'
     },
     exploreCourses: 'Explorer les cours'
@@ -47,7 +47,7 @@ export const translations: Record<Language, Translations> = {
     },
     hero: {
       title: 'Transform your future with CBTC',
-      subtitle: 'Quality training in technology, languages and business in CÃ´te d\'Ivoire',
+      subtitle: 'Quality training in technology, languages and business in Côte d\'Ivoire',
       cta: 'Start now'
     },
     exploreCourses: 'Explore courses'

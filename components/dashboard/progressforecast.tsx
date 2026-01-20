@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useLanguage } from '@/app/contexts/languagecontext'; // lowercase path
+import { useLanguage } from '@/app/contexts/LanguageContext'; // lowercase path
 import bilingualtext from '@/components/bilingualtext'; // lowercase path
 
 /**
@@ -48,12 +48,12 @@ export default function ProgressForecast() {
         <div>
           <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider">
             {/* Component call: bilingualtext (PascalCase) */}
-            <bilingualtext text={{ fr: "PrÃ©vision de DiplÃ´me", en: "Graduation Forecast" }} />
+            <bilingualtext text={{ fr: "Prévision de Diplôme", en: "Graduation Forecast" }} />
           </h3>
           <p className="text-2xl font-bold text-gray-900 mt-1">{forecast.date}</p>
         </div>
         <div className="bg-blue-50 px-3 py-1 rounded-full text-blue-700 text-xs font-bold">
-          {forecast.density}x <bilingualtext text={{ fr: "DensitÃ©", en: "Density" }} />
+          {forecast.density}x <bilingualtext text={{ fr: "Densité", en: "Density" }} />
         </div>
       </div>
 
@@ -75,7 +75,7 @@ export default function ProgressForecast() {
         <p className="text-[10px] text-gray-400 italic mt-2">
           <bilingualtext 
             text={{ 
-              fr: "*AjustÃ© via le Cobel AI Engine.", 
+              fr: "*Ajusté via le Cobel AI Engine.", 
               en: "*Adjusted via Cobel AI Engine." 
             }} 
           />

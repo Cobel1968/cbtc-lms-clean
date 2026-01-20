@@ -10,7 +10,7 @@ export const HandwritingUpload = ({ user_id }: { user_id: string }) => {
     setUploading(true);
     
     // Simulate OCR Extraction (In Phase 2, this links to Tesseract/Vision)
-    const mock_extracted_text = "L'Ã©tudiant comprend les contrats intelligents et la blockchain.";
+    const mock_extracted_text = "L'étudiant comprend les contrats intelligents et la blockchain.";
     
     const response = await process_handwriting_data(user_id, mock_extracted_text);
     

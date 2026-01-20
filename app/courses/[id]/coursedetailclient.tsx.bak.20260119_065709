@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 
 // FIXED: Lowercase path for Vercel/Linux compliance
-import { useLanguage as use_language } from '@/app/contexts/LanguageContext';
+import { useLanguage as use_language } from '../../contexts/languagecontext';
 import { translations } from '@/lib/translations';
 import bilingualtext from '../../components/bilingualtext'; 
 import Link from 'next/link';

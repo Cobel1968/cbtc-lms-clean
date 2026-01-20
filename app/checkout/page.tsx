@@ -1,37 +1,46 @@
 'use client';
 
-// Corrected import paths to match CamelCase filenames
-import { useCart } from '@/app/contexts/CartContext'; 
-import { useLanguage } from '@/app/contexts/languagecontext'; 
 import Link from 'next/link';
-import { ArrowLeft, CreditCard, Lock, CheckCircle, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
+import { ArrowLeft, CreditCard, CheckCircle, ShieldCheck } from 'lucide-react';
+
+// Contexts (Linux/Vercel case-sensitive)
+import { useCart } from '@/app/contexts/CartContext';
+import { useLanguage } from '@/app/contexts/LanguageContext';
 
 export default function CheckoutPage() {
   const { cart, totalPrice, clearCart } = useCart();
   const { language } = useLanguage();
+
   const [isProcessing, setIsProcessing] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
 
   const t = {
     title: language === 'fr' ? 'Paiement' : 'Checkout',
     back: language === 'fr' ? 'Retour au panier' : 'Back to cart',
-    orderSummary: language === 'fr' ? 'RÃƒÂ©sumÃƒÂ© de la commande' : 'Order Summary',
+    orderSummary: language === 'fr' ? 'Résumé de la commande' : 'Order Summary',
     total: language === 'fr' ? 'Total' : 'Total',
-    cardNumber: language === 'fr' ? 'NumÃƒÂ©ro de carte' : 'Card Number',
+    cardNumber: language === 'fr' ? 'Numéro de carte' : 'Card Number',
     expiryDate: language === 'fr' ? "Date d'expiration" : 'Expiry Date',
     cvv: language === 'fr' ? 'CVV' : 'CVV',
     cardholderName: language === 'fr' ? 'Nom du titulaire' : 'Cardholder Name',
     placeOrder: language === 'fr' ? 'Passer la commande' : 'Place Order',
     processing: language === 'fr' ? 'Traitement en cours...' : 'Processing...',
-    secure: language === 'fr' ? 'Paiement sÃƒÂ©curisÃƒÂ©' : 'Secure Payment',
+    secure: language === 'fr' ? 'Paiement sécurisé' : 'Secure Payment',
     empty: language === 'fr' ? 'Votre panier est vide' : 'Your cart is empty',
     browse: language === 'fr' ? 'Parcourir les cours' : 'Browse Courses',
+    confirmedTitle: language === 'fr' ? 'Confirmée !' : 'Confirmed!',
+    confirmedBody:
+      language === 'fr'
+        ? 'Merci pour votre achat. Vos modules de formation sont maintenant déverrouillés.'
+        : 'Thank you for your purchase. Your training modules are now unlocked.',
+    goDashboard: language === 'fr' ? 'Accéder au Dashboard' : 'Go to Dashboard',
   };
 
   const handleCheckout = async () => {
     setIsProcessing(true);
-    // Simulate payment processing for the Pedagogical Logic flow
+
+    // Simulate payment processing (Pedagogical Logic flow)
     setTimeout(() => {
       setIsProcessing(false);
       setIsComplete(true);
@@ -39,6 +48,7 @@ export default function CheckoutPage() {
     }, 2000);
   };
 
+  // Empty cart (before completion)
   if (cart.length === 0 && !isComplete) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
@@ -55,6 +65,7 @@ export default function CheckoutPage() {
     );
   }
 
+  // Success screen
   if (isComplete) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
@@ -63,24 +74,21 @@ export default function CheckoutPage() {
             <CheckCircle size={48} className="text-emerald-500" />
           </div>
           <h1 className="text-3xl font-black text-slate-900 mb-4 uppercase tracking-tighter">
-            {language === 'fr' ? 'ConfirmÃƒÂ©e !' : 'Confirmed!'}
+            {t.confirmedTitle}
           </h1>
-          <p className="text-slate-500 font-medium mb-8">
-            {language === 'fr' 
-              ? 'Merci pour votre achat. Vos modules de formation sont maintenant dÃƒÂ©verrouillÃƒÂ©s.'
-              : 'Thank you for your purchase. Your training modules are now unlocked.'}
-          </p>
+          <p className="text-slate-500 font-medium mb-8">{t.confirmedBody}</p>
           <Link
             href="/dashboard"
             className="block w-full bg-slate-900 text-white px-6 py-4 rounded-2xl hover:bg-black transition-all font-bold uppercase text-sm tracking-widest"
           >
-            {language === 'fr' ? 'AccÃƒÂ©der au Dashboard' : 'Go to Dashboard'}
+            {t.goDashboard}
           </Link>
         </div>
       </div>
     );
   }
 
+  // Checkout screen
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       <div className="container mx-auto px-4 py-12 max-w-6xl">
@@ -95,6 +103,7 @@ export default function CheckoutPage() {
         <h1 className="text-4xl font-black text-slate-900 mb-10 uppercase tracking-tighter">{t.title}</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          {/* Payment form */}
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-white rounded-[40px] shadow-sm border border-slate-100 p-10">
               <div className="flex items-center gap-3 mb-8">
@@ -125,6 +134,7 @@ export default function CheckoutPage() {
                       className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
                     />
                   </div>
+
                   <div>
                     <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-3">
                       {t.cvv}
@@ -151,10 +161,11 @@ export default function CheckoutPage() {
             </div>
           </div>
 
+          {/* Summary */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-[40px] shadow-xl border border-slate-100 p-8 sticky top-8">
               <h2 className="text-lg font-black text-slate-900 mb-6 uppercase tracking-tight">{t.orderSummary}</h2>
-              
+
               <div className="space-y-4 mb-8">
                 {cart.map((item) => (
                   <div key={item.id} className="flex justify-between items-start">

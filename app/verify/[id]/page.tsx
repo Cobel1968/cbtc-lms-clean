@@ -1,15 +1,15 @@
 'use client';
 
-import { calculate_friction_index, friction_data } from '@/lib/friction_engine';
-import { AlertCircle, ArrowRightLeft, BookOpen } from 'lucide-react';
+import { calculate_friction_index, friction_data } from '@/lib/frictionengine';
+import { ArrowRightLeft } from 'lucide-react';
 
 const mock_vocational_data: friction_data[] = [
   { term: 'circuit breaker / disjoncteur', category: 'electrical', english_score: 45, french_score: 95, attempts: 3 },
-  { term: 'front desk / rÃ©ception', category: 'hospitality', english_score: 88, french_score: 92, attempts: 1 },
-  { term: 'torque wrench / clÃ© dynamomÃ©trique', category: 'mechanical', english_score: 30, french_score: 85, attempts: 5 },
+  { term: 'front desk / réception', category: 'hospitality', english_score: 88, french_score: 92, attempts: 1 },
+  { term: 'torque wrench / clé dynamométrique', category: 'mechanical', english_score: 30, french_score: 85, attempts: 5 },
 ];
 
-export default function bilingual_friction_report() {
+export default function BilingualFrictionReport() {
   const reports = calculate_friction_index(mock_vocational_data);
 
   return (
@@ -26,14 +26,24 @@ export default function bilingual_friction_report() {
 
       <div className="grid gap-4">
         {reports.map((item) => (
-          <div key={item.term} className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex items-center justify-between">
+          <div
+            key={item.term}
+            className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex items-center justify-between"
+          >
             <div className="flex items-center gap-6">
-              <div className={`p-4 rounded-2xl ${Number(item.friction_index) > 50 ? 'bg-red-50 text-red-500' : 'bg-slate-50 text-slate-400'}`}>
+              <div
+                className={`p-4 rounded-2xl ${
+                  Number(item.friction_index) > 50 ? 'bg-red-50 text-red-500' : 'bg-slate-50 text-slate-400'
+                }`}
+              >
                 <ArrowRightLeft size={24} />
               </div>
+
               <div>
                 <h3 className="font-black text-slate-800 uppercase text-lg leading-none mb-1">{item.term}</h3>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{item.category} â€¢ {item.attempts} assessments</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                  {item.category} • {item.attempts} assessments
+                </p>
               </div>
             </div>
 
@@ -44,6 +54,7 @@ export default function bilingual_friction_report() {
                   {item.friction_index}%
                 </p>
               </div>
+
               <button className="bg-slate-900 text-white px-6 py-3 rounded-2xl font-bold hover:bg-indigo-600 transition-all uppercase text-xs">
                 assign module
               </button>

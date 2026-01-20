@@ -80,7 +80,7 @@ export function validateEmail(email: string): boolean {
  */
 export function validatePassword(password: string): { isValid: boolean; error?: string } {
   if (password.length < 8) {
-    return { isValid: false, error: 'Le mot de passe doit contenir au moins 8 caractÃ¨res' };
+    return { isValid: false, error: 'Le mot de passe doit contenir au moins 8 caractères' };
   }
   if (!/[A-Z]/.test(password)) {
     return { isValid: false, error: 'Le mot de passe doit contenir au moins une majuscule' };

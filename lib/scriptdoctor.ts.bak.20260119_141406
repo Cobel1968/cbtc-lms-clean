@@ -55,7 +55,7 @@ export const cobel_health_check = {
 export const run_full_system_audit = async (): Promise<string[]> => {
   // Simulation of found imports in the project
   const detected_imports = [
-    '@/app/contexts/LanguageContext', // Canonical (Linux-truth)
+    '@/app/contexts/languagecontext', // Correct
     '../../components/bilingualtext'  // ERROR: Capitalized B/T (Causes Vercel Fail)
   ];
 

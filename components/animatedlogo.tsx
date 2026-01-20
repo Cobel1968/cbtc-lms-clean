@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import DiagnosticWelcomeModal from @/components/dashboard/diagnosticwelcomemodal';
+import DiagnosticWelcomeModal from "@/components/dashboard/diagnosticwelcomemodal';
 import { User } from '@/lib/types'; // Import your User type
 
 export default function DashboardPage() {

@@ -1,8 +1,8 @@
 'use client';
 
 // Corrected import paths to match CamelCase filenames
-import { useCart } from '@/app/contexts/CartContext'; 
-import { useLanguage } from '@/app/contexts/languagecontext'; 
+import { useCart } from "@/app/contexts/CartContext"; 
+import { useLanguage } from '@/app/contexts/LanguageContext'; 
 import Link from 'next/link';
 import { ShoppingCart, Trash2, ArrowLeft } from 'lucide-react';
 
@@ -16,7 +16,7 @@ export default function CartPage() {
     browse: language === 'fr' ? 'Parcourir les cours' : 'Browse Courses',
     total: language === 'fr' ? 'Total' : 'Total',
     clear: language === 'fr' ? 'Vider le panier' : 'Clear Cart',
-    checkout: language === 'fr' ? 'Passer ÃƒÂ  la caisse' : 'Proceed to Checkout',
+    checkout: language === 'fr' ? 'Passer à la caisse' : 'Proceed to Checkout',
     remove: language === 'fr' ? 'Retirer' : 'Remove',
     back: language === 'fr' ? 'Retour aux cours' : 'Back to courses',
   };
@@ -108,3 +108,4 @@ export default function CartPage() {
     </div>
   );
 }
+

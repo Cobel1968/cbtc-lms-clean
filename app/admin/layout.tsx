@@ -1,7 +1,7 @@
 'use client';
 
-import { languageprovider } from '@/app/contexts/languagecontext';
-import { CartProvider } from '@/app/contexts/CartContext';
+import { LanguageProvider } from '@/app/contexts/LanguageContext';
+import { CartProvider } from "@/app/contexts/CartContext";
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 // icons are third-party components, so PascalCase is required here
@@ -35,7 +35,7 @@ export default function admin_layout({
   ];
 
   return (
-    <languageprovider>
+    <LanguageProvider>
       <CartProvider>
         {/* added 'lowercase' class to the parent to ensure visual consistency */}
         <div className="flex min-h-screen bg-[#f8fafc] lowercase">
@@ -93,6 +93,6 @@ export default function admin_layout({
 
         </div>
       </CartProvider>
-    </languageprovider>
+    </LanguageProvider>
   );
 }

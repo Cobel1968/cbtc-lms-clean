@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Zap, User, Mail, Lock, ShieldCheck, Loader2 } from 'lucide-react';
-import supabase from '@/app/contexts/languagecontext';
+import supabase from '@/app/contexts/LanguageContext';
 
 export default function RegisterPage() {
   const router = useRouter();

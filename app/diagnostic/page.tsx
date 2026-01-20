@@ -9,63 +9,98 @@ import supabase from '@/lib/supabaseClient';
 import { coursesData } from '@/lib/coursesData';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 
-interface Question {
+type SupabaseDiagnosticOption = {
+  key: string;
+  text_fr: string;
+  text_en: string;
+};
+
+type SupabaseDiagnosticQuestion = {
   id: string;
-  question: { fr: string; en: string };
-  options: { fr: string; en: string }[];
-  correctAnswer: number;
-}
+  type?: string;
+  question_fr: string;
+  question_en: string;
+  options: SupabaseDiagnosticOption[];
+  answer?: string; // we don't need it client-side for a diagnostic
+  technical_term_target?: string | null;
+};
 
 export default function DiagnosticPage() {
   const router = useRouter();
   const { language, isMounted } = useLanguage();
 
   const [selectedCourse, setSelectedCourse] = useState<string>('');
+
+  // Loaded from Supabase
+  const [testId, setTestId] = useState<string>('');
+  const [durationSeconds, setDurationSeconds] = useState<number>(30 * 60);
+  const [questions, setQuestions] = useState<SupabaseDiagnosticQuestion[]>([]);
+  const [isLoadingTest, setIsLoadingTest] = useState<boolean>(false);
+
+  // Quiz state
   const [currentQuestion, setCurrentQuestion] = useState<number>(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
-  const [timeRemaining, setTimeRemaining] = useState<number>(1800);
+  const [timeRemaining, setTimeRemaining] = useState<number>(30 * 60);
 
   const [isComplete, setIsComplete] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [score, setScore] = useState<number>(0);
 
-  const questions: Question[] = useMemo(
-    () => [
-      {
-        id: '1',
-        question: {
-          fr: 'Expérience technique préalable ?',
-          en: 'Prior technical experience?',
-        },
-        options: [
-          { fr: 'Aucune', en: 'None' },
-          { fr: 'Débutant', en: 'Beginner' },
-          { fr: 'Intermédiaire', en: 'Intermediate' },
-          { fr: 'Avancé', en: 'Advanced' },
-        ],
-        correctAnswer: 0,
-      },
-      {
-        id: '2',
-        question: {
-          fr: 'Maîtrise de la terminologie technique bilingue ?',
-          en: 'Mastery of bilingual technical terminology?',
-        },
-        options: [
-          { fr: 'Faible', en: 'Low' },
-          { fr: 'Moyenne', en: 'Average' },
-          { fr: 'Bonne', en: 'Good' },
-          { fr: 'Excellente', en: 'Excellent' },
-        ],
-        correctAnswer: 0,
-      },
-    ],
-    []
-  );
+  // Results
+  const [percentageScore, setPercentageScore] = useState<number>(0);
 
-  // Timer (runs only after a course is selected and until complete)
+  // ---------- Load diagnostic test when a course is selected ----------
+  useEffect(() => {
+    const loadTest = async () => {
+      if (!selectedCourse) return;
+
+      setIsLoadingTest(true);
+      setTestId('');
+      setQuestions([]);
+      setCurrentQuestion(0);
+      setAnswers({});
+      setIsComplete(false);
+      setPercentageScore(0);
+
+      try {
+        const { data, error } = await supabase
+          .from('diagnostic_tests')
+          .select('id, duration_minutes, questions')
+          .eq('course_id', selectedCourse)
+          .limit(1)
+          .single();
+
+        if (error || !data) {
+          console.error('Unable to load diagnostic test:', error);
+          return;
+        }
+
+        // Only accept course diagnostics where questions is an array
+        const q = Array.isArray(data.questions) ? (data.questions as SupabaseDiagnosticQuestion[]) : [];
+
+        if (!Array.isArray(data.questions)) {
+          console.warn('Diagnostic test questions is not an array (likely IELTS/object). Ignoring for this page.');
+        }
+
+        setTestId(data.id);
+
+        const mins = Number(data.duration_minutes || 30);
+        const secs = mins * 60;
+        setDurationSeconds(secs);
+        setTimeRemaining(secs);
+
+        setQuestions(q);
+      } finally {
+        setIsLoadingTest(false);
+      }
+    };
+
+    void loadTest();
+  }, [selectedCourse]);
+
+  // ---------- Timer (runs only after a course+test is loaded and until complete) ----------
   useEffect(() => {
     if (!selectedCourse) return;
+    if (!testId) return;
     if (isComplete) return;
     if (timeRemaining <= 0) return;
 
@@ -74,7 +109,7 @@ export default function DiagnosticPage() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [selectedCourse, isComplete, timeRemaining]);
+  }, [selectedCourse, testId, isComplete, timeRemaining]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -98,26 +133,38 @@ export default function DiagnosticPage() {
     setIsSaving(true);
 
     try {
-      // Score: normalize to 0-100 (simple heuristic)
+      if (!testId || questions.length === 0) {
+        console.error('Cannot submit: missing testId or questions.');
+        setIsComplete(true);
+        return;
+      }
+
+      // Scoring model: each question yields 1..4 points based on selected option index (0..3)
+      // This matches your earlier heuristic and maps well to Supabase fields score/max_score/percentage.
       let totalPoints = 0;
       questions.forEach((_q, index) => {
         if (answers[index] !== undefined) totalPoints += answers[index] + 1; // 1..4
       });
 
-      const calculatedScore = Math.round((totalPoints / (questions.length * 4)) * 100);
-      setScore(calculatedScore);
+      const maxScore = questions.length * 4; // 20 * 4 = 80 typical
+      const pct = maxScore > 0 ? Math.round((totalPoints / maxScore) * 10000) / 100 : 0;
 
-      // Save to Supabase (best-effort)
+      setPercentageScore(pct);
+
+      // Save to Supabase
       const { data } = await supabase.auth.getUser();
       const user = data?.user;
 
-      if (user && selectedCourse) {
+      if (user) {
         const { error } = await supabase.from('diagnostic_results').insert({
           user_id: user.id,
-          course_id: selectedCourse,
-          score: calculatedScore,
-          answers,
+          test_id: testId,
+          score: totalPoints,
+          max_score: maxScore,
+          percentage: pct,
+          answers: answers,
           completed_at: new Date().toISOString(),
+          time_taken: durationSeconds - timeRemaining,
         });
 
         if (error) {
@@ -128,12 +175,13 @@ export default function DiagnosticPage() {
       setIsComplete(true);
     } catch (error) {
       console.error('Error submitting diagnostic:', error);
+      setIsComplete(true);
     } finally {
       setIsSaving(false);
     }
   };
 
-  // Loading gate (prevents hydration mismatch if your LanguageContext uses client-only logic)
+  // ---------- Hydration gate ----------
   if (!isMounted) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
@@ -142,7 +190,7 @@ export default function DiagnosticPage() {
     );
   }
 
-  // Course selection
+  // ---------- Course selection screen ----------
   if (!selectedCourse && !isComplete) {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-slate-900">
@@ -168,13 +216,32 @@ export default function DiagnosticPage() {
     );
   }
 
-  // Results screen
+  // ---------- Loading test screen ----------
+  if (selectedCourse && !isComplete && (isLoadingTest || !testId)) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 text-slate-900">
+        <div className="max-w-md w-full bg-white rounded-[40px] shadow-xl p-10 border border-slate-100 text-center">
+          <Loader2 className="animate-spin text-indigo-600 mx-auto mb-4" size={32} />
+          <p className="font-bold text-slate-700">
+            {language === 'fr' ? 'Chargement du diagnostic…' : 'Loading diagnostic…'}
+          </p>
+          <p className="text-slate-500 text-sm mt-2">
+            {language === 'fr'
+              ? 'Nous préparons vos 20 questions (30 minutes).'
+              : 'Preparing your 20-question test (30 minutes).'}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // ---------- Results screen ----------
   if (isComplete) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 text-slate-900">
         <div className="max-w-md w-full bg-white rounded-[40px] shadow-2xl p-10 text-center border border-slate-100">
           <CheckCircle size={60} className="mx-auto text-green-500 mb-6" />
-          <h2 className="text-5xl font-black mb-2 text-slate-900">{score}%</h2>
+          <h2 className="text-5xl font-black mb-2 text-slate-900">{percentageScore}%</h2>
 
           <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px] mb-8">
             {language === 'fr' ? 'Parcours Cobel AI cartographié' : 'Cobel AI path mapped'}
@@ -191,7 +258,7 @@ export default function DiagnosticPage() {
     );
   }
 
-  // Main diagnostic screen
+  // ---------- Main diagnostic screen ----------
   const currentQ = questions[currentQuestion];
 
   return (
@@ -211,12 +278,14 @@ export default function DiagnosticPage() {
 
       <main className="max-w-3xl mx-auto px-6 py-12">
         <div className="bg-white rounded-[40px] shadow-xl p-10 border border-slate-100">
-          <h2 className="text-2xl font-black mb-8 text-slate-900">{currentQ.question[language]}</h2>
+          <h2 className="text-2xl font-black mb-8 text-slate-900">
+            {language === 'fr' ? currentQ.question_fr : currentQ.question_en}
+          </h2>
 
           <div className="grid gap-4 mb-8">
-            {currentQ.options.map((option, index) => (
+            {(currentQ.options || []).map((opt: any, index: number) => (
               <button
-                key={index}
+                key={opt.key ?? index}
                 onClick={() => handleAnswer(index)}
                 className={`w-full text-left p-6 border-2 rounded-2xl transition-all ${
                   answers[currentQuestion] === index
@@ -224,7 +293,9 @@ export default function DiagnosticPage() {
                     : 'border-slate-100 hover:border-indigo-300 hover:bg-slate-50'
                 }`}
               >
-                <span className="font-bold text-slate-900">{option[language]}</span>
+                <span className="font-bold text-slate-900">
+                  {language === 'fr' ? opt.text_fr : opt.text_en}
+                </span>
               </button>
             ))}
           </div>

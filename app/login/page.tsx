@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Lock, User, ShieldCheck, Zap, Loader2 } from 'lucide-react'
-import supabase from '@/app/contexts/languagecontext' // Verified lowercase import
+import supabase from '@/app/contexts/LanguageContext' // Verified lowercase import
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')

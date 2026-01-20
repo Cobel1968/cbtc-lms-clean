@@ -1,6 +1,6 @@
 'use client';
 
-import { useLanguage } from '@/app/contexts/languagecontext'; 
+import { useLanguage } from '@/app/contexts/LanguageContext'; 
 import { useState, useEffect } from 'react';
 
 interface bilingualtextProps {

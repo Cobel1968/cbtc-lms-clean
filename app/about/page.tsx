@@ -1,7 +1,7 @@
 'use client';
 
 // Import matches your lowercase file: languagecontext.tsx
-import { useLanguage } from '@/app/contexts/languagecontext'; 
+import { useLanguage } from '@/app/contexts/LanguageContext'; 
 import { Award, Users, BookOpen, Target, CheckCircle } from 'lucide-react';
 
 export default function AboutPage() {

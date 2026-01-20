@@ -1,6 +1,6 @@
 'use client';
 
-import { useLanguage as use_language } from '@/app/contexts/languagecontext';
+import { useLanguage as use_language } from '@/app/contexts/LanguageContext';
 import { Zap, Calendar, TrendingDown } from 'lucide-react';
 
 interface progress_props {
@@ -25,7 +25,7 @@ export default function ProgressForecasting({ standard_weeks, days_saved, comple
             {language === 'fr' ? 'Optimisation Temporelle' : 'Temporal Optimization'}
           </h3>
           <p className="text-blue-200 text-sm">
-            {language === 'fr' ? 'Analyse de fluiditÃ© bilingue appliquÃ©e' : 'Bilingual fluency analysis applied'}
+            {language === 'fr' ? 'Analyse de fluidité bilingue appliquée' : 'Bilingual fluency analysis applied'}
           </p>
         </div>
         <div className="bg-white/10 px-4 py-2 rounded-full backdrop-blur-md border border-white/20">
@@ -58,7 +58,7 @@ export default function ProgressForecasting({ standard_weeks, days_saved, comple
           </div>
           <div className="p-4 rounded-2xl bg-yellow-400/10 border border-yellow-400/20">
             <TrendingDown className="text-yellow-400 mb-2" size={20} />
-            <div className="text-xs text-yellow-400 uppercase">{language === 'fr' ? 'Parcours OptimisÃ©' : 'Optimized Path'}</div>
+            <div className="text-xs text-yellow-400 uppercase">{language === 'fr' ? 'Parcours Optimisé' : 'Optimized Path'}</div>
             <div className="text-lg font-bold text-yellow-400 tracking-tight">{optimized_days} {language === 'fr' ? 'Jours' : 'Days'}</div>
           </div>
         </div>
@@ -67,7 +67,7 @@ export default function ProgressForecasting({ standard_weeks, days_saved, comple
       <div className="mt-8 pt-6 border-t border-white/10 text-center">
         <p className="text-xs text-blue-300 italic opacity-80">
           {language === 'fr' 
-            ? "* PrÃ©diction basÃ©e sur l'analyse de vos Ã©valuations manuscrites." 
+            ? "* Prédiction basée sur l'analyse de vos évaluations manuscrites." 
             : "* Prediction based on the analysis of your handwritten assessments."}
         </p>
       </div>

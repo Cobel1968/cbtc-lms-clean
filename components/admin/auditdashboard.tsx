@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 // strictly matching our lowercase lib files for vercel exigence
-import { run_full_system_audit } from '@/lib/script-doctor'; 
+import { run_full_system_audit } from '@/lib/scriptdoctor'; 
 import { process_handwritten_assessment } from '@/lib/handwritingprocessor';
 import { Activity, ShieldCheck, RefreshCw, AlertCircle } from 'lucide-react';
 

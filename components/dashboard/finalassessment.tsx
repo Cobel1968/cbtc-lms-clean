@@ -60,8 +60,8 @@ export default function FinalAssessment({
           <BilingualText 
             text={{ 
               fr: is_locked 
-                ? "AccÃ¨s restreint. Le Cobel AI Engine exige une fluence technique de 60% (via analyse manuscrite) pour dÃ©bloquer cet examen." 
-                : "Seuil de fluence atteint ! Vous Ãªtes maintenant autorisÃ© Ã  passer l'examen de certification finale.",
+                ? "Accès restreint. Le Cobel AI Engine exige une fluence technique de 60% (via analyse manuscrite) pour débloquer cet examen." 
+                : "Seuil de fluence atteint ! Vous êtes maintenant autorisé Ã  passer l'examen de certification finale.",
               en: is_locked 
                 ? "Access restricted. The Cobel AI Engine requires 60% technical fluency (via handwriting analysis) to unlock this exam." 
                 : "Fluency threshold reached! You are now authorized to take the final certification exam."
@@ -72,7 +72,7 @@ export default function FinalAssessment({
         {is_locked ? (
           <div className="flex flex-col gap-4">
             <div className="inline-flex items-center gap-4 px-6 py-3 bg-slate-200 rounded-2xl text-slate-500 cursor-not-allowed font-bold text-xs uppercase tracking-widest">
-              <BilingualText text={{ fr: "Examen VerrouillÃ©", en: "Exam Locked" }} />
+              <BilingualText text={{ fr: "Examen Verrouillé", en: "Exam Locked" }} />
             </div>
             
             {/* Progress to Unlock */}

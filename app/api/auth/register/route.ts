@@ -23,7 +23,7 @@ export async function POST(req: Request) {
     
     if (authError || !authData.user) {
       return NextResponse.json(
-        { error: authError?.message || 'Erreur lors de la crÃ©ation du compte' }, 
+        { error: authError?.message || 'Erreur lors de la création du compte' }, 
         { status: 400 }
       );
     }
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
     
     if (createError || !newUser) {
       return NextResponse.json(
-        { error: 'Erreur lors de la crÃ©ation du profil utilisateur' },
+        { error: 'Erreur lors de la création du profil utilisateur' },
         { status: 500 }
       );
     }
@@ -59,7 +59,7 @@ export async function POST(req: Request) {
           created_at: newUser.created_at,
         },
       },
-      message: 'Compte crÃ©Ã© avec succÃ¨s !',
+      message: 'Compte créé avec succès !',
     });
     
   } catch (error: any) {

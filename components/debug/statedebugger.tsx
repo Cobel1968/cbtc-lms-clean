@@ -1,6 +1,6 @@
 'use client';
 
-import { useLanguage } from '@/app/contexts/languagecontext';
+import { useLanguage } from '@/app/contexts/LanguageContext';
 import { useCart } from '@/app/contexts/CartContext';
 
 export default function StateDebugger() {
