@@ -1,5 +1,4 @@
-'use client'
-
+'use client';
 import React, { useState } from 'react';
 // Calling the server action we just pushed to GitHub
 import { syncHandwritingToEngine } from '@/app/actions/assessment';

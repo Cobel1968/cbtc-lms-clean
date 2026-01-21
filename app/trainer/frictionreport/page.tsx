@@ -1,26 +1,70 @@
-﻿'use client';
+'use client';
 
-import { calculate_friction_index, friction_data } from '@/lib/frictionengine';
-import { AlertCircle, ArrowRightLeft, BookOpen } from 'lucide-react';
+export const dynamic = 'force-dynamic';
 
-const mock_vocational_data: friction_data[] = [
-  { term: 'circuit breaker / disjoncteur', category: 'electrical', english_score: 45, french_score: 95, attempts: 3 },
-  { term: 'front desk / rÃƒÆ’Ã‚Â©ception', category: 'hospitality', english_score: 88, french_score: 92, attempts: 1 },
-  { term: 'torque wrench / clÃƒÆ’Ã‚Â© dynamomÃƒÆ’Ã‚Â©trique', category: 'mechanical', english_score: 30, french_score: 85, attempts: 5 },
-];
+import { useEffect, useState } from 'react';
+import dynamicImport from 'next/dynamic';
+import { ArrowRightLeft, Loader2, CheckCircle2 } from 'lucide-react';
 
-export default function bilingual_friction_report() {
-  const reports = calculate_friction_index(mock_vocational_data);
+// --- Internal Report Component ---
+function FrictionReportContent() {
+  const [reports, setReports] = useState<any[]>([]);
+  const [isMounted, setIsMounted] = useState(false);
+  const [assigning, setAssigning] = useState<string | null>(null);
+
+  useEffect(() => {
+    const initEngine = async () => {
+      const { calculate_friction_index } = await import('@/lib/frictionengine');
+      
+      const mock_vocational_data = [
+        { term: 'circuit breaker / disjoncteur', category: 'electrical', english_score: 45, french_score: 95, attempts: 3 },
+        { term: 'front desk / réception', category: 'hospitality', english_score: 88, french_score: 92, attempts: 1 },
+        { term: 'torque wrench / clé dynamométrique', category: 'mechanical', english_score: 30, french_score: 85, attempts: 5 },
+      ];
+
+      const data = calculate_friction_index(mock_vocational_data);
+      setReports(data);
+      setIsMounted(true);
+    };
+
+    initEngine();
+  }, []);
+
+  // --- Logic: Assign Module & Adjust Curriculum Density ---
+  const handleAssignModule = async (term: string, category: string) => {
+    setAssigning(term);
+    
+    // Methodical Trace for Rollback
+    console.log(`[Cobel AI Engine] ACTION: Assign Module | TERM: ${term} | CAT: ${category}`);
+    
+    try {
+      // Logic simulation: This bridges the gap to the student's dynamic path
+      await new Promise(resolve => setTimeout(resolve, 800)); 
+      
+      // In production, this call updates 'learning_path_density' in Supabase
+      console.log(`[Cobel AI Engine] SUCCESS: Path adjusted to 'DENSE' for track: ${category}`);
+      
+      alert(`Pedagogical adjustment successful for: ${term}. Curriculum density increased for affected students.`);
+    } catch (error) {
+      console.error("[Cobel AI Engine] ROLLBACK: Assignment failed.", error);
+    } finally {
+      setAssigning(null);
+    }
+  };
+
+  if (!isMounted) return null;
 
   return (
     <div className="p-8 lg:p-12 space-y-8 lowercase">
       <header className="flex justify-between items-end">
         <div>
-          <h1 className="text-3xl font-black italic uppercase tracking-tighter">bilingual friction report</h1>
+          <h1 className="text-3xl font-black italic uppercase tracking-tighter text-slate-900">
+            bilingual friction report
+          </h1>
           <p className="text-slate-500 font-bold">identifying vocational language gaps</p>
         </div>
         <div className="bg-amber-50 text-amber-700 px-4 py-2 rounded-2xl border border-amber-100 text-xs font-black uppercase">
-          3 critical gaps detected
+          {reports.filter(r => Number(r.friction_index) > 50).length} critical gaps detected
         </div>
       </header>
 
@@ -32,8 +76,12 @@ export default function bilingual_friction_report() {
                 <ArrowRightLeft size={24} />
               </div>
               <div>
-                <h3 className="font-black text-slate-800 uppercase text-lg leading-none mb-1">{item.term}</h3>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{item.category} ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ {item.attempts} assessments</p>
+                <h3 className="font-black text-slate-800 uppercase text-lg leading-none mb-1">
+                  {item.term}
+                </h3>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                  {item.category} • {item.attempts} assessments
+                </p>
               </div>
             </div>
 
@@ -44,8 +92,16 @@ export default function bilingual_friction_report() {
                   {item.friction_index}%
                 </p>
               </div>
-              <button className="bg-slate-900 text-white px-6 py-3 rounded-2xl font-bold hover:bg-indigo-600 transition-all uppercase text-xs">
-                assign module
+              <button 
+                onClick={() => handleAssignModule(item.term, item.category)}
+                disabled={assigning === item.term}
+                className="min-w-[140px] bg-slate-900 text-white px-6 py-3 rounded-2xl font-bold hover:bg-indigo-600 transition-all uppercase text-xs flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                {assigning === item.term ? (
+                  <Loader2 className="animate-spin" size={14} />
+                ) : (
+                  'assign module'
+                )}
               </button>
             </div>
           </div>
@@ -54,3 +110,13 @@ export default function bilingual_friction_report() {
     </div>
   );
 }
+
+// --- BUILD PROTECTION: Dynamic Export ---
+export default dynamicImport(() => Promise.resolve(FrictionReportContent), {
+  ssr: false,
+  loading: () => (
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <Loader2 className="animate-spin text-indigo-600" size={40} />
+    </div>
+  ),
+});

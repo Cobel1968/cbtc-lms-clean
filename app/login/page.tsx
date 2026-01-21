@@ -1,9 +1,10 @@
-'use client'
-
+'use client';
+export const dynamic = 'force-dynamic';
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Lock, User, ShieldCheck, Zap, Loader2 } from 'lucide-react'
-import supabase from '@/app/contexts/LanguageContext' // Verified lowercase import
+import { Lock, User, ShieldCheck, Zap, Loader2, AlertCircle as AlertIcon } from 'lucide-react'
+import { supabase } from '@/lib/supabaseClient' 
+import { useLanguage } from '@/app/contexts/LanguageContext'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -11,6 +12,9 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const router = useRouter()
+  
+  // ✅ Fixed the syntax error here
+  const { language } = useLanguage() || { language: 'en', t: (k) => k };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -24,8 +28,6 @@ export default function LoginPage() {
       })
 
       if (error) throw error
-
-      // Redirect to the normalized dashboard path
       router.push('/dashboard')
     } catch (err: any) {
       setErrorMsg(err.message || "Authentication failed")
@@ -42,12 +44,14 @@ export default function LoginPage() {
               <Zap className="text-white" size={32} fill="white" />
             </div>
             <h1 className="text-2xl font-black text-slate-900 tracking-tight uppercase">Cobel AI Engine</h1>
-            <p className="text-slate-400 text-sm font-medium">Portail d'Innovation Vocationnelle (2026)</p>
+            <p className="text-slate-400 text-sm font-medium">
+              {language === 'fr' ? "Portail d'Innovation Vocationnelle (2026)" : "Vocational Innovation Portal (2026)"}
+            </p>
           </div>
 
           {errorMsg && (
             <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-xs font-bold flex items-center gap-2">
-              <AlertCircle size={14} />
+              <AlertIcon size={14} />
               {errorMsg}
             </div>
           )}
@@ -100,12 +104,5 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
-  )
-}
-
-// Support component for error display
-function AlertCircle({ size }: { size: number }) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-  )
+  );
 }

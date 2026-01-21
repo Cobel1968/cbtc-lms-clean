@@ -25,4 +25,7 @@ Thumbs.db
 
 # IDE
 .vscode/
-.idea/
+.idea/*.bak.*
+*.csv
+/tools/
+/scripts/*.DISABLED.js

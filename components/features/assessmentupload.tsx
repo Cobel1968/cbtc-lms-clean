@@ -1,5 +1,4 @@
 'use client';
-
 import { useState as use_state } from 'react';
 import { supabase } from '@/lib/supabase';
 // Aliasing lucide icons to match the project's naming convention

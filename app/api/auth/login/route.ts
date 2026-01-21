@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabaseClient';
 
@@ -7,7 +8,7 @@ export async function POST(req: Request) {
 
     if (!email || !password) {
       return NextResponse.json(
-        { error: 'Identifiants requis pour accÃ©der Ã  CBTC' },
+        { error: 'Identifiants requis pour accÃ©der Ã  CBTC' },
         { status: 400 }
       );
     }

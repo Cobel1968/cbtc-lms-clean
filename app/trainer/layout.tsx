@@ -1,7 +1,7 @@
 'use client';
-
+export const dynamic = 'force-dynamic';
 import { ReactNode } from 'react';
-import { BookOpen, Users, BarChart3, Settings, LogOut } from 'lucide-react';
+import { BookOpen, Users, BarChart3, Settings, LogOut , AlertCircle} from 'lucide-react';
 import Link from 'next/link';
 
 export default function trainer_layout({ children }: { children: ReactNode }) {

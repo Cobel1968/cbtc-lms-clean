@@ -1,26 +1,48 @@
 'use client';
 
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { useCart } from '@/app/contexts/CartContext';
 
+/**
+ * COBEL ENGINE - STATE DEBUGGER v5.0
+ * Strategy: Capitalized naming for React standards + Hydration Shield.
+ */
 export default function StateDebugger() {
-  const { language, isMounted: langMounted } = useLanguage();
-  const { cart, total_price, isMounted: cartMounted } = useCart();
+  const [mounted, setMounted] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
-  // Only show in development or for admin 'Abel C.'
-  if (process.env.NODE_ENV === 'production') return null;
+  const languageContext = useLanguage();
+  const cartContext = useCart();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Shield: Prevents execution during Next.js static export
+  if (!mounted || process.env.NODE_ENV === 'production') {
+    return null;
+  }
 
   return (
-    <div className="fixed bottom-4 right-4 p-4 bg-black/80 text-white text-xs rounded-lg shadow-xl z-50 font-mono border border-green-500">
-      <h4 className="text-green-500 font-bold mb-2 uppercase">ðŸ“¡ Cobel Engine State</h4>
-      <div className="space-y-1">
-        <p>Language: <span className="text-yellow-400">{language.toUpperCase()}</span></p>
-        <p>Lang Mounted: <span className={langMounted ? "text-green-400" : "text-red-400"}>{String(langMounted)}</span></p>
-        <hr className="border-gray-700 my-2" />
-        <p>Cart Items: <span className="text-yellow-400">{cart.length}</span></p>
-        <p>Total: <span className="text-yellow-400">{total_price.toLocaleString()} XOF</span></p>
-        <p>Cart Mounted: <span className={cartMounted ? "text-green-400" : "text-red-400"}>{String(cartMounted)}</span></p>
-      </div>
+    <div className="fixed bottom-4 right-4 z-[9999]">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="bg-black text-white text-[10px] px-2 py-1 rounded-md opacity-50 hover:opacity-100 transition-opacity"
+      >
+        {isOpen ? 'CLOSE COBEL DEBUG' : 'COBEL DEBUG'}
+      </button>
+
+      {isOpen && (
+        <div className="mt-2 p-4 bg-white border-2 border-black rounded-lg shadow-xl w-64 text-[12px] font-mono">
+          <h3 className="font-bold border-b mb-2 pb-1 text-blue-600">PEDAGOGICAL STATE</h3>
+          <p><strong>Lang:</strong> {languageContext.language}</p>
+          <p><strong>Fluency:</strong> {languageContext.fluencyScore}%</p>
+          
+          <h3 className="font-bold border-b mt-3 mb-2 pb-1 text-purple-600">CART STATE</h3>
+          <p><strong>Items:</strong> {cartContext.cart?.length || 0}</p>
+        </div>
+      )}
     </div>
   );
 }

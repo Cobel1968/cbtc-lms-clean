@@ -1,5 +1,4 @@
 'use client';
-
 import { useLanguage } from '@/app/contexts/LanguageContext'; 
 import { useState, useEffect } from 'react';
 

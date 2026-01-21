@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ShoppingCart } from 'lucide-react';
@@ -9,15 +9,30 @@ import { useCart } from '@/app/contexts/CartContext';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 
 export default function Navbar() {
+  const [mounted, setMounted] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  const { language: currentLang, setLanguage } = useLanguage();
-  const { getCartItemCount } = useCart();
-  const cartItemCount = getCartItemCount();
+  // We still initialize the hooks, but we won't use their return values 
+  // until the 'mounted' check passes below.
+  const languageContext = useLanguage();
+  const cartContext = useCart();
 
-  // Mini dictionnaire local (temporaire) pour stabiliser le build.
-  // (On pourra le déplacer plus tard dans un vrai module i18n.)
+  // Sync mount state with the browser
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // HYDRATION SHIELD: If not mounted, render a non-interactive 
+  // placeholder to satisfy the Next.js static export.
+  if (!mounted) {
+    return <div className="h-16 bg-white shadow-md w-full sticky top-0 z-50" />;
+  }
+
+  const { language: currentLang, setLanguage } = languageContext;
+  const { cart } = cartContext; // Using 'cart' array to get count safely
+  const cartItemCount = cart?.length || 0;
+
   const t = {
     nav: {
       home: currentLang === 'fr' ? 'accueil' : 'home',
@@ -44,7 +59,7 @@ export default function Navbar() {
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/';
-    return pathname.startsWith(href);
+    return pathname?.startsWith(href);
   };
 
   return (
@@ -76,14 +91,9 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* Language Switcher & Auth Buttons */}
+          {/* Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            {/* Cart Icon */}
-            <Link
-              href="/cart"
-              className="relative px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors"
-              aria-label="Shopping cart"
-            >
+            <Link href="/cart" className="relative px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors">
               <ShoppingCart size={20} />
               {cartItemCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
@@ -92,53 +102,32 @@ export default function Navbar() {
               )}
             </Link>
 
-            {/* Language Toggle */}
             <button
               onClick={toggleLanguage}
               className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-              aria-label="Toggle language"
             >
               {currentLang === 'fr' ? 'EN' : 'FR'}
             </button>
 
-            {/* Login Button */}
-            <Link
-              href="/login"
-              className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
-            >
+            <Link href="/login" className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors">
               {t.nav.login}
             </Link>
 
-            {/* Sign Up Button */}
-            <Link
-              href="/register"
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm"
-            >
+            <Link href="/register" className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm">
               {t.nav.register}
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
-            aria-label="Toggle mobile menu"
+            className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {mobileMenuOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               )}
             </svg>
           </button>
@@ -147,64 +136,23 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-gray-200 bg-white">
-          <div className="px-4 py-3 space-y-3">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`block px-3 py-2 rounded-lg text-base font-medium ${
-                  isActive(link.href) ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-
-            {/* Mobile Cart Link */}
+        <div className="md:hidden border-t border-gray-200 bg-white p-4 space-y-3">
+          {navLinks.map((link) => (
             <Link
-              href="/cart"
+              key={link.href}
+              href={link.href}
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center justify-between px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+              className={`block px-3 py-2 rounded-lg ${isActive(link.href) ? 'text-blue-600 bg-blue-50' : 'text-gray-700'}`}
             >
-              <span className="flex items-center gap-2">
-                <ShoppingCart size={20} />
-                {currentLang === 'fr' ? 'Panier' : 'Cart'}
-              </span>
-              {cartItemCount > 0 && (
-                <span className="bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
-                  {cartItemCount}
-                </span>
-              )}
+              {link.label}
             </Link>
-
-            {/* Mobile Language Toggle */}
-            <button
-              onClick={toggleLanguage}
-              className="w-full px-3 py-2 text-base font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-            >
-              {currentLang === 'fr' ? 'Switch to English' : 'Passer en Français'}
-            </button>
-
-            {/* Mobile Auth Buttons */}
-            <div className="space-y-2 pt-3 border-t border-gray-200">
-              <Link
-                href="/login"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block w-full px-3 py-2 text-center text-base font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-              >
-                {t.nav.login}
-              </Link>
-              <Link
-                href="/register"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block w-full px-3 py-2 text-center text-base font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
-              >
-                {t.nav.register}
-              </Link>
-            </div>
-          </div>
+          ))}
+          <Link href="/cart" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 px-3 py-2 text-gray-700">
+            <ShoppingCart size={20} /> {currentLang === 'fr' ? 'Panier' : 'Cart'}
+          </Link>
+          <button onClick={toggleLanguage} className="w-full text-left px-3 py-2 bg-gray-100 rounded-lg">
+            {currentLang === 'fr' ? 'Switch to English' : 'Passer en Français'}
+          </button>
         </div>
       )}
     </nav>

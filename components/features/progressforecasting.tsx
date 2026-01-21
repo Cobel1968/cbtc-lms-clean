@@ -1,5 +1,4 @@
 'use client';
-
 import { useLanguage as use_language } from '@/app/contexts/LanguageContext';
 import { Zap, Calendar, TrendingDown } from 'lucide-react';
 

@@ -1,10 +1,11 @@
 'use client';
+export const dynamic = 'force-dynamic';
+// ✅ Mandatory for usePathname and context providers
 
 import { LanguageProvider } from '@/app/contexts/LanguageContext';
 import { CartProvider } from "@/app/contexts/CartContext";
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-// icons are third-party components, so PascalCase is required here
 import { 
   LayoutDashboard, 
   Users, 
@@ -16,7 +17,10 @@ import {
   BookOpen
 } from 'lucide-react';
 
-// rectification: changed AdminLayout to admin_layout to match lowercase file system
+/**
+ * COBEL ADMIN LAYOUT
+ * Feature: Adaptive Navigation for Pedagogical Logic v2.7
+ */
 export default function admin_layout({
   children,
 }: {
@@ -24,7 +28,6 @@ export default function admin_layout({
 }) {
   const pathname = usePathname();
 
-  // rectification: updated array to include 'course map' and ensure lowercase labels/hrefs
   const nav_items = [
     { label: 'overview', href: '/admin/dashboard', icon: <LayoutDashboard size={18} /> },
     { label: 'course map', href: '/admin/course', icon: <BookOpen size={18} /> },
@@ -37,12 +40,10 @@ export default function admin_layout({
   return (
     <LanguageProvider>
       <CartProvider>
-        {/* added 'lowercase' class to the parent to ensure visual consistency */}
         <div className="flex min-h-screen bg-[#f8fafc] lowercase">
           
           <aside className="w-64 bg-slate-900 text-white flex flex-col fixed h-full border-r border-slate-800 z-50">
             <div className="p-8">
-              {/* using 'uppercase' class for styling only, keeping the text source lowercase */}
               <h2 className="text-xl font-black tracking-tighter italic uppercase text-indigo-400">
                 cobel admin
               </h2>
@@ -78,7 +79,7 @@ export default function admin_layout({
                   vercel build safe
                 </span>
               </div>
-              <button className="flex items-center gap-3 px-4 py-2 text-slate-500 hover:text-red-400 transition-colors w-full text-xs font-bold uppercase">
+              <button className="flex items-center gap-3 px-4 py-2 text-slate-500 hover:text-red-400 transition-colors w-full text-xs font-bold uppercase text-left">
                 <LogOut size={16} />
                 <span>logout</span>
               </button>

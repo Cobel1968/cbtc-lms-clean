@@ -1,4 +1,4 @@
-﻿export const calculateInitialDensity = (score) => score > 85 ? 0.7 : score < 45 ? 1.3 : 1.0;
+export const calculateInitialDensity = (score) => score > 85 ? 0.7 : score < 45 ? 1.3 : 1.0;
 export const getMappedPath = (domain, score) => {
   const level = score > 75 ? 'advanced' : score > 40 ? 'intermediate' : 'beginner';
   const paths = {
@@ -21,4 +21,4 @@ export const checkTechnicalFluency = (text, glossary) => {
   if (!text) return 0;
   const matches = glossary.filter(term => text.toLowerCase().includes(term.toLowerCase()));
   return Math.round((matches.length / glossary.length) * 100);
-};
+}

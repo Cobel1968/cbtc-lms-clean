@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { Zap, Clock, CalendarCheck, TrendingUp } from 'lucide-react'
+import { Zap, Clock, CalendarCheck, TrendingUp } from 'lucide-react';
 
 interface ForecastProps {
   total_minutes_spent: number;
@@ -8,11 +8,12 @@ interface ForecastProps {
 }
 
 export default function milestone_forecast({ total_minutes_spent, expected_minutes }: ForecastProps) {
-  // Logic: Calculate velocity (How much faster is the student?)
-  const velocity = total_minutes_spent > 0 ? (total_minutes_spent / expected_minutes) * 100 : 0;
+  // Logic: Calculate velocity (Efficiency relative to expected time)
+  const velocity = expected_minutes > 0 ? (total_minutes_spent / expected_minutes) * 100 : 0;
   
-  // Logic: Project timeframe reduction (weeks saved)
-  const weeks_saved = Math.floor(total_minutes_spent / 480); // Assuming 8 hours saved = 1 day gained
+  // Logic: Project timeframe reduction (days saved)
+  // Assuming 480 mins (8 hours) of high-mastery work gained = 1 day saved in the curriculum
+  const days_saved = Math.floor(total_minutes_spent / 480);
 
   return (
     <div className="bg-slate-900 rounded-[40px] p-8 text-white shadow-2xl relative overflow-hidden lowercase">
@@ -45,7 +46,7 @@ export default function milestone_forecast({ total_minutes_spent, expected_minut
               <CalendarCheck size={12} /> timeframe reduction
             </span>
             <div className="text-4xl font-black italic tracking-tighter text-emerald-400">
-              -{weeks_saved} <span className="text-sm text-slate-400 not-italic tracking-normal">days saved</span>
+              -{days_saved} <span className="text-sm text-slate-400 not-italic tracking-normal">days saved</span>
             </div>
           </div>
         </div>
@@ -72,5 +73,5 @@ export default function milestone_forecast({ total_minutes_spent, expected_minut
         </p>
       </div>
     </div>
-  )
+  );
 }

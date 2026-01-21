@@ -1,5 +1,5 @@
 'use client';
-
+export const dynamic = 'force-dynamic';
 import React from 'react';
 import { Lock, Unlock, ArrowRight, Award, ShieldCheck } from 'lucide-react';
 import BilingualText from '@/components/bilingualtext';
@@ -61,7 +61,7 @@ export default function FinalAssessment({
             text={{ 
               fr: is_locked 
                 ? "Accès restreint. Le Cobel AI Engine exige une fluence technique de 60% (via analyse manuscrite) pour débloquer cet examen." 
-                : "Seuil de fluence atteint ! Vous êtes maintenant autorisé Ã  passer l'examen de certification finale.",
+                : "Seuil de fluence atteint ! Vous êtes maintenant autorisé Ã  passer l'examen de certification finale.",
               en: is_locked 
                 ? "Access restricted. The Cobel AI Engine requires 60% technical fluency (via handwriting analysis) to unlock this exam." 
                 : "Fluency threshold reached! You are now authorized to take the final certification exam."

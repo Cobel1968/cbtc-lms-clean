@@ -1,6 +1,5 @@
 'use client';
-
-import React, { createContext, useContext, useState as use_state, useEffect as use_effect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface cart_item {
   id: string;
@@ -14,31 +13,31 @@ interface cart_context_type {
   remove_from_cart: (id: string) => void;
   clear_cart: () => void;
   total_price: number;
-  isMounted: boolean; // Added for hydration safety
+  isMounted: boolean;
 }
 
 const cart_context = createContext<cart_context_type | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [cart, set_cart] = use_state<cart_item[]>([]);
-  const [isMounted, set_is_mounted] = use_state(false);
+  const [cart, set_cart] = useState<cart_item[]>([]);
+  const [isMounted, set_is_mounted] = useState(false);
 
-  // 1. Initial Mount: Load data from localStorage
-  use_effect(() => {
+  useEffect(() => {
     set_is_mounted(true);
-    const saved_cart = localStorage.getItem('cobel_cart');
-    if (saved_cart) {
-      try {
-        set_cart(JSON.parse(saved_cart));
-      } catch (e) {
-        console.error("Cobel Engine: Failed to parse cart data", e);
+    if (typeof window !== 'undefined') {
+      const saved_cart = localStorage.getItem('cobel_cart');
+      if (saved_cart) {
+        try {
+          set_cart(JSON.parse(saved_cart));
+        } catch (e) {
+          console.error("Cobel Engine: Failed to parse cart data", e);
+        }
       }
     }
   }, []);
 
-  // 2. Sync: Update localStorage whenever the cart changes
-  use_effect(() => {
-    if (isMounted) {
+  useEffect(() => {
+    if (isMounted && typeof window !== 'undefined') {
       localStorage.setItem('cobel_cart', JSON.stringify(cart));
     }
   }, [cart, isMounted]);
@@ -67,8 +66,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
 export function useCart() {
   const context = useContext(cart_context);
-  if (context === undefined) {
-    throw new Error('useCart must be used within a CartProvider');
-  }
+  if (context === undefined) throw new Error('useCart must be used within a CartProvider');
   return context;
 }
