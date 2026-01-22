@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image'; // Optimized Next.js Image component
 import { usePathname } from 'next/navigation';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Menu, X, Languages } from 'lucide-react';
 
 import { useCart } from '@/app/contexts/CartContext';
 import { useLanguage } from '@/app/contexts/LanguageContext';
@@ -13,46 +14,42 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  // We still initialize the hooks, but we won't use their return values 
-  // until the 'mounted' check passes below.
   const languageContext = useLanguage();
   const cartContext = useCart();
 
-  // Sync mount state with the browser
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // HYDRATION SHIELD: If not mounted, render a non-interactive 
-  // placeholder to satisfy the Next.js static export.
+  // HYDRATION SHIELD
   if (!mounted) {
-    return <div className="h-16 bg-white shadow-md w-full sticky top-0 z-50" />;
+    return <div className="h-16 bg-white shadow-sm w-full sticky top-0 z-50" />;
   }
 
   const { language: currentLang, setLanguage } = languageContext;
-  const { cart } = cartContext; // Using 'cart' array to get count safely
+  const { cart } = cartContext; 
   const cartItemCount = cart?.length || 0;
 
   const t = {
     nav: {
-      home: currentLang === 'fr' ? 'accueil' : 'home',
-      courses: currentLang === 'fr' ? 'cours' : 'courses',
-      about: currentLang === 'fr' ? 'à propos' : 'about',
-      contact: currentLang === 'fr' ? 'contact' : 'contact',
-      login: currentLang === 'fr' ? 'connexion' : 'login',
-      register: currentLang === 'fr' ? "s'inscrire" : 'sign up',
+      home: currentLang === 'fr' ? 'Accueil' : 'Home',
+      courses: currentLang === 'fr' ? 'Cours' : 'Courses',
+      about: currentLang === 'fr' ? 'À Propos' : 'About',
+      contact: currentLang === 'fr' ? 'Contact' : 'Contact',
+      login: currentLang === 'fr' ? 'Connexion' : 'Login',
+      register: currentLang === 'fr' ? "S'inscrire" : 'Sign Up',
+      diagnostic: currentLang === 'fr' ? 'Diagnostic IA' : 'AI Diagnostic',
     },
   };
 
   const toggleLanguage = () => {
-    const newLang = currentLang === 'fr' ? 'en' : 'fr';
-    setLanguage(newLang);
+    setLanguage(currentLang === 'fr' ? 'en' : 'fr');
   };
 
   const navLinks = [
     { href: '/', label: t.nav.home },
     { href: '/courses', label: t.nav.courses },
-    { href: '/diagnostic', label: currentLang === 'fr' ? 'Diagnostic IA' : 'AI Diagnostic' },
+    { href: '/diagnostic', label: t.nav.diagnostic },
     { href: '/about', label: t.nav.about },
     { href: '/contact', label: t.nav.contact },
   ];
@@ -63,27 +60,36 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50">
+    <nav className="bg-white border-b border-gray-100 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">CB</span>
+          
+          {/* Logo - Restored via /logo.png */}
+          <Link href="/" className="flex items-center space-x-3 group">
+            <div className="relative w-10 h-10 overflow-hidden">
+              <Image 
+                src="/logo.png" 
+                alt="COBELBTC Logo" 
+                fill
+                style={{ objectFit: 'contain' }}
+                priority
+              />
             </div>
-            <span className="text-xl font-bold text-gray-900">COBELBTC</span>
+            <span className="text-xl font-bold tracking-tight text-gray-900 group-hover:text-blue-600 transition-colors">
+              COBELBTC
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-6">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`text-sm font-medium transition-colors ${
+                className={`text-sm font-medium transition-all duration-200 py-1 ${
                   isActive(link.href)
                     ? 'text-blue-600 border-b-2 border-blue-600'
-                    : 'text-gray-700 hover:text-blue-600'
+                    : 'text-gray-600 hover:text-blue-600'
                 }`}
               >
                 {link.label}
@@ -92,11 +98,11 @@ export default function Navbar() {
           </div>
 
           {/* Actions */}
-          <div className="hidden md:flex items-center space-x-4">
-            <Link href="/cart" className="relative px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors">
-              <ShoppingCart size={20} />
+          <div className="hidden md:flex items-center space-x-3">
+            <Link href="/cart" className="relative p-2 text-gray-600 hover:text-blue-600 transition-colors">
+              <ShoppingCart size={20} strokeWidth={2.5} />
               {cartItemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                <span className="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center border-2 border-white">
                   {cartItemCount}
                 </span>
               )}
@@ -104,55 +110,62 @@ export default function Navbar() {
 
             <button
               onClick={toggleLanguage}
-              className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-gray-700 bg-gray-50 border border-gray-200 hover:bg-gray-100 rounded-md transition-colors"
             >
+              <Languages size={14} />
               {currentLang === 'fr' ? 'EN' : 'FR'}
             </button>
 
-            <Link href="/login" className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors">
+            <div className="h-6 w-[1px] bg-gray-200 mx-2" />
+
+            <Link href="/login" className="px-3 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
               {t.nav.login}
             </Link>
 
-            <Link href="/register" className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm">
+            <Link href="/register" className="px-5 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-all shadow-md hover:shadow-lg active:scale-95">
               {t.nav.register}
             </Link>
           </div>
 
-          {/* Mobile Button */}
+          {/* Mobile Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100"
+            className="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-50"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              {mobileMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </div>
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-gray-200 bg-white p-4 space-y-3">
+        <div className="md:hidden border-t border-gray-100 bg-white p-4 space-y-2 animate-in slide-in-from-top-4 duration-200">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               onClick={() => setMobileMenuOpen(false)}
-              className={`block px-3 py-2 rounded-lg ${isActive(link.href) ? 'text-blue-600 bg-blue-50' : 'text-gray-700'}`}
+              className={`block px-4 py-3 rounded-xl font-medium ${
+                isActive(link.href) ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'
+              }`}
             >
               {link.label}
             </Link>
           ))}
-          <Link href="/cart" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 px-3 py-2 text-gray-700">
-            <ShoppingCart size={20} /> {currentLang === 'fr' ? 'Panier' : 'Cart'}
+          <div className="grid grid-cols-2 gap-2 pt-2">
+            <button onClick={toggleLanguage} className="flex items-center justify-center gap-2 py-3 bg-gray-100 rounded-xl text-sm font-bold">
+              <Languages size={16} /> {currentLang === 'fr' ? 'English' : 'Français'}
+            </button>
+            <Link href="/cart" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-center gap-2 py-3 bg-gray-100 rounded-xl text-sm font-bold">
+              <ShoppingCart size={16} /> {currentLang === 'fr' ? 'Panier' : 'Cart'}
+            </Link>
+          </div>
+          <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="block w-full text-center py-3 font-bold text-gray-700 border border-gray-200 rounded-xl">
+            {t.nav.login}
           </Link>
-          <button onClick={toggleLanguage} className="w-full text-left px-3 py-2 bg-gray-100 rounded-lg">
-            {currentLang === 'fr' ? 'Switch to English' : 'Passer en Français'}
-          </button>
+          <Link href="/register" onClick={() => setMobileMenuOpen(false)} className="block w-full text-center py-3 font-bold text-white bg-blue-600 rounded-xl shadow-blue-200 shadow-lg">
+            {t.nav.register}
+          </Link>
         </div>
       )}
     </nav>
