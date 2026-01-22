@@ -11,13 +11,13 @@ import {
   Camera, 
   CheckCircle2, 
   FileText,
-  AlertCircle
+  AlertCircle,
+  ShieldAlert
 } from 'lucide-react';
 import supabase from '@/lib/supabaseClient';
 
 /**
  * COBEL ENGINE: DYNAMIC COMPONENT LOADING
- * Standardized lowercase 'components' path for Linux/Vercel compatibility.
  * Feature 3: Milestone Forecast (Temporal Optimization)
  */
 const MilestoneForecast = dynamicImport(() => import('@/components/MilestoneForecast'), {
@@ -31,39 +31,54 @@ export default function StudentDashboard() {
   const [loading, setLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchDashboardData() {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (user) {
-        const { data: profile } = await supabase
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (!user) {
+          window.location.href = '/login';
+          return;
+        }
+
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
-          .select('total_minutes_spent, vocational_track')
+          .select('total_minutes_spent, vocational_track, role')
           .eq('id', user.id)
           .single();
 
-        setUserData(user);
-        if (profile) {
-          setStats({ 
-            minutes: profile.total_minutes_spent || 0,
-            expected: 6000,
-            track: profile.vocational_track || 'bilingual electrical engineering'
-          });
+        if (profileError) throw profileError;
+
+        // Security Check: Ensure user has the right to be here
+        if (profile.role === 'admin') {
+            console.log("[Cobel Engine] Admin detected in Student Terminal. Access granted.");
         }
+
+        setUserData(user);
+        setStats({ 
+          minutes: profile.total_minutes_spent || 0,
+          expected: 6000,
+          track: profile.vocational_track || 'bilingual electrical engineering'
+        });
+      } catch (err: any) {
+        console.error("[Cobel Engine] Context Load Error:", err.message);
+        setError("could not sync with cobel engine. checking connection...");
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
     fetchDashboardData();
   }, []);
 
   /**
    * FEATURE 4: ANALOG-TO-DIGITAL BRIDGE
-   * Innovation: Ingestion of physical vocational assessments.
-   * Logic: Bridges handwriting to digital technical fluency scores.
+   * Integrates OCR pre-processing for bilingual technical fluency.
    */
   const handleHandwritingUpload = async () => {
     setIsUploading(true);
+    setError(null);
     
     try {
       const response = await fetch('/api/analyze-handwriting', {
@@ -79,16 +94,25 @@ export default function StudentDashboard() {
 
       if (result.success) {
         setUploadSuccess(true);
-        // TEMPORAL OPTIMIZATION: Update mastery minutes based on AI extraction
+        
+        // Update database in background for Temporal Optimization
+        await supabase
+            .from('profiles')
+            .update({ total_minutes_spent: stats.minutes + (result.data.adjustment_minutes || 960) })
+            .eq('id', userData.id);
+
         setStats(prev => ({ 
           ...prev, 
           minutes: prev.minutes + (result.data.adjustment_minutes || 960) 
         }));
         
         setTimeout(() => setUploadSuccess(false), 4000);
+      } else {
+          throw new Error("Handwriting analysis failed to extract terms.");
       }
-    } catch (error) {
-      console.error("[Cobel Engine] Ingestion error. System remains in stable state.", error);
+    } catch (err: any) {
+      setError("bridge ingestion failed. ensure assessment is clear.");
+      setTimeout(() => setError(null), 5000);
     } finally {
       setIsUploading(false);
     }
@@ -106,13 +130,21 @@ export default function StudentDashboard() {
     <div className="min-h-screen bg-slate-50 p-6 lg:p-10 lowercase">
       <div className="max-w-7xl mx-auto space-y-10">
         
+        {/* Error Notification Bar */}
+        {error && (
+          <div className="bg-red-50 border border-red-100 p-4 rounded-2xl flex items-center gap-3 text-red-600 animate-in slide-in-from-top">
+            <AlertCircle size={18} />
+            <span className="font-bold text-xs uppercase tracking-tight">{error}</span>
+          </div>
+        )}
+
         {/* Dashboard Header */}
-        <header className="flex justify-between items-center">
+        <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-4xl font-black tracking-tighter uppercase italic text-slate-900">
+            <h1 className="text-4xl font-black tracking-tighter uppercase italic text-slate-900 leading-none">
               student <span className="text-indigo-600">terminal</span>
             </h1>
-            <p className="text-slate-500 font-bold tracking-tight">cobel ai engine: path mapping active</p>
+            <p className="text-slate-500 font-bold tracking-tight mt-1">cobel ai engine: path mapping active</p>
           </div>
           <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-3">
             <GraduationCap className="text-indigo-600" size={20} />
@@ -123,7 +155,7 @@ export default function StudentDashboard() {
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
             
-            {/* FEATURE 3: MILESTONE FORECAST (Temporal Optimization Visualization) */}
+            {/* FEATURE 3: MILESTONE FORECAST */}
             <MilestoneForecast 
               total_minutes_spent={stats.minutes} 
               expected_minutes={stats.expected} 

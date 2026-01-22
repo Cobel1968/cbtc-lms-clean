@@ -29,3 +29,5 @@ Thumbs.db
 *.csv
 /tools/
 /scripts/*.DISABLED.js
+.vercel
+.env*.local

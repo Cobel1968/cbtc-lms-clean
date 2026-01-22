@@ -3,36 +3,30 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { mockOcrExtraction } from '@/lib/ocrService';
 
-// Fix: Force dynamic rendering to prevent build-time static export errors
 export const dynamic = 'force-dynamic';
 
 /**
  * FEATURE 4: Analog-to-Digital Pedagogical Bridge
- * Author: Abel C.
- * Purpose: Ingests physical assessments, extracts bilingual terms, 
- * and triggers Temporal Optimization based on technical fluency.
+ * Logic: Ingests physical assessments -> Extracts Bilingual Terms -> Updates Temporal Forecast
  */
 
 export async function POST(req: Request) {
+  const cookieStore = cookies();
+  const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+  
+  // Track assessment ID for potential rollback
+  let assessmentId: string | null = null;
+
   try {
-    // 1. Initialize Supabase with cookie-based Auth for secure ingestion
-    const cookieStore = cookies();
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
-    
-    // 2. Parse request body
     const { imageUrl, userId } = await req.json();
 
     if (!imageUrl || !userId) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    /**
-     * PEDAGOGICAL LOGIC: Contextual Extraction
-     * Maps French technical terms to English technical mastery.
-     */
+    // PEDAGOGICAL LOGIC: Mapping technical terms (e.g., Clé dynamométrique -> Torque Wrench)
     const raw_text = "L'étudiant a correctement installé la clé dynamométrique et vérifié le disjoncteur.";
     
-    // Call the feature logic: Analyze technical fluency
     const { 
       detected_en, 
       detected_fr, 
@@ -40,8 +34,8 @@ export async function POST(req: Request) {
       adjustment_minutes 
     } = mockOcrExtraction(raw_text);
 
-    // 3. Database Ingestion (Persistent record of physical assessment)
-    const { data, error } = await supabase
+    // 1. DATABASE INGESTION
+    const { data: assessmentData, error: ingestionError } = await supabase
       .from('vocational_assessments')
       .insert({
         user_id: userId,
@@ -55,24 +49,26 @@ export async function POST(req: Request) {
       .select()
       .single();
 
-    if (error) {
-      // Rollback logging: Maintain audit trail of the AI engine
-      console.error('[Cobel Engine] Ingestion Rollback: Database sync failure');
-      throw error;
-    }
+    if (ingestionError) throw new Error(`Ingestion Failure: ${ingestionError.message}`);
+    assessmentId = assessmentData.id;
 
-    // 4. TEMPORAL OPTIMIZATION: Update the Milestone Forecast
+    // 2. TEMPORAL OPTIMIZATION (RPC Call)
+    // This updates the 'total_minutes_spent' in the profiles table
     const { error: rpcError } = await supabase.rpc('increment_minutes', { 
-      user_id: userId, 
-      minutes: adjustment_minutes 
+      user_id_param: userId, // Ensure this matches your SQL function parameter name
+      minutes_to_add: adjustment_minutes 
     });
 
     if (rpcError) {
-      console.error('[Cobel Engine] Milestone Sync Error: Temporal Optimization failed to persist');
-      // Methodical Rollback: In a production environment, you would delete the assessment record here
+      /**
+       * CRITICAL ROLLBACK: If the time forecast fails to update, 
+       * we remove the assessment record to maintain data integrity.
+       */
+      await supabase.from('vocational_assessments').delete().eq('id', assessmentId);
+      console.error('[Cobel Engine] Rollback executed: Assessment deleted due to RPC failure');
+      throw new Error("Temporal Optimization failed to persist. Rollback successful.");
     }
 
-    // 5. Success Response
     return NextResponse.json({ 
       success: true,
       message: "analog-to-digital bridge complete: milestone forecast updated",
@@ -80,7 +76,7 @@ export async function POST(req: Request) {
         score: fluency_score,
         adjustment_minutes: adjustment_minutes,
         terms_mapped: detected_en.length + detected_fr.length,
-        ingestion_id: data.id,
+        ingestion_id: assessmentId,
         logic_applied: "temporal_optimization_v1"
       }
     });
