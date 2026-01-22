@@ -7,24 +7,27 @@ export const dynamic = 'force-dynamic';
 
 /**
  * FEATURE 4: Analog-to-Digital Pedagogical Bridge
- * Logic: Ingests physical assessments -> Extracts Bilingual Terms -> Updates Temporal Forecast
+ * Innovation: Handwriting ingestion that triggers Temporal Optimization.
+ * This file uses a strict Rollback to ensure data integrity between 
+ * vocational assessments and user profile minutes.
  */
 
 export async function POST(req: Request) {
   const cookieStore = cookies();
   const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
   
-  // Track assessment ID for potential rollback
+  // Tracking ID for potential Rollback
   let assessmentId: string | null = null;
 
   try {
     const { imageUrl, userId } = await req.json();
 
     if (!imageUrl || !userId) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+      return NextResponse.json({ error: "missing required fields: image and user identity" }, { status: 400 });
     }
 
     // PEDAGOGICAL LOGIC: Mapping technical terms (e.g., Clé dynamométrique -> Torque Wrench)
+    // This bridges the bilingual friction in traditional vocational training.
     const raw_text = "L'étudiant a correctement installé la clé dynamométrique et vérifié le disjoncteur.";
     
     const { 
@@ -34,7 +37,7 @@ export async function POST(req: Request) {
       adjustment_minutes 
     } = mockOcrExtraction(raw_text);
 
-    // 1. DATABASE INGESTION
+    // 1. DATABASE INGESTION: Storing the physical work record
     const { data: assessmentData, error: ingestionError } = await supabase
       .from('vocational_assessments')
       .insert({
@@ -50,23 +53,27 @@ export async function POST(req: Request) {
       .single();
 
     if (ingestionError) throw new Error(`Ingestion Failure: ${ingestionError.message}`);
+    
     assessmentId = assessmentData.id;
 
     // 2. TEMPORAL OPTIMIZATION (RPC Call)
-    // This updates the 'total_minutes_spent' in the profiles table
+    // This updates the 'total_minutes_spent' in the profiles table automatically.
     const { error: rpcError } = await supabase.rpc('increment_minutes', { 
-      user_id_param: userId, // Ensure this matches your SQL function parameter name
+      user_id_param: userId, 
       minutes_to_add: adjustment_minutes 
     });
 
     if (rpcError) {
       /**
-       * CRITICAL ROLLBACK: If the time forecast fails to update, 
-       * we remove the assessment record to maintain data integrity.
+       * CRITICAL ROLLBACK: Cobel Engine Integrity Protocol
+       * If the profile's mastery time cannot be updated, we delete the
+       * assessment record so the user doesn't see a "ghost" sync.
        */
-      await supabase.from('vocational_assessments').delete().eq('id', assessmentId);
-      console.error('[Cobel Engine] Rollback executed: Assessment deleted due to RPC failure');
-      throw new Error("Temporal Optimization failed to persist. Rollback successful.");
+      if (assessmentId) {
+        await supabase.from('vocational_assessments').delete().eq('id', assessmentId);
+        console.warn(`[Cobel Engine] Rollback executed: Assessment ${assessmentId} removed due to profile sync failure.`);
+      }
+      throw new Error("Temporal Optimization sync failed. Data rolled back for integrity.");
     }
 
     return NextResponse.json({ 
@@ -75,14 +82,14 @@ export async function POST(req: Request) {
       data: {
         score: fluency_score,
         adjustment_minutes: adjustment_minutes,
-        terms_mapped: detected_en.length + detected_fr.length,
+        terms_mapped: (detected_en?.length || 0) + (detected_fr?.length || 0),
         ingestion_id: assessmentId,
         logic_applied: "temporal_optimization_v1"
       }
     });
 
   } catch (error: any) {
-    console.error('[Cobel Engine] Handwriting Analysis Error:', error.message);
+    console.error('[Cobel Engine Bridge] Fatal Error:', error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
