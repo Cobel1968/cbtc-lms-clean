@@ -20,11 +20,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr">
+    <html lang="en">
       <body className={inter.className}>
         <LanguageProvider>
           <CartProvider>
-            <div className="min-h-screen flex flex-col bg-gray-50">
+            <div className="min-h-screen flex flex-col bg-gray-50 lowercase">
               <Navbar />
               <main className="flex-grow">{children}</main>
               <StateDebugger />
@@ -35,5 +35,3 @@ export default function RootLayout({
     </html>
   );
 }
- 
- 
