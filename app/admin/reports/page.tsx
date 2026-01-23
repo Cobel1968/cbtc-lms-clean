@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
@@ -78,7 +78,6 @@ export default function TrainerFrictionReport() {
           <div className="flex items-center gap-4">
             <div className="bg-white p-2 rounded-xl shadow-sm border border-gray-100">
                <img 
-                 src="/logo.png?v=2026-01-23" 
                  alt="Cobel Logo" 
                  className="h-14 w-auto object-contain" 
                  onError={(e) => { (e.target as HTMLImageElement).src = '/assets/logo.png'; }}
