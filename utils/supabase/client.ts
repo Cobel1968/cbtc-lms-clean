@@ -1,3 +1,4 @@
+// Cobel Engine Client V1.1
 import { createBrowserClient } from '@supabase/ssr'
 
 export function createClient() {
