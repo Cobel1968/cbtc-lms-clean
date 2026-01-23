@@ -7,7 +7,6 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 1. UPDATED BYPASS LIST
-  // Added '/' and '/diagnostic' so the public can actually see your work!
   const isPublicPage = 
     pathname === '/' || 
     pathname === '/diagnostic' ||
@@ -16,10 +15,10 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/auth');
 
   const isPublicApi = pathname.startsWith('/api/analyzehandwriting');
-                       
+                        
   const isStaticAsset = 
     pathname.startsWith('/_next') || 
-    pathname.startsWith('/assets') || // Matches your public/assets/ logo path
+    pathname.startsWith('/assets') || 
     pathname.includes('favicon.ico') ||
     /\.(?:svg|png|jpg|jpeg|gif|webp)$/.test(pathname);
 
@@ -33,20 +32,23 @@ export async function middleware(request: NextRequest) {
     request: { headers: request.headers },
   });
 
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
     return response; 
   }
 
   try {
+    // Using the library directly here prevents the naming conflict with utils/supabase/server
     const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      supabaseUrl,
+      supabaseKey,
       {
         cookies: {
           get(name: string) { return request.cookies.get(name)?.value; },
           set(name: string, value: string, options: CookieOptions) {
             request.cookies.set({ name, value, ...options });
-            // IMPORTANT: Update response so cookies persist
             response = NextResponse.next({ request: { headers: request.headers } });
             response.cookies.set({ name, value, ...options });
           },
@@ -59,6 +61,7 @@ export async function middleware(request: NextRequest) {
       }
     );
 
+    // Refresh session if it exists
     const { data: { user } } = await supabase.auth.getUser();
 
     // 3. AUTH GUARD: Redirect to login if no session on private routes
@@ -90,5 +93,14 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * Feel free to add other excluded static paths here, as /assets is handled in isStaticAsset
+     */
+    '/((?!_next/static|_next/image|favicon.ico).*)',
+  ],
 };
