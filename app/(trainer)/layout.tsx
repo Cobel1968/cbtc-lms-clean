@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import Link from 'next/link'; // Optimization: Faster navigation, cleaner build trace
 import { createClient } from '@/utils/supabase/server';
 import CobelLogo from '@/components/CobelLogo';
 import { 
@@ -22,16 +23,16 @@ export default async function TrainerLayout({
   // Guard 1: Existence check
   if (!user) redirect('/login');
 
-  // Guard 2: Role-Based Access Control (RBAC)
+  // Guard 2: RBAC (Role-Based Access Control)
   const { data: profile } = await supabase
     .from('profiles')
     .select('role, email')
     .eq('id', user.id)
     .single();
 
-  // Strict check for 'trainer' or 'admin' roles
+  // Innovation: Multi-Dimensional Diagnostic access control
   if (profile?.role !== 'admin' && profile?.role !== 'trainer') {
-    console.warn(`[Cobel Security] Unauthorized access attempt by ${user.email}`);
+    console.warn(`[Cobel Security] Unauthorized access attempt: ${user.email}`);
     redirect('/dashboard');
   }
 
@@ -51,25 +52,24 @@ export default async function TrainerLayout({
           </div>
         </div>
 
-        {/* Navigation Section */}
+        {/* Navigation Section: Using <Link> for Build Stability */}
         <nav className="flex-1 space-y-2">
-          <a href="/trainer" className="flex items-center gap-3 p-4 bg-white/5 hover:bg-indigo-600/20 text-white rounded-2xl font-bold text-sm uppercase tracking-tight transition-all group border border-white/5">
+          <Link href="/trainer" className="flex items-center gap-3 p-4 bg-white/5 hover:bg-indigo-600/20 text-white rounded-2xl font-bold text-sm uppercase tracking-tight transition-all group border border-white/5">
             <LayoutDashboard size={18} className="group-hover:text-indigo-400 transition-colors" /> 
             overview
-          </a>
-          <a href="#" className="flex items-center gap-3 p-4 text-slate-400 hover:text-white hover:bg-white/5 rounded-2xl transition-all font-bold text-sm uppercase tracking-tight group">
+          </Link>
+          <Link href="/admin/students" className="flex items-center gap-3 p-4 text-slate-400 hover:text-white hover:bg-white/5 rounded-2xl transition-all font-bold text-sm uppercase tracking-tight group">
             <Users size={18} className="group-hover:text-indigo-400 transition-colors" /> 
             student list
-          </a>
-          <a href="#" className="flex items-center gap-3 p-4 text-slate-400 hover:text-white hover:bg-white/5 rounded-2xl transition-all font-bold text-sm uppercase tracking-tight group">
+          </Link>
+          <Link href="/trainer/frictionreport" className="flex items-center gap-3 p-4 text-slate-400 hover:text-white hover:bg-white/5 rounded-2xl transition-all font-bold text-sm uppercase tracking-tight group">
             <BarChart3 size={18} className="group-hover:text-indigo-400 transition-colors" /> 
             fluency labs
-          </a>
+          </Link>
         </nav>
 
-        {/* System Status & Session Management */}
+        {/* System Status */}
         <div className="mt-auto space-y-6">
-           {/* Engine Status Block */}
            <div className="p-5 bg-indigo-600/10 rounded-[24px] border border-indigo-500/20">
               <div className="flex items-center gap-2 mb-2">
                 <Activity size={14} className="text-indigo-400 animate-pulse" />
@@ -81,7 +81,6 @@ export default async function TrainerLayout({
               </div>
            </div>
 
-           {/* User Profile Summary */}
            <div className="flex items-center gap-3 px-2">
               <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-indigo-400">
                 <UserCircle size={20} />
