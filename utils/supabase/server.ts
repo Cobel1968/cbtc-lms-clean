@@ -4,9 +4,17 @@ import { cookies } from 'next/headers';
 export function createClient() {
   const cookieStore = cookies();
 
+  // Safeguard: Ensure env variables exist before initialization
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error("Missing Supabase Environment Variables in Server Client");
+  }
+
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseKey,
     {
       cookies: {
         get(name: string) {
@@ -16,14 +24,15 @@ export function createClient() {
           try {
             cookieStore.set({ name, value, ...options });
           } catch (error) {
-            // This can be ignored if the middleware is handling cookie refreshes
+            // This is expected when calling set from a Server Component 
+            // if the middleware is already handling session refreshes.
           }
         },
         remove(name: string, options: CookieOptions) {
           try {
             cookieStore.set({ name, value: '', ...options });
           } catch (error) {
-            // This can be ignored if the middleware is handling cookie refreshes
+            // Expected safe-fail
           }
         },
       },
