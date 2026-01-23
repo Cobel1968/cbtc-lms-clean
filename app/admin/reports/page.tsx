@@ -10,7 +10,7 @@ export default function TrainerFrictionReport() {
   const supabase = createClient();
 
   useEffect(() => {
-    // 1. Initial Stats Fetch
+    // 1. Initial Stats Fetch (Innovation Impact Analytics)
     async function fetchStats() {
       const { data } = await supabase
         .from('vocational_assessments')
@@ -56,71 +56,92 @@ export default function TrainerFrictionReport() {
     <div className="p-8 max-w-7xl mx-auto space-y-8 bg-gray-50 min-h-screen">
       <header className="flex justify-between items-center">
         <div>
-          <div className="flex items-center gap-3 mb-2">
-            {/* LOGO CACHE-BUSTER: Forcing refresh with ?v=1 */}
-            <img src="/logo.png?v=1" alt="Cobel Logo" className="h-12 w-auto object-contain" />
-            <h1 className="text-3xl font-bold text-gray-900 tracking-tight text-blue-900">Trainer Friction Report</h1>
+          <div className="flex items-center gap-4 mb-2">
+            {/* LOGO CACHE-BUSTER: Forcing refresh to bypass Vercel deployment cache */}
+            <div className="bg-white p-2 rounded-xl shadow-sm border border-gray-100">
+               <img 
+                 src="/logo.png?v=2026-01-23" 
+                 alt="Cobel Logo" 
+                 className="h-14 w-auto object-contain" 
+                 onError={(e) => {
+                   // Fallback if the root path is still struggling
+                   (e.target as HTMLImageElement).src = '/assets/logo.png';
+                 }}
+               />
+            </div>
+            <div>
+              <h1 className="text-3xl font-black text-blue-950 tracking-tight">Trainer Friction Report</h1>
+              <p className="text-gray-500 font-medium text-sm italic">Innovation Type: Computer-Implemented Pedagogical Logic</p>
+            </div>
           </div>
-          <p className="text-gray-500 font-medium italic">Innovation Impact: Measuring pedagogical time-waste reduction</p>
         </div>
-        <div className="bg-green-100 text-green-700 px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 animate-pulse">
-          <Activity size={14} /> System Live
+        <div className="bg-green-100 text-green-700 px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 border border-green-200">
+          <Activity size={14} className="animate-pulse" /> AI Engine Live
         </div>
       </header>
 
+      {/* Metric Cards Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard 
           title="Manual Labor Saved" 
-          value={`${stats.totalHoursSaved} Hours`} 
+          value={`${stats.totalHoursSaved}h`} 
           icon={<Clock className="text-blue-600" />} 
-          sub="Reclaimed Trainer Time"
+          sub="Reclaimed Trainer Hours"
         />
         <StatCard 
           title="Automated Milestones" 
           value={stats.totalAssessments.toString()} 
-          icon={<Zap className="text-yellow-500" />} 
-          sub="OCR Ingestions Completed"
+          icon={<Zap className="text-amber-500" />} 
+          sub="Bridges Ingested"
         />
         <StatCard 
-          title="Avg. Technical Mastery" 
+          title="Technical Mastery" 
           value={`${stats.avgFluency}%`} 
-          icon={<Users className="text-purple-600" />} 
-          sub="Bilingual Proficiency Rate"
+          icon={<Users className="text-indigo-600" />} 
+          sub="Bilingual Proficiency Avg"
         />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Chart Area */}
+        {/* Main Chart Visualization Area */}
         <div className="lg:col-span-2 bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-          <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-            <BarChart3 size={20} className="text-blue-600" /> Innovation Impact: Temporal Optimization
+          <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-gray-800">
+            <BarChart3 size={20} className="text-blue-600" /> Temporal Optimization Phase
           </h3>
-          <p className="text-sm text-gray-500 mb-6">
-            Visualizing the <strong>Automated Milestone Forecasting</strong> logic.
+          <p className="text-sm text-gray-500 mb-8">
+            This visualizes the <strong>Automated Milestone Forecasting</strong>. The engine adjusts the student curriculum density based on analog assessments.
           </p>
-          <div className="h-64 bg-slate-50 rounded-2xl flex flex-col items-center justify-center border-2 border-dashed border-slate-200">
-            <BarChart3 size={48} className="text-slate-200 mb-2" />
-            <span className="text-slate-400 font-medium">Real-time Data Visualization Active</span>
+          
+          <div className="h-72 bg-slate-50 rounded-2xl flex flex-col items-center justify-center border-2 border-dashed border-slate-200 relative overflow-hidden">
+             <div className="absolute inset-0 opacity-5 pointer-events-none">
+                {/* Visual texture representing grid lines */}
+                <div className="w-full h-full" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', size: '20px 20px' }}></div>
+             </div>
+             <BarChart3 size={48} className="text-slate-300 mb-3" />
+             <span className="text-slate-400 font-bold uppercase tracking-widest text-xs">Proprietary Optimization Mapping</span>
           </div>
         </div>
 
         {/* Real-Time Activity Feed */}
-        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-          <h3 className="font-bold text-lg mb-6 flex items-center gap-2">
-            <Activity size={20} className="text-green-600" /> Live Pedagogical Feed
+        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col h-full">
+          <h3 className="font-bold text-lg mb-6 flex items-center gap-2 text-gray-800">
+            <Activity size={20} className="text-green-500" /> Live Pedagogical Feed
           </h3>
-          <div className="space-y-4">
-            {activities.length === 0 && <p className="text-sm text-gray-400 italic">No recent assessments...</p>}
-            {activities.map((act) => (
-              <div key={act.id} className="p-4 bg-slate-50 rounded-2xl border border-slate-100 transition-all hover:bg-blue-50">
-                <div className="flex justify-between items-start mb-1">
-                  <span className="text-[10px] font-black uppercase text-blue-600 tracking-wider">Assessment Ingested</span>
-                  <span className="text-[10px] text-gray-400">{new Date(act.created_at).toLocaleTimeString()}</span>
+          <div className="space-y-4 overflow-y-auto max-h-[400px] pr-2 custom-scrollbar">
+            {activities.length === 0 ? (
+              <div className="text-center py-10 text-gray-400 text-sm italic">Waiting for student submissions...</div>
+            ) : (
+              activities.map((act) => (
+                <div key={act.id} className="p-4 bg-gray-50 rounded-2xl border border-gray-100 transition-all hover:shadow-md hover:bg-white border-l-4 border-l-blue-600">
+                  <div className="flex justify-between items-start mb-1">
+                    <span className="text-[10px] font-black uppercase text-blue-600 tracking-widest">A2D Bridge</span>
+                    <span className="text-[10px] text-gray-400 font-mono">{new Date(act.created_at).toLocaleTimeString()}</span>
+                  </div>
+                  <p className="text-sm font-black text-gray-900">{act.bilingual_fluency_score}% Fluency</p>
+                  <p className="text-[11px] text-gray-500 mt-1 font-medium">Optimization: +{act.suggest_timeframe_adjustment} mins</p>
                 </div>
-                <p className="text-sm font-bold text-gray-800">{act.bilingual_fluency_score}% Fluency Detected</p>
-                <p className="text-[11px] text-gray-500">+{act.suggest_timeframe_adjustment} mins saved</p>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </div>
@@ -130,13 +151,13 @@ export default function TrainerFrictionReport() {
 
 function StatCard({ title, value, icon, sub }: any) {
   return (
-    <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 space-y-3 transition-transform hover:scale-[1.02]">
+    <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 space-y-3 transition-all hover:border-blue-200 group">
       <div className="flex justify-between items-center">
-        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{title}</span>
-        <div className="p-2 bg-gray-50 rounded-lg">{icon}</div>
+        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{title}</span>
+        <div className="p-2 bg-gray-50 rounded-xl group-hover:bg-blue-50 transition-colors">{icon}</div>
       </div>
-      <div className="text-4xl font-black text-gray-900 tracking-tighter">{value}</div>
-      <div className="text-[10px] text-blue-600 font-bold uppercase tracking-tight">{sub}</div>
+      <div className="text-4xl font-black text-blue-950 tracking-tighter">{value}</div>
+      <div className="text-[10px] text-blue-600 font-black uppercase tracking-tight">{sub}</div>
     </div>
   );
 }
