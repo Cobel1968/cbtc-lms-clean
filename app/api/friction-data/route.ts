@@ -1,19 +1,22 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
 
-// This line is the fix: It tells Next.js this route MUST be dynamic
+// Innovation: Temporal Optimization - Ensures real-time data for the friction dashboard
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const cookieStore = cookies();
-  const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+  // Use our unified server client utility
+  const supabase = createClient();
   
   const { data, error } = await supabase
     .from('friction_logs')
     .select('term, friction_index, created_at')
     .order('friction_index', { ascending: false });
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error("COBEL_FRICTION_FETCH_ERROR:", error.message);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
   return NextResponse.json(data);
 }
