@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image'; // Optimized Next.js Image component
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { ShoppingCart, Menu, X, Languages } from 'lucide-react';
 
@@ -21,7 +21,6 @@ export default function Navbar() {
     setMounted(true);
   }, []);
 
-  // HYDRATION SHIELD
   if (!mounted) {
     return <div className="h-16 bg-white shadow-sm w-full sticky top-0 z-50" />;
   }
@@ -64,11 +63,11 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           
-          {/* Logo - Restored via /logo.png */}
+          {/* Logo - Updated to match public/assets/logo-v2.png */}
           <Link href="/" className="flex items-center space-x-3 group">
             <div className="relative w-10 h-10 overflow-hidden">
               <Image 
-                src="/logo.png" 
+                src="/assets/logo-v2.png" 
                 alt="COBELBTC Logo" 
                 fill
                 style={{ objectFit: 'contain' }}
@@ -139,7 +138,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-gray-100 bg-white p-4 space-y-2 animate-in slide-in-from-top-4 duration-200">
+        <div className="md:hidden border-t border-gray-100 bg-white p-4 space-y-2">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -152,20 +151,6 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
-          <div className="grid grid-cols-2 gap-2 pt-2">
-            <button onClick={toggleLanguage} className="flex items-center justify-center gap-2 py-3 bg-gray-100 rounded-xl text-sm font-bold">
-              <Languages size={16} /> {currentLang === 'fr' ? 'English' : 'Français'}
-            </button>
-            <Link href="/cart" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-center gap-2 py-3 bg-gray-100 rounded-xl text-sm font-bold">
-              <ShoppingCart size={16} /> {currentLang === 'fr' ? 'Panier' : 'Cart'}
-            </Link>
-          </div>
-          <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="block w-full text-center py-3 font-bold text-gray-700 border border-gray-200 rounded-xl">
-            {t.nav.login}
-          </Link>
-          <Link href="/register" onClick={() => setMobileMenuOpen(false)} className="block w-full text-center py-3 font-bold text-white bg-blue-600 rounded-xl shadow-blue-200 shadow-lg">
-            {t.nav.register}
-          </Link>
         </div>
       )}
     </nav>

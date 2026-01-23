@@ -9,13 +9,11 @@ import StateDebugger from "@/components/debug/statedebugger";
 
 const inter = Inter({ subsets: ["latin"] });
 
-// Metadata MUST be in a Server Component
 export const metadata: Metadata = {
   title: "CBTC Training Center | Cobel AI Engine",
   description: "Vocational Training with Adaptive Learning Pedagogical Logic",
 };
 
-// We remove 'use client' and dynamic export to allow metadata to work
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -29,7 +27,6 @@ export default function RootLayout({
             <div className="min-h-screen flex flex-col bg-gray-50">
               <Navbar />
               <main className="flex-grow">{children}</main>
-              {/* Debugger will only render on client if it has 'use client' inside it */}
               <StateDebugger />
             </div>
           </CartProvider>
