@@ -63,15 +63,16 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           
-          {/* Logo - Updated to match public/assets/logo-v2.png */}
+          {/* Logo - Updated to Cloud Storage to resolve Vercel build hang */}
           <Link href="/" className="flex items-center space-x-3 group">
             <div className="relative w-10 h-10 overflow-hidden">
               <Image 
-                src="/assets/logo-v2.png" 
+                src="https://rvlcpygatguvxhuliand.supabase.co/storage/v1/object/public/assets/cobel-logo.png" 
                 alt="COBELBTC Logo" 
                 fill
                 style={{ objectFit: 'contain' }}
                 priority
+                unoptimized
               />
             </div>
             <span className="text-xl font-bold tracking-tight text-gray-900 group-hover:text-blue-600 transition-colors">
