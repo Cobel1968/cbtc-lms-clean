@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
@@ -12,12 +12,16 @@ export default function TrainerFrictionReport() {
   const [isExporting, setIsExporting] = useState(false);
   const supabase = createClient();
 
+  // Cloud-hosted logo URL for stability
+  const logoUrl = "https://rvlcpygatguvxhuliand.supabase.co/storage/v1/object/public/assets/cobel-logo.png";
+
   // PDF Export Logic
   const downloadPDF = async () => {
     const element = document.getElementById('report-container');
     if (!element) return;
     
     setIsExporting(true);
+    // useCORS: true is critical now that the logo is on Supabase storage
     const canvas = await html2canvas(element, { scale: 2, useCORS: true });
     const imgData = canvas.toDataURL('image/png');
     const pdf = new jsPDF('p', 'mm', 'a4');
@@ -78,9 +82,13 @@ export default function TrainerFrictionReport() {
           <div className="flex items-center gap-4">
             <div className="bg-white p-2 rounded-xl shadow-sm border border-gray-100">
                <img 
+                 src={logoUrl}
                  alt="Cobel Logo" 
                  className="h-14 w-auto object-contain" 
-                 onError={(e) => { (e.target as HTMLImageElement).src = '/assets/logo.png'; }}
+                 crossOrigin="anonymous"
+                 onError={(e) => { 
+                   (e.target as HTMLImageElement).src = logoUrl; 
+                 }}
                />
             </div>
             <div>

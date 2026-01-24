@@ -23,14 +23,21 @@ export default function CertificateTemplate({
   // Ensure we have a date string to prevent hydration errors during SSG/SSR
   const displayDate = current_date || new Date().toLocaleDateString();
 
+  // Cloud-hosted logo URL for stability and build-failure prevention
+  const logoUrl = "https://rvlcpygatguvxhuliand.supabase.co/storage/v1/object/public/assets/cobel-logo.png";
+
   return (
     <div className="certificate-border p-10 border-8 border-double border-yellow-600 bg-white text-center max-w-4xl mx-auto shadow-2xl my-8">
       {/* Header Section */}
       <div className="flex justify-between items-center mb-10">
         <img 
-          src="/logo.png" 
+          src={logoUrl} 
           alt="Cobel Logo" 
           className="h-20 w-auto object-contain" 
+          crossOrigin="anonymous"
+          onError={(e) => { 
+            (e.target as HTMLImageElement).src = logoUrl; 
+          }}
         />
         <div className="text-right">
           <h1 className="text-2xl font-serif font-bold text-gray-800">COBEL BUSINESS TRAINING CENTER</h1>
