@@ -1,6 +1,6 @@
 'use client';
 export const dynamic = 'force-dynamic';
-import { HandwritingUpload } from '@/components/dashboard/handwritingupload';
+import { HandwritingUpload } from '@/components/HandwritingUpload';
 import { BilingualDictionaryView } from '@/components/admin/BilingualDictionaryView';
 import { MilestoneForecast } from '@/components/admin/MilestoneForecast';
 
