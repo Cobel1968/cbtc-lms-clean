@@ -6,7 +6,7 @@ import NavBar from '@/components/NavBar'; // Must match 'NavBar' exactly
 import { LanguageProvider } from "@/app/contexts/LanguageContext";
 import { CartProvider } from "@/app/contexts/CartContext";
 import CobelHeader from '@/components/CobelHeader'; // Using the LogoFixed Header
-import StateDebugger from "@/components/debug/statedebugger";
+import StateDebugger from "@/components/debug/StateDebugger";
 
 const inter = Inter({ subsets: ["latin"] });
 
