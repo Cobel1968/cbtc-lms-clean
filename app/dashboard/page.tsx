@@ -1,44 +1,81 @@
-import { createClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
-import StudentDashboardUI from './StudentDashboardUI';
-import CobelLogo from '@/components/CobelLogo';
+'use client';
 
-export default async function Page() {
-  const supabase = createClient();
+// app/dashboard/page.tsx
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+// FIXED: Matched the single quote at the end with a double quote at the start
+import DiagnosticWelcomeModal from "@/components/dashboard/Diagnosticwelcomemodal";
+import { User } from '@/lib/types'; 
 
-  const { data: { user } } = await supabase.auth.getUser();
+export default function DashboardPage() {
+  const [user, setUser] = useState<User | null>(null);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+  const supabase = createClientComponentClient();
+  const router = useRouter();
+
+  useEffect(() => {
+    async function getUser() {
+      // FIXED: Using 'authUser' internally to avoid shadowing the 'user' state variable
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      
+      if (authUser) {
+        setUser(authUser as unknown as User); 
+        
+        // Multi-Dimensional Diagnostic Check
+        const { data: results, error } = await supabase
+          .from('diagnostic_results')
+          .select('*')
+          .eq('user_id', authUser.id)
+          .eq('test_type', 'pre-test');
+
+        if (error || !results || results.length === 0) {
+          setShowWelcomeModal(true);
+        } else {
+          setShowWelcomeModal(false);
+        }
+      } else {
+        router.push('/login');
+      }
+    }
+    getUser();
+  }, [supabase, router]);
+
+  const handleStartDiagnostic = () => {
+    router.push('/diagnostic-test'); 
+    setShowWelcomeModal(false); 
+  };
+
+  const handleCloseModal = () => {
+    setShowWelcomeModal(false);
+  };
 
   if (!user) {
-    redirect('/login');
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 text-slate-600">
+        Loading user data...
+      </div>
+    );
   }
 
-  // Pre-fetch profile for the Cobel Engine
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single();
-
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Global Corporate Header */}
-      <nav className="bg-white border-b border-slate-100 px-6 py-4 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <CobelLogo />
-          <div className="flex items-center gap-4">
-            <div className="text-right hidden sm:block">
-              <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest leading-none">terminal active</p>
-              <p className="text-xs font-bold text-slate-900 lowercase">{user.email}</p>
-            </div>
-            <div className="h-10 w-10 bg-indigo-600 rounded-2xl flex items-center justify-center text-white font-black shadow-lg shadow-indigo-100">
-               {user.email?.charAt(0).toUpperCase()}
-            </div>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-slate-100 p-8">
+      <h1 className="text-3xl font-bold text-slate-900 mb-6 uppercase tracking-tight">
+        Welcome to your Dashboard, {user.first_name || user.email}!
+      </h1>
+      
+      <div className="p-6 bg-white rounded-2xl shadow-sm border border-slate-200">
+        <p className="text-slate-600 leading-relaxed">
+          This is your personalized learning space. Your <strong>Cobel AI Engine</strong> is ready to guide you.
+        </p>
+      </div>
 
-      {/* Interactive UI Layer */}
-      <StudentDashboardUI initialProfile={profile} user={user} />
+      <DiagnosticWelcomeModal
+        userName={user.first_name || user.email || "Learner"}
+        isOpen={showWelcomeModal}
+        onClose={handleCloseModal}
+        onStartDiagnostic={handleStartDiagnostic}
+      />
     </div>
   );
 }

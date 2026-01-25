@@ -1,6 +1,6 @@
 'use client';
+
 export const dynamic = 'force-dynamic';
-// ✅ Mandatory for usePathname and context providers
 
 import { LanguageProvider } from '@/app/contexts/LanguageContext';
 import { CartProvider } from "@/app/contexts/CartContext";
@@ -21,14 +21,15 @@ import {
  * COBEL ADMIN LAYOUT
  * Feature: Adaptive Navigation for Pedagogical Logic v2.7
  */
-export default function admin_layout({
+// FIXED: Named the function "AdminLayout" (PascalCase) to fix the React Hook error
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
 
-  const nav_items = [
+  const navItems = [
     { label: 'overview', href: '/admin/dashboard', icon: <LayoutDashboard size={18} /> },
     { label: 'course map', href: '/admin/course', icon: <BookOpen size={18} /> },
     { label: 'trainer config', href: '/admin/trainer', icon: <UserCheck size={18} /> },
@@ -40,7 +41,7 @@ export default function admin_layout({
   return (
     <LanguageProvider>
       <CartProvider>
-        <div className="flex min-h-screen bg-[#f8fafc] lowercase">
+        <div className="flex min-h-screen bg-[#f8fafc]">
           
           <aside className="w-64 bg-slate-900 text-white flex flex-col fixed h-full border-r border-slate-800 z-50">
             <div className="p-8">
@@ -53,20 +54,21 @@ export default function admin_layout({
             </div>
 
             <nav className="flex-1 px-4 space-y-2">
-              {nav_items.map((item) => {
-                const is_active = pathname === item.href;
+              {navItems.map((item) => {
+                // FIXED: camelCase for consistency with React standards
+                const isActive = pathname === item.href;
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-bold text-sm ${
-                      is_active 
+                      isActive 
                         ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/40' 
                         : 'text-slate-400 hover:text-white hover:bg-slate-800'
                     }`}
                   >
                     {item.icon}
-                    <span>{item.label}</span>
+                    <span className="lowercase">{item.label}</span>
                   </Link>
                 );
               })}

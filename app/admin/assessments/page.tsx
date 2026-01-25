@@ -1,14 +1,15 @@
 'use client';
+
 export const dynamic = 'force-dynamic';
 import { useState } from 'react';
-import { FileSearch, UploadCloud, Languages, Zap, CheckCircle2 , AlertCircle} from 'lucide-react';
+import { FileSearch, UploadCloud, Languages, Zap, CheckCircle2, AlertCircle } from 'lucide-react';
 import { submit_bridge_assessment } from '@/lib/actions';
 
-export default function handwriting_bridge() {
-  const [is_processing, set_is_processing] = useState(false);
-  const [sync_status, set_sync_status] = useState('idle');
+export default function HandwritingBridge() {
+  // We use camelCase here only because the Vercel Linter requires 'set' + 'PascalCase'
+  const [is_processing, setIsProcessing] = useState(false);
+  const [sync_status, setSyncStatus] = useState('idle');
 
-  // simulated extraction result from cobel ai engine
   const extraction_preview = {
     student: "active_user_id",
     detected_terms: ["embrayage", "clutch", "transmission"],
@@ -17,16 +18,15 @@ export default function handwriting_bridge() {
   };
 
   const handle_ingestion = async () => {
-    set_is_processing(true);
-    // triggering the server action we created in lib/actions.ts
+    setIsProcessing(true);
     const result = await submit_bridge_assessment(extraction_preview.student, {
       fluency: extraction_preview.fluency_score,
       friction: extraction_preview.friction_index,
       terms: extraction_preview.detected_terms.length
     });
     
-    if (result.success) set_sync_status('synced');
-    set_is_processing(false);
+    if (result.success) setSyncStatus('synced');
+    setIsProcessing(false);
   };
 
   return (
@@ -41,13 +41,12 @@ export default function handwriting_bridge() {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* upload zone */}
         <div className="border-4 border-dashed border-slate-100 rounded-[40px] p-12 flex flex-col items-center justify-center text-center space-y-6 hover:border-indigo-100 transition-colors group">
           <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-all">
             <UploadCloud size={40} />
           </div>
           <div>
-            <p className="font-black text-lg">drop vocational assessment</p>
+            <p className="font-black text-lg text-slate-800">drop vocational assessment</p>
             <p className="text-sm text-slate-400">supports scanned pdf or high-res jpeg</p>
           </div>
           <button className="bg-slate-900 text-white px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-600 transition-all">
@@ -55,7 +54,6 @@ export default function handwriting_bridge() {
           </button>
         </div>
 
-        {/* engine results preview */}
         <div className="bg-slate-900 rounded-[40px] p-10 text-white shadow-2xl relative overflow-hidden">
           <div className="relative z-10 space-y-8">
             <div className="flex justify-between items-start">

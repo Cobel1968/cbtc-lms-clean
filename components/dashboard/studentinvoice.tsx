@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient'; // Ensure this path is also lowercase
 
-export const studentinvoice = ({ enrollmentId }: { enrollmentId: string }) => {
+export const StudentInvoice = ({ enrollmentId }: { enrollmentId: string }) => {
   const [data, setData] = useState<any>(null);
 
   // We use useEffect (CamelCase) because it is a React Hook

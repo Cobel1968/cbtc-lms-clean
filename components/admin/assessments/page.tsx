@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { process_handwritten_assessment, update_curriculum_from_handwriting } from '@/lib/handwritingprocessor';
 import { Upload, FileText, CheckCircle, Zap, Clock, RefreshCw } from 'lucide-react';
 
-export default function assessments_page() {
+export default function AssessmentsPage() {
   const [is_uploading, set_is_uploading] = useState(false);
   const [result, set_result] = useState<any>(null);
 

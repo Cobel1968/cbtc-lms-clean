@@ -4,8 +4,8 @@ import { useEffect } from 'react';
 import { AlertTriangle, RefreshCcw, ShieldAlert, Home } from 'lucide-react';
 import Link from 'next/link';
 
-// rectification: changed AdminError to admin_error to match project standard
-export default function admin_error({
+// rectification: changed AdminError to AdminError to match project standard
+export default function AdminError({
   error,
   reset,
 }: {

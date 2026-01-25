@@ -6,7 +6,7 @@ import { run_full_system_audit } from '@/lib/scriptdoctor';
 import { process_handwritten_assessment } from '@/lib/handwritingprocessor';
 import { Activity, ShieldCheck, RefreshCw, AlertCircle } from 'lucide-react';
 
-export default function audit_dashboard() {
+export default function AuditDashboard() {
   const [logs, set_logs] = useState<string[]>([]);
   const [is_auditing, set_is_auditing] = useState(false);
 

@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 import { useState } from 'react';
 import { Users, Calendar, Clock, ChevronRight, TrendingDown, Search , AlertCircle} from 'lucide-react';
 
-export default function student_directory() {
+export default function StudentDirectory() {
   const [search_query, set_search_query] = useState('');
 
   // simulated data representing the engine's temporal mapping

@@ -11,7 +11,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-export default function student_directory() {
+export default function StudentDirectory() {
   const [students, set_students] = useState<any[]>([]);
   const [is_loading, set_is_loading] = useState(true);
 

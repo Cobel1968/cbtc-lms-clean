@@ -20,7 +20,7 @@ const mock_students = [
   { id: '3', name: 'Yao Kouadio', track: 'Hospitality ESP', speed: '2.1x', saved: '28h', status: 'Fast-Track' },
 ]
 
-export default function trainer_dashboard() {
+export default function TrainerDashboard() {
   const [active_tab, set_active_tab] = useState<'roster' | 'folders' | 'reports' | 'audit' | 'curriculum'>('roster')
   const [selected_student, set_selected_student] = useState<any>(null)
   const [audit_log, set_audit_log] = useState<string[]>([])

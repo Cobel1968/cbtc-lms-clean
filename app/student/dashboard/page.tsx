@@ -9,7 +9,7 @@ import milestone_forecast from '@/components/milestone_forecast';
 // feature 4: analog-to-digital bridge component
 import assessment_uploader from '@/components/assessment/assessmentuploader';
 
-export default function student_portal() {
+export default function StudentPortal() {
   // state keys forced to lowercase snake_case
   const [engine_stats, set_engine_stats] = useState({
     total_minutes: 0,

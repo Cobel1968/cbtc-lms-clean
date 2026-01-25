@@ -2,7 +2,7 @@
 export const dynamic = 'force-dynamic';
 import React, { useState } from 'react';
 import { useOCRBridge } from '@/lib/ocr/ocrfluencybridge';
-import BilingualText from '@/components/bilingualtext';
+import BilingualText from '@/components/BilingualText';
 
 export default function IngestionPage() {
   const {        analyze_handwritten_content        } = useOCRBridge() || { isProcessing: false };

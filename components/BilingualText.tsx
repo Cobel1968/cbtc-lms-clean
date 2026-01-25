@@ -2,7 +2,7 @@
 import { useLanguage } from '@/app/contexts/LanguageContext'; 
 import { useState, useEffect } from 'react';
 
-interface bilingualtextProps {
+interface BilingualTextProps {
   text: {
     fr: string;
     en: string;
@@ -11,10 +11,10 @@ interface bilingualtextProps {
 }
 
 /**
- * PRODUCTION COMPLIANT: bilingualtext Component
+ * PRODUCTION COMPLIANT: BilingualText Component
  * Solves the technical problem of bilingual friction and hydration mismatches.
  */
-export default function bilingualtext({ text, className = "" }: bilingualtextProps) {
+export default function BilingualText({ text, className = "" }: BilingualTextProps) {
   const { language } = useLanguage();
   const [isMounted, set_is_mounted] = useState(false);
 
