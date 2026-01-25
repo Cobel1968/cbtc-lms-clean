@@ -5,7 +5,7 @@
  */
 
 // 1. Module Resolution: Using relative pathing for Node compatibility
-const { calculate_fluency_from_text } = require('../lib/ocrfluencybridge');
+const { calculate_fluency_from_text } = require('../lib/handwritingLogic');
 
 /**
  * FEATURE 3: Temporal Optimization Logic

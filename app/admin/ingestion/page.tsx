@@ -1,7 +1,7 @@
 'use client';
 export const dynamic = 'force-dynamic';
 import React, { useState } from 'react';
-import { useOCRBridge } from '@/lib/ocr/ocrfluencybridge';
+import { useOCRBridge } from '@/lib/ocr/handwritingLogic';
 import BilingualText from '@/components/BilingualText';
 
 export default function IngestionPage() {

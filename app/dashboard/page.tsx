@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 // FIXED: Matched the single quote at the end with a double quote at the start
-import DiagnosticWelcomeModal from "@/components/dashboard/Diagnosticwelcomemodal";
+import DiagnosticWelcomeModal from "@/components/dashboard/DiagnosticWelcomeModal";
 import { User } from '@/lib/types'; 
 
 export default function DashboardPage() {

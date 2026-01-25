@@ -14,7 +14,7 @@ function FrictionReportContent() {
 
   useEffect(() => {
     const initEngine = async () => {
-      const { calculate_friction_index } = await import('@/lib/frictionengine');
+      const { calculate_friction_index } = await import('@/lib/frictionEngine');
       
       const mock_vocational_data = [
         { term: 'circuit breaker / disjoncteur', category: 'electrical', english_score: 45, french_score: 95, attempts: 3 },
