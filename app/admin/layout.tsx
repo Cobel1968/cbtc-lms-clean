@@ -68,7 +68,7 @@ export default function AdminLayout({
                     }`}
                   >
                     {item.icon}
-                    <span className="lowercase">{item.label}</span>
+                    <span className="lowercase">{item?.label}</span>
                   </Link>
                 );
               })}

@@ -51,7 +51,7 @@ export default function StudentDashboardUI({ initialProfile, user }: any) {
               }`}
             >
               <span className="flex-shrink-0">{item.icon}</span>
-              {isSidebarOpen && <span className="font-bold text-xs uppercase tracking-tight">{item.label}</span>}
+              {isSidebarOpen && <span className="font-bold text-xs uppercase tracking-tight">{item?.label}</span>}
             </button>
           ))}
         </nav>

@@ -61,7 +61,7 @@ export default function UnifiedCobelDashboard() {
               }`}
             >
               {item.icon}
-              {isSidebarOpen && <span className="font-medium text-sm">{item.label}</span>}
+              {isSidebarOpen && <span className="font-medium text-sm">{item?.label}</span>}
             </button>
           ))}
         </nav>

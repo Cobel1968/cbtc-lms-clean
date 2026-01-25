@@ -29,7 +29,7 @@ export default function trainer_layout({ children }: { children: ReactNode }) {
               className="flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-500 hover:bg-slate-50 hover:text-indigo-600 transition-all group"
             >
               <item.icon size={18} />
-              <span className="font-bold">{item.label}</span>
+              <span className="font-bold">{item?.label}</span>
             </Link>
           ))}
         </nav>

@@ -92,7 +92,7 @@ export default function Navbar() {
                     : 'text-gray-600 hover:text-blue-600'
                 }`}
               >
-                {link.label}
+                {link?.label}
               </Link>
             ))}
           </div>
@@ -149,7 +149,7 @@ export default function Navbar() {
                 isActive(link.href) ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
-              {link.label}
+              {link?.label}
             </Link>
           ))}
         </div>
