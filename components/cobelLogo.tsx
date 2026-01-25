@@ -1,12 +1,18 @@
+'use client';
 import Image from 'next/image';
 import Link from 'next/link';
 
+/**
+ * COMPONENT: CobelLogo
+ * PURPOSE: Global Corporate Branding for CBTC LMS
+ * COMPLIANCE: Vercel-Safe (Cloud-hosted asset)
+ */
 export default function CobelLogo({ className = "" }: { className?: string }) {
-  // Use the verified Supabase storage URL to bypass Vercel build panics
+  // Verified Supabase storage URL to ensure 100% build success on Vercel
   const cloudLogoUrl = "https://rvlcpygatguvxhuliand.supabase.co/storage/v1/object/public/assets/cobel-logo.png";
 
   return (
-    <Link href="/" className={`flex items-center gap-3 hover:opacity-90 transition-opacity ${className}`}>
+    <Link href="/dashboard" className={`flex items-center gap-3 hover:opacity-90 transition-opacity ${className}`}>
       {/* Container for the cloud-hosted logo */}
       <div className="relative w-10 h-10 overflow-hidden rounded-xl bg-white shadow-sm border border-slate-100 flex items-center justify-center">
         <Image 
@@ -16,7 +22,7 @@ export default function CobelLogo({ className = "" }: { className?: string }) {
           height={40}
           className="object-contain p-1"
           priority
-          unoptimized // This prevents Next.js from trying to re-process the image during build
+          unoptimized // Prevents Vercel build-time processing errors
         />
       </div>
 
@@ -26,7 +32,7 @@ export default function CobelLogo({ className = "" }: { className?: string }) {
           cobel<span className="text-indigo-600">btc</span>
         </span>
         <span className="text-[8px] font-bold text-slate-400 uppercase tracking-[0.3em] mt-0.5">
-          vocational lms
+          pedagogical engine v1.0
         </span>
       </div>
     </Link>

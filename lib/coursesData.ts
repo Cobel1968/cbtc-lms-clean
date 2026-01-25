@@ -1,9 +1,5 @@
 'use client';
 export const dynamic = 'force-dynamic';
-/**
- * Course data exports
- * Enhanced with Filtering and Sorting Logic for Cobel AI Engine
- */
 
 export interface Course {
   id: string;
@@ -28,16 +24,20 @@ export interface Course {
   prerequisites_en?: string;
   prerequisites_fr?: string;
   curriculum?: any;
+  // Added compatibility fields for the UI
+  name?: { en: string; fr: string };
+  description?: { en: string; fr: string };
 }
 
-// Placeholder for static courses if database is unreachable during build
+// Initializing as empty array to prevent .map errors
 export const coursesData: Course[] = [];
 
 /**
  * Filter courses by Category
- * Fixed: Added null-safe checking to prevent .toLowerCase() errors
+ * Logic: Safe check for array existence before filtering
  */
-export const getCoursesByCategory = (courses: Course[], category: string): Course[] => {
+export const getCoursesByCategory = (category: string): Course[] => {
+  const courses = Array.isArray(coursesData) ? coursesData : [];
   if (!category || category === 'all') return courses;
   return courses.filter(course => 
     course?.category?.toLowerCase() === category.toLowerCase()
@@ -45,9 +45,10 @@ export const getCoursesByCategory = (courses: Course[], category: string): Cours
 };
 
 /**
- * Filter courses by Level (Beginner, Intermediate, Advanced)
+ * Filter courses by Level
  */
-export const getCoursesByLevel = (courses: Course[], level: string): Course[] => {
+export const getCoursesByLevel = (level: string): Course[] => {
+  const courses = Array.isArray(coursesData) ? coursesData : [];
   if (!level || level === 'all') return courses;
   return courses.filter(course => 
     course?.level?.toLowerCase() === level.toLowerCase()
@@ -56,20 +57,25 @@ export const getCoursesByLevel = (courses: Course[], level: string): Course[] =>
 
 /**
  * Sort courses by specific criteria
+ * Enhanced with popularity and rating fallbacks
  */
 export const sortCourses = (courses: Course[], criteria: string): Course[] => {
+  if (!Array.isArray(courses)) return [];
   const sorted = [...courses];
+  
   switch (criteria) {
+    case 'price-asc':
     case 'price-low':
-      return sorted.sort((a, b) => a.price - b.price);
+      return sorted.sort((a, b) => (a.price || 0) - (b.price || 0));
+    case 'price-desc':
     case 'price-high':
-      return sorted.sort((a, b) => b.price - a.price);
+      return sorted.sort((a, b) => (b.price || 0) - (a.price || 0));
     case 'duration':
-      return sorted.sort((a, b) => a.duration_weeks - b.duration_weeks);
+      return sorted.sort((a, b) => (a.duration_weeks || 0) - (b.duration_weeks || 0));
     case 'name':
       return sorted.sort((a, b) => (a.name_en || '').localeCompare(b.name_en || ''));
     default:
-      return sorted;
+      return sorted; // 'popularity' or 'rating' defaults to the current order
   }
 };
 

@@ -1,40 +1,47 @@
-// Supabase client configuration
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './database.types';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
+// SAFETY CHECK: Prevents the app from crashing if variables are missing
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('Supabase environment variables are not set. Please check your .env file.');
+  if (typeof window !== 'undefined') {
+    console.error('COBEL ENGINE ERROR: Supabase environment variables are missing in the browser.');
+  }
 }
 
+// 1. STANDARD CLIENT (Browser & General Use)
+// This fixes the "deprecated parameters" by passing everything in a single config object
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true,
+    storageKey: 'cobel-lms-auth-token', // Unique key to prevent hanging on login
   },
 });
 
-// Server-side Supabase client (for API routes)
+// 2. SERVER-SIDE CLIENT (For API Routes)
+// Use this inside /api folders to bypass RLS when necessary (Admin tasks)
 export function createServerClient() {
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  
   return createClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+    supabaseUrl,
+    serviceKey || supabaseAnonKey, 
     {
       auth: {
-        persistSession: false,
         autoRefreshToken: false,
+        persistSession: false,
       },
     }
   );
 }
 
 /**
- * DATABASE HELPERS (For API Routes)
- * These resolve the "not exported" errors in:
- * /api/auth/register, /api/courses/[id], and /api/enrollments
+ * COBEL AI ENGINE HELPERS
+ * Resolved: Exporting logic for profiles, courses, and enrollments.
  */
 
 export const createUser = async (userData: any) => {
@@ -49,9 +56,9 @@ export const createEnrollment = async (enrollmentData: any) => {
   return data;
 };
 
-// Add this to resolve common course lookup patterns in API routes
+// Vocational Course Lookup
 export const getCourseById = async (id: string) => {
-  const { data, error } = await supabase.from('courses').select('*').eq('id', id).single();
+  const { data, error } = await supabase.from('courses').select('*').eq('id', id).maybeSingle();
   if (error) throw error;
   return data;
 };

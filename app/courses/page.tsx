@@ -1,24 +1,26 @@
 'use client';
 export const dynamic = 'force-dynamic';
 import { useState, useMemo } from 'react';
-import { Search, Filter, BookOpen, Users, Clock, Star, ChevronRight, Zap, GraduationCap , AlertCircle} from 'lucide-react';
+import { Search, BookOpen, Users, Clock, Star, Zap, GraduationCap, FileText } from 'lucide-react';
 import { coursesData, getCoursesByCategory, getCoursesByLevel, sortCourses } from '@/lib/coursesData';
 import type { CourseCategory, CourseLevel, SortOption } from '@/lib/types';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { translations } from '@/lib/translations';
 import BilingualText from '@/components/BilingualText';
+import HandwritingUpload from '@/components/HandwritingUpload'; // Feature 4 Integration
 import Link from 'next/link';
 
 export default function CoursesPage() {
-  const {        language        } = useLanguage() || { language: 'en', t: (k) => k };
-  const t = translations[language];
+  const context = useLanguage();
+  const language = context?.language || 'en';
+  const t = translations[language] || translations['en'];
   
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<CourseCategory | 'all'>('all');
   const [selectedLevel, setSelectedLevel] = useState<CourseLevel | 'all'>('all');
   const [sortBy, setSortBy] = useState<SortOption>('popularity');
 
-  // Hardcoded references to the files you just uploaded to FastComet
+  // FastComet HTML Module Links
   const quickAccessModules = [
     {
       id: 'voc-hospitality',
@@ -43,29 +45,30 @@ export default function CoursesPage() {
     }
   ];
 
+  // Logic: Safe filtering with array rollback
   const filteredAndSortedCourses = useMemo(() => {
-    let filtered = coursesData;
+    let filtered = Array.isArray(coursesData) ? [...coursesData] : [];
 
     if (searchTerm) {
       filtered = filtered.filter(course =>
-        course.name[language].toLowerCase().includes(searchTerm.toLowerCase()) ||
-        course.description[language].toLowerCase().includes(searchTerm.toLowerCase())
+        course?.name?.[language]?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        course?.description?.[language]?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
     if (selectedCategory !== 'all') {
-      filtered = getCoursesByCategory(selectedCategory);
+      filtered = getCoursesByCategory(filtered, selectedCategory) || [];
     }
 
     if (selectedLevel !== 'all') {
-      filtered = getCoursesByLevel(selectedLevel);
+      filtered = getCoursesByLevel(filtered, selectedLevel) || [];
     }
 
-    return sortCourses(filtered, sortBy);
+    return sortCourses(filtered, sortBy) || [];
   }, [searchTerm, selectedCategory, selectedLevel, sortBy, language]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pb-20">
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-16">
         <div className="container mx-auto px-4">
@@ -80,7 +83,7 @@ export default function CoursesPage() {
         </div>
       </section>
 
-      {/* Quick Access Section for your newly uploaded HTML files */}
+      {/* Quick Access Grid */}
       <section className="container mx-auto px-4 -mt-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {quickAccessModules.map((mod) => (
@@ -88,29 +91,52 @@ export default function CoursesPage() {
               key={mod.id} 
               href={mod.path} 
               target="_blank" 
-              className="bg-white p-4 rounded-xl shadow-lg border-l-4 border-yellow-500 hover:scale-105 transition-transform flex items-center justify-between"
+              rel="noopener noreferrer"
+              className="bg-white p-4 rounded-xl shadow-lg border-l-4 border-yellow-500 hover:scale-105 transition-transform flex items-center justify-between group"
             >
               <div>
                 <span className="text-xs font-bold text-yellow-600 uppercase tracking-wider">{mod.type}</span>
-                <h4 className="font-bold text-gray-800">{mod.name[language]}</h4>
+                <h4 className="font-bold text-gray-800 group-hover:text-blue-600 transition-colors">
+                  {mod.name[language]}
+                </h4>
                 <p className="text-xs text-gray-500">{mod.level}</p>
               </div>
-              <Zap className="text-yellow-500" size={24} />
+              <Zap className="text-yellow-500 animate-pulse" size={24} />
             </a>
           ))}
         </div>
       </section>
 
-      {/* Filters */}
-      <section className="bg-white shadow-sm border-b mt-12">
+      {/* FEATURE 4: Analog-to-Digital Pedagogical Bridge (Handwriting Module) */}
+      <section className="container mx-auto px-4 mt-16">
+        <div className="max-w-4xl mx-auto bg-blue-50 border border-blue-100 rounded-3xl p-8 flex flex-col md:flex-row items-center gap-8">
+          <div className="flex-1 text-center md:text-left">
+            <h2 className="text-2xl font-bold text-blue-900 mb-3 flex items-center justify-center md:justify-start gap-2">
+              <FileText className="text-blue-600" />
+              {language === 'fr' ? 'Évaluation Manuscrite' : 'Handwriting Assessment'}
+            </h2>
+            <p className="text-blue-700 text-sm">
+              {language === 'fr' 
+                ? 'Utilisez l\'IA Cobel pour convertir vos évaluations physiques en données de progression bilingue.'
+                : 'Use Cobel AI to convert physical assessments into bilingual progression data.'}
+            </p>
+          </div>
+          <div className="flex-shrink-0">
+            <HandwritingUpload />
+          </div>
+        </div>
+      </section>
+
+      {/* Filter Bar */}
+      <section className="bg-white shadow-sm border-b mt-16 sticky top-0 z-10">
         <div className="container mx-auto px-4 py-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
               <input
                 type="text"
-                placeholder={language === 'fr' ? 'Rechercher un cours...' : 'Search courses...'}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder={language === 'fr' ? 'Rechercher...' : 'Search...'}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -150,7 +176,7 @@ export default function CoursesPage() {
         </div>
       </section>
 
-      {/* Course Grid */}
+      {/* Dynamic Course Grid */}
       <section className="container mx-auto px-4 py-12">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
@@ -175,7 +201,7 @@ export default function CoursesPage() {
                 </div>
                 <div className="absolute top-4 right-4">
                   <span className="bg-white/90 backdrop-blur text-blue-600 px-3 py-1 rounded-full text-xs font-bold uppercase">
-                    <bilingualtext text={course.category.label} />
+                    <BilingualText text={course?.category?.label || 'General'} />
                   </span>
                 </div>
               </div>
@@ -183,7 +209,7 @@ export default function CoursesPage() {
               <div className="p-6">
                 <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
                   <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded font-medium uppercase">
-                    <bilingualtext text={course.level.label} />
+                    <BilingualText text={course?.level?.label || 'Vocational'} />
                   </span>
                   <span className="flex items-center gap-1">
                     <Clock size={14} />
@@ -192,11 +218,11 @@ export default function CoursesPage() {
                 </div>
 
                 <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-                  <bilingualtext text={course.name} />
+                  <BilingualText text={course.name} />
                 </h3>
 
                 <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                  <bilingualtext text={course.description} />
+                  <BilingualText text={course.description} />
                 </p>
 
                 <div className="flex items-center justify-between pt-4 border-t border-gray-100">
@@ -213,7 +239,7 @@ export default function CoursesPage() {
 
                   <div className="text-right">
                     <p className="text-xl font-bold text-blue-600">
-                      {course.price_xof.toLocaleString()} XOF
+                      {course.price_xof?.toLocaleString() || 0} XOF
                     </p>
                   </div>
                 </div>

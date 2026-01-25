@@ -4,7 +4,7 @@ import "./globals.css";
 
 import { LanguageProvider } from "@/app/contexts/LanguageContext";
 import { CartProvider } from "@/app/contexts/CartContext";
-import Navbar from "@/components/layout/navbar";
+import CobelHeader from '@/components/CobelHeader'; // Using the Logo-fixed Header
 import StateDebugger from "@/components/debug/statedebugger";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -24,9 +24,11 @@ export default function RootLayout({
       <body className={inter.className}>
         <LanguageProvider>
           <CartProvider>
-            <div className="min-h-screen flex flex-col bg-gray-50 lowercase">
-              <Navbar />
+            {/* Removed 'lowercase' to preserve technical acronym integrity */}
+            <div className="min-h-screen flex flex-col bg-gray-50">
+              <CobelHeader /> 
               <main className="flex-grow">{children}</main>
+              {/* The debugger remains active for our AI Engine testing */}
               <StateDebugger />
             </div>
           </CartProvider>

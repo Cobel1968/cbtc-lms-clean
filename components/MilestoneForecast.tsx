@@ -7,13 +7,23 @@ interface ForecastProps {
   expected_minutes: number; // e.g., 6000 mins for a 12-week course
 }
 
-export default function milestone_forecast({ total_minutes_spent, expected_minutes }: ForecastProps) {
-  // Feature 3: Temporal Optimization Logic
+/**
+ * FEATURE 3: Temporal Optimization Logic (Automated Milestone Forecasting)
+ * Author: Abel C.
+ * Compliant with Vercel/Next.js naming conventions.
+ */
+export default function MilestoneForecast({ total_minutes_spent, expected_minutes }: ForecastProps) {
+  // Rollback: Prevent division by zero if data sync is incomplete
+  if (!expected_minutes || expected_minutes === 0) {
+    console.error("cobel_engine: Rollback triggered - Invalid expected_minutes for forecast.");
+    return null; 
+  }
+
   // Calculate velocity (Efficiency relative to expected time)
-  const velocity = expected_minutes > 0 ? (total_minutes_spent / expected_minutes) * 100 : 0;
+  const velocity = (total_minutes_spent / expected_minutes) * 100;
   
   // Logic: Project timeframe reduction (days saved)
-  // assuming 480 mins (8 hours) of mastery gained = 1 day saved in the curriculum
+  // Assuming 480 mins (8 hours) of mastery gained = 1 day saved in the curriculum
   const days_saved = Math.floor(total_minutes_spent / 480);
 
   return (
