@@ -12,7 +12,6 @@ import SignaturePad from 'react-signature-canvas'
 
 // strictly lowercase imports
 import report_template from '@/components/reporttemplate'
-import { run_full_system_audit } from '@/lib/scriptdoctor'
 
 const mock_students = [
   { id: '1', name: 'Jean Marc', track: 'Hospitality ESP', speed: '1.4x', saved: '12.5h', status: 'In Workshop' },

@@ -2,7 +2,6 @@
 export const dynamic = 'force-dynamic';
 import { useState, useEffect, useCallback } from 'react';
 // strictly matching our lowercase lib files for vercel exigence
-import { run_full_system_audit } from '@/lib/scriptdoctor'; 
 import { process_handwritten_assessment } from '@/lib/handwritingprocessor';
 import { Activity, ShieldCheck, RefreshCw, AlertCircle } from 'lucide-react';
 
@@ -30,7 +29,6 @@ export default function AuditDashboard() {
 
       set_logs([...results, bridge_status]);
     } catch (error) {
-      set_logs(prev => [...prev, "ÃƒÂ¢Ã‚ÂÃ…â€™ critical: engine failure (check scriptdoctor.ts)"]);
     } finally {
       set_is_auditing(false);
     }

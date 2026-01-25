@@ -6,7 +6,7 @@
     "dev": "next dev",
     "check": "node scripts/check-case.js",
     "fix-case": "node scripts/fix-filenames.js",
-    "build": "NEXT_DISABLE_SOURCEMAPS=1 next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
