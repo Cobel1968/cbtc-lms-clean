@@ -6,16 +6,36 @@ export const runtime = 'nodejs';
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 1. IMPROVED BYPASS LOGIC
-  // Explicitly allowing /auth/callback to prevent the hanging during initial login sign-in
+  // 1. ADVANCED BOT & PROBE TERMINATION (Stop the 307 Spam)
+  // Instead of redirecting unknown bots to /login, we return a 404 immediately.
+  const botPatterns = [
+    /wp-/,                // WordPress paths
+    /\.php$/,             // PHP scripts
+    /xmlrpc/i,            // Remote procedures
+    /actuator/i,          // Spring Boot probes
+    /config/i,            // Config files
+    /admin-console/i,     // Console probes
+    /\.env$/,             // Environment files
+    /\.git/               // Git directory probes
+  ];
+
+  const isBotProbe = botPatterns.some(pattern => pattern.test(pathname));
+
+  if (isBotProbe) {
+    // SILENT TERMINATION: Returning 404 stops the middleware and logs a 404, not a 307.
+    return new NextResponse(null, { status: 404 });
+  }
+
+  // 2. UPDATED BYPASS LOGIC (The "Green Zone")
   const isPublicPage = 
     pathname === '/' || 
     pathname === '/diagnostic' ||
     pathname.startsWith('/login') || 
     pathname.startsWith('/register') || 
-    pathname.startsWith('/auth');
+    pathname.startsWith('/auth') ||
+    pathname.startsWith('/pricing'); 
 
-  const isPublicApi = pathname.startsWith('/api/analyzehandwriting');
+  const isPublicApi = pathname.startsWith('/api/analyze-handwriting');
                         
   const isStaticAsset = 
     pathname.startsWith('/_next') || 
@@ -27,8 +47,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 2. STABLE INITIALIZATION
-  // Create an unmodified response first
+  // 3. STABLE SUPABASE INITIALIZATION
   let response = NextResponse.next({
     request: { headers: request.headers },
   });
@@ -46,9 +65,7 @@ export async function middleware(request: NextRequest) {
         cookies: {
           get(name: string) { return request.cookies.get(name)?.value; },
           set(name: string, value: string, options: CookieOptions) {
-            // Update request cookies so subsequent logic sees the changes
             request.cookies.set({ name, value, ...options });
-            // Sync with the response object we created earlier
             response = NextResponse.next({ request: { headers: request.headers } });
             response.cookies.set({ name, value, ...options });
           },
@@ -61,27 +78,36 @@ export async function middleware(request: NextRequest) {
       }
     );
 
-    // CRITICAL: getUser() triggers the session refresh logic safely
+    // CRITICAL: Verify the user session
     const { data: { user } } = await supabase.auth.getUser();
 
-    // 3. AUTH GUARD
+    // 4. AUTH GUARD (Refined Redirect)
     if (!user) {
-      const loginUrl = new URL('/login', request.url);
-      loginUrl.searchParams.set('next', pathname);
-      return NextResponse.redirect(loginUrl);
+      // Only redirect to login for actual app paths to prevent random 307s
+      const isAppPath = 
+        pathname.startsWith('/dashboard') || 
+        pathname.startsWith('/student') || 
+        pathname.startsWith('/trainer') || 
+        pathname.startsWith('/admin');
+
+      if (isAppPath) {
+        const loginUrl = new URL('/login', request.url);
+        loginUrl.searchParams.set('next', pathname);
+        return NextResponse.redirect(loginUrl);
+      }
+      
+      // If it's not a known app path and user is unauthenticated, return 404
+      return new NextResponse(null, { status: 404 });
     }
 
-    // 4. ROLE-BASED ACCESS CONTROL (Cobel Engine Pedagogical Roles)
-    // Metadata is the safest place to store role for fast middleware checks
+    // 5. ROLE-BASED ACCESS CONTROL (Cobel Engine Pedagogical Roles)
     const role = user.user_metadata?.role;
 
-    // Protection for Admin/Lead Trainer routes
     if (pathname.startsWith('/admin') && role !== 'admin') {
       const fallback = role === 'lead_trainer' ? '/dashboard' : '/student';
       return NextResponse.redirect(new URL(fallback, request.url));
     }
 
-    // Protection for Lead Trainer features (e.g., Handwriting Analysis Dashboard)
     if (pathname.startsWith('/trainer') && role !== 'lead_trainer' && role !== 'admin') {
       return NextResponse.redirect(new URL('/dashboard', request.url));
     }
@@ -91,7 +117,7 @@ export async function middleware(request: NextRequest) {
     return response; 
   }
 
-  response.headers.set('x-cobel-engine-status', 'stable-v4-redirect-fix');
+  response.headers.set('x-cobel-engine-status', 'stable-v5.3-307-cleanup');
   return response;
 }
 
