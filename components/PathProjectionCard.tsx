@@ -1,6 +1,6 @@
 'use client';
 import { Clock, Zap, Calendar } from 'lucide-react';
-import { calculateOptimizedPath } from '@/lib/pathMappingEngine';
+import { calculateOptimizedPath } from '@/lib/PathMappingEngine';
 
 interface Props {
   baseWeeks: number;

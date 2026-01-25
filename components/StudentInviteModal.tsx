@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Send, UserPlus, Mail, ShieldCheck } from 'lucide-react';
-import { generateBilingualInvite } from '@/lib/invitationEngine';
+import { generateBilingualInvite } from '@/lib/InvitationEngine';
 
 export default function StudentInviteModal() {
   const [email, setEmail] = useState('');

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Zap, Clock, CheckCircle, Languages, TrendingUp, Sparkles, Target , AlertCircle} from 'lucide-react';
 
 // audit: ensured lowercase naming for local component paths
-import course_switcher from '@/components/courseswitcher';
+import course_switcher from '@/components/CourseSwitcher';
 import milestone_forecast from '@/components/milestone_forecast';
 // feature 4: analog-to-digital bridge component
 import assessment_uploader from '@/components/assessment/assessmentuploader';

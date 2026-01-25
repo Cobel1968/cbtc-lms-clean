@@ -2,7 +2,7 @@
 export const dynamic = 'force-dynamic';
 import React, { useMemo } from 'react';
 import { Calendar, Clock, TrendingUp, Zap, CheckCircle2, AlertCircle } from 'lucide-react';
-import bilingualtext from '@/components/bilingualtext'; // Standard lowercase path
+import bilingualtext from '@/components/BilingualText'; // Standard lowercase path
 
 interface GraduationPredictorProps {
   diagnostic_score: number;

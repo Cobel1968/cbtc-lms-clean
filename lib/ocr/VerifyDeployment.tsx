@@ -5,7 +5,7 @@
  */
 
 import { createClient } from '@/utils/supabase/server'; 
-import { mockOcrExtraction } from '@/lib/ocrService'; // FIXED: Updated to match our new file
+import { mockOcrExtraction } from '@/lib/OcrService'; // FIXED: Updated to match our new file
 
 export const run_system_audit = async () => {
   console.log("--- STARTING COBEL ENGINE AUDIT ---");

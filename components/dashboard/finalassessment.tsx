@@ -2,7 +2,7 @@
 export const dynamic = 'force-dynamic';
 import React from 'react';
 import { Lock, Unlock, ArrowRight, Award, ShieldCheck } from 'lucide-react';
-import BilingualText from '@/components/bilingualtext';
+import BilingualText from '@/components/BilingualText';
 
 interface FinalAssessmentProps {
   course: {

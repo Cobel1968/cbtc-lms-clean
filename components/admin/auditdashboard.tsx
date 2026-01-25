@@ -2,7 +2,7 @@
 export const dynamic = 'force-dynamic';
 import { useState, useEffect, useCallback } from 'react';
 // strictly matching our lowercase lib files for vercel exigence
-import { process_handwritten_assessment } from '@/lib/handwritingprocessor';
+import { process_handwritten_assessment } from '@/lib/handwritingProcessor';
 import { Activity, ShieldCheck, RefreshCw, AlertCircle } from 'lucide-react';
 
 export default function AuditDashboard() {

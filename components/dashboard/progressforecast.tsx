@@ -2,7 +2,7 @@
 export const dynamic = 'force-dynamic';
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/app/contexts/LanguageContext'; // lowercase path
-import bilingualtext from '@/components/bilingualtext'; // lowercase path
+import bilingualtext from '@/components/BilingualText'; // lowercase path
 
 /**
  * FEATURE 3: Automated Milestone Forecasting

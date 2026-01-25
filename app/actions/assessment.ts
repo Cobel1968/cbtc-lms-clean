@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabaseClient'; // Using the lowercase path
 import { 
   process_handwritten_assessment, 
   update_curriculum_from_handwriting 
-} from '@/lib/handwritingprocessor';
+} from '@/lib/handwritingProcessor';
 import { User } from '@/lib/types';
 
 /**

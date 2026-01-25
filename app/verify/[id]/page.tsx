@@ -1,6 +1,6 @@
 'use client';
 export const dynamic = 'force-dynamic';
-import { calculate_friction_index, friction_data } from '@/lib/frictionengine';
+import { calculate_friction_index, friction_data } from '@/lib/FrictionEngine';
 import { ArrowRightLeft , AlertCircle} from 'lucide-react';
 
 const mock_vocational_data: friction_data[] = [

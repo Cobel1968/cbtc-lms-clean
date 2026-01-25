@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { LanguageProvider } from "@/app/contexts/LanguageContext";
 import { CartProvider } from "@/app/contexts/CartContext";
 import Navbar from "@/components/layout/navbar";
-import StateDebugger from "@/components/debug/StateDebugger";
+import StateDebugger from "@/components/debug/statedebugger";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);

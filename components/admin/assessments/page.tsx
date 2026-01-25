@@ -2,7 +2,7 @@
 export const dynamic = 'force-dynamic';
 import { useState } from 'react';
 // lib imports are already standardized to lowercase snake_case
-import { process_handwritten_assessment, update_curriculum_from_handwriting } from '@/lib/handwritingprocessor';
+import { process_handwritten_assessment, update_curriculum_from_handwriting } from '@/lib/handwritingProcessor';
 import { Upload, FileText, CheckCircle, Zap, Clock, RefreshCw } from 'lucide-react';
 
 export default function AssessmentsPage() {

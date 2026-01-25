@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { getStudentPerformanceOverview } from '@/lib/trainerAnalytics';
+import { getStudentPerformanceOverview } from '@/lib/TrainerAnalytics';
 import { Users, TrendingDown, Award, Search } from 'lucide-react';
 
 export default function TrainerDashboard() {
