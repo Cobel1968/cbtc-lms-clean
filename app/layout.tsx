@@ -1,16 +1,16 @@
-import type { Metadata } from "next";
+import type { MetaData } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import NavBar from '@/components/NavBar'; // Must match 'NavBar' exactly
 
 import { LanguageProvider } from "@/app/contexts/LanguageContext";
 import { CartProvider } from "@/app/contexts/CartContext";
-import CobelHeader from '@/components/CobelHeader'; // Using the Logo-fixed Header
-import StateDebugger from "@/components/debug/statedebugger";
+import CobelHeader from '@/components/CobelHeader'; // Using the LogoFixed Header
+import StateDebugger from "@/components/debug/StateDebugger";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
+export const MetaData: MetaData = {
   title: "CBTC Training Center | Cobel AI Engine",
   description: "Vocational Training with Adaptive Learning Pedagogical Logic",
 };
