@@ -27,3 +27,13 @@ export const process_handwriting_data = async (user_id: string, extracted_text: 
   if (error) console.error("Pedagogical Sync Error:", error.message);
   return { new_score, matches };
 }
+
+// Feature 4: Custom Hook for Ingestion Page
+export function useOCRBridge() {
+    return {
+        processHandwriting: async (userId, text) => {
+            return await process_handwriting_data(userId, text);
+        },
+        isProcessing: false
+    };
+}
