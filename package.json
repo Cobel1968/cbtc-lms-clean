@@ -6,7 +6,7 @@
     "dev": "next dev",
     "check": "node scripts/check-case.js",
     "fix-case": "node scripts/fix-filenames.js",
-    "build": "next build",
+    "build": "NEXT_DISABLE_SOURCEMAPS=1 next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -14,7 +14,7 @@
     "@hookform/resolvers": "^3.3.4",
     "@supabase/auth-helpers-nextjs": "^0.15.0",
     "@supabase/ssr": "^0.5.2",
-    "@supabase/supabase-js": "^2.91.1",
+    "@supabase/supabase-js": "^2.48.0",
     "clsx": "^2.1.0",
     "dompurify": "^3.2.4",
     "framer-motion": "^11.0.8",
