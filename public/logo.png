@@ -1,0 +1,13 @@
+import Image from 'next/image';
+
+// Inside your Header/Navbar component:
+<Link href="/" className="flex items-center gap-2">
+  <Image 
+    src="/images/logo.png" // Path relative to the 'public' folder
+    alt="Cobel BTC Logo"
+    width={150} 
+    height={50}
+    priority // Ensures the logo loads immediately without "popping"
+    className="object-contain"
+  />
+</Link>
