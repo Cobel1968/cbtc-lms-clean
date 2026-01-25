@@ -6,7 +6,8 @@ export const runtime = 'nodejs';
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 1. UPDATED BYPASS LIST
+  // 1. IMPROVED BYPASS LOGIC
+  // Explicitly allowing /auth/callback to prevent the hanging during initial login sign-in
   const isPublicPage = 
     pathname === '/' || 
     pathname === '/diagnostic' ||
@@ -22,12 +23,12 @@ export async function middleware(request: NextRequest) {
     pathname.includes('favicon.ico') ||
     /\.(?:svg|png|jpg|jpeg|gif|webp)$/.test(pathname);
 
-  // Safeguard: Immediate exit for public routes and assets
   if (isPublicPage || isStaticAsset || isPublicApi) {
     return NextResponse.next();
   }
 
-  // 2. INITIALIZE RESPONSE
+  // 2. STABLE INITIALIZATION
+  // Create an unmodified response first
   let response = NextResponse.next({
     request: { headers: request.headers },
   });
@@ -35,12 +36,9 @@ export async function middleware(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (!supabaseUrl || !supabaseKey) {
-    return response; 
-  }
+  if (!supabaseUrl || !supabaseKey) return response;
 
   try {
-    // Using the library directly here prevents the naming conflict with utils/supabase/server
     const supabase = createServerClient(
       supabaseUrl,
       supabaseKey,
@@ -48,7 +46,9 @@ export async function middleware(request: NextRequest) {
         cookies: {
           get(name: string) { return request.cookies.get(name)?.value; },
           set(name: string, value: string, options: CookieOptions) {
+            // Update request cookies so subsequent logic sees the changes
             request.cookies.set({ name, value, ...options });
+            // Sync with the response object we created earlier
             response = NextResponse.next({ request: { headers: request.headers } });
             response.cookies.set({ name, value, ...options });
           },
@@ -61,30 +61,33 @@ export async function middleware(request: NextRequest) {
       }
     );
 
-    // Refresh session if it exists
+    // CRITICAL: getUser() triggers the session refresh logic safely
     const { data: { user } } = await supabase.auth.getUser();
 
-    // 3. AUTH GUARD: Redirect to login if no session on private routes
+    // 3. AUTH GUARD
     if (!user) {
       const loginUrl = new URL('/login', request.url);
       loginUrl.searchParams.set('next', pathname);
       return NextResponse.redirect(loginUrl);
     }
 
-    // 4. ROLE-BASED ACCESS CONTROL
+    // 4. ROLE-BASED ACCESS CONTROL (Cobel Engine Pedagogical Roles)
+    // Metadata is the safest place to store role for fast middleware checks
     const role = user.user_metadata?.role;
 
+    // Protection for Admin/Lead Trainer routes
     if (pathname.startsWith('/admin') && role !== 'admin') {
-      const fallback = role === 'trainer' ? '/trainer' : '/student';
+      const fallback = role === 'lead_trainer' ? '/dashboard' : '/student';
       return NextResponse.redirect(new URL(fallback, request.url));
     }
 
-    if (pathname.startsWith('/trainer') && role === 'student') {
-      return NextResponse.redirect(new URL('/student', request.url));
+    // Protection for Lead Trainer features (e.g., Handwriting Analysis Dashboard)
+    if (pathname.startsWith('/trainer') && role !== 'lead_trainer' && role !== 'admin') {
+      return NextResponse.redirect(new URL('/dashboard', request.url));
     }
 
   } catch (error) {
-    console.error("COBEL MIDDLEWARE ERROR:", error);
+    console.error("COBEL ENGINE AUTH ERROR:", error);
     return response; 
   }
 
@@ -94,13 +97,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * Feel free to add other excluded static paths here, as /assets is handled in isStaticAsset
-     */
-    '/((?!_next/static|_next/image|favicon.ico).*)',
+    '/((?!_next/static|_next/image|favicon.ico|assets).*)',
   ],
 };

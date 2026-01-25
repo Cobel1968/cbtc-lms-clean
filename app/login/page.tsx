@@ -2,7 +2,7 @@
 export const dynamic = 'force-dynamic';
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Lock, User, ShieldCheck, Zap, Loader2, AlertCircle as AlertIcon } from 'lucide-react'
+import { Lock, User, ShieldCheck, Zap, Loader2, AlertCircle as AlertIcon, Terminal } from 'lucide-react'
 import { supabase } from '@/lib/supabaseClient' 
 import { useLanguage } from '@/app/contexts/LanguageContext'
 
@@ -13,8 +13,21 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const router = useRouter()
   
-  // ✅ Fixed the syntax error here
-  const { language } = useLanguage() || { language: 'en', t: (k) => k };
+  const { language } = useLanguage() || { language: 'en', t: (k: any) => k };
+
+  // ✅ New: Verification trigger to bypass hanging login sessions
+  const handleTestPipeline = async () => {
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    if (error) setErrorMsg(error.message);
+    else setErrorMsg("Check email: Verification link sent to bypass gateway.");
+    setLoading(false);
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -28,7 +41,9 @@ export default function LoginPage() {
       })
 
       if (error) throw error
-      router.push('/dashboard')
+      
+      // ✅ Use replace instead of push to prevent back-button loops in middleware
+      router.replace('/dashboard')
     } catch (err: any) {
       setErrorMsg(err.message || "Authentication failed")
       setLoading(false)
@@ -50,7 +65,9 @@ export default function LoginPage() {
           </div>
 
           {errorMsg && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-xs font-bold flex items-center gap-2">
+            <div className={`mb-6 p-4 rounded-2xl text-xs font-bold flex items-center gap-2 ${
+              errorMsg.includes("sent") ? "bg-emerald-50 text-emerald-600 border border-emerald-100" : "bg-red-50 text-red-600 border border-red-100"
+            }`}>
               <AlertIcon size={14} />
               {errorMsg}
             </div>
@@ -82,18 +99,26 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <button 
-              type="submit"
-              disabled={loading}
-              className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-indigo-600 transition-all shadow-xl shadow-slate-200 disabled:opacity-70"
-            >
-              {loading ? (
-                <Loader2 className="animate-spin" size={18} />
-              ) : (
-                <ShieldCheck size={18} />
-              )}
-              {loading ? "Authenticating..." : "Secure Access / Connexion"}
-            </button>
+            <div className="flex flex-col gap-3">
+              <button 
+                type="submit"
+                disabled={loading}
+                className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-indigo-600 transition-all shadow-xl shadow-slate-200 disabled:opacity-70"
+              >
+                {loading ? <Loader2 className="animate-spin" size={18} /> : <ShieldCheck size={18} />}
+                {loading ? "Authenticating..." : "Secure Access / Connexion"}
+              </button>
+
+              {/* ✅ TEST PIPELINE BUTTON: Used to clear "hanging" sessions via Magic Link */}
+              <button 
+                type="button"
+                onClick={handleTestPipeline}
+                className="w-full py-3 bg-white text-slate-500 border border-slate-200 rounded-2xl text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-slate-50 transition-all"
+              >
+                <Terminal size={14} />
+                Repair Session / Debug Redirect
+              </button>
+            </div>
           </form>
         </div>
         
