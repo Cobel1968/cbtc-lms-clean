@@ -1,100 +1,103 @@
-import { createWorker } from 'tesseract.js';
-import { DiagnosticCard } from '@/components/admin/DiagnosticCard';
 'use client';
-export const dynamic = 'force-dynamic';
+
 import React, { useState } from 'react';
-import { useOCRBridge } from '@/lib/ocr/handwritingLogic';
-import BilingualText from '@/components/BilingualText';
+import { createWorker } from 'tesseract.js';
+import { Zap, FileText, CheckCircle } from 'lucide-react';
+import { DiagnosticCard } from '@/components/admin/DiagnosticCard';
+import { processHandwriting } from '@/lib/handwritingLogic';
 
 export default function IngestionPage() {
-  const {        analyze_handwritten_content        } = useOCRBridge() || { isProcessing: false };
-  const [is_loading, set_is_loading] = useState(false);
-  const [result, set_result] = useState<{ score: number; terms: string[] } | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [extractedText, setExtractedText] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [diagnosticData, setDiagnosticData] = useState<any>(null);
 
-  const handle_image_processing = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  // 1. Handle Local File Selection
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setPreviewUrl(URL.createObjectURL(selectedFile));
+      setExtractedText(''); // Reset on new file
+      setDiagnosticData(null);
+    }
+  };
 
-    set_is_loading(true);
-
-    // SIMULATION: In a real scenario, you'd send 'file' to a Tesseract/Google Vision API
-    // We are simulating the text extracted from a handwritten vocational quiz
-    setTimeout(() => {
-      const simulated_raw_text =
-        "L'élève a compris le moteur et le software de maintenance network.";
-      const analysis = analyze_handwritten_content(simulated_raw_text);
-
-      set_result({
-        score: analysis.score,
-        terms: analysis.terms_detected,
-      });
-      set_is_loading(false);
-    }, 1500);
+  // 2. OCR Analysis Logic
+  const handleAnalyze = async () => {
+    if (!previewUrl) return;
+    setIsProcessing(true);
+    try {
+      const worker = await createWorker('fra+eng');
+      const { data: { text } } = await worker.recognize(previewUrl);
+      setExtractedText(text);
+      await worker.terminate();
+    } catch (err) {
+      console.error(err);
+      alert("OCR Failed");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-8">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">
-          <BilingualText text={{ fr: "Ingestion d'Évaluation", en: 'Assessment Ingestion' }} />
-        </h1>
-        <p className="text-gray-600">Feature 4: Analog-to-Digital Pedagogical Bridge</p>
-      </header>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Upload Section */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <h2 className="text-lg font-semibold mb-4">Upload Assessment Scan</h2>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handle_image_processing}
-            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-          />
-          {is_loading && (
-            <p className="mt-4 text-blue-600 animate-pulse">
-              Processing OCR &amp; Analyzing Technical Lexicon...
-            </p>
-          )}
-        </div>
-
-        {/* Real-time Analysis Result */}
-        <div className="bg-gray-900 text-white p-6 rounded-xl shadow-lg font-mono text-sm">
-          <h2 className="text-green-400 font-bold mb-4 uppercase tracking-widest">
-            Engine Analysis
-          </h2>
-          {result ? (
-            <div className="space-y-3">
-              <p>
-                Technical Fluency:{' '}
-                <span className="text-yellow-400 text-xl font-bold">{result.score}%</span>
-              </p>
-              <div>
-                <p className="text-gray-400 mb-1">Detected Terms:</p>
-                <div className="flex flex-wrap gap-2">
-                  {result.terms.map((term) => (
-                    <span
-                      key={term}
-                      className="bg-green-900/50 border border-green-500 px-2 py-0.5 rounded text-green-400"
-                    >
-                      {term}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <p className="text-xs text-gray-500 mt-4 italic">
-                Result integrated into student digital profile.
-              </p>
-            </div>
-          ) : (
-            <p className="text-gray-500">Waiting for input scan...</p>
-          )}
-        </div>
+    <div className="p-8 max-w-4xl mx-auto space-y-8">
+      <h1 className="text-3xl font-bold italic">Analog-to-Digital Bridge</h1>
+      
+      {/* Step 1: Upload Box */}
+      <div className="border-4 border-dashed border-slate-200 rounded-3xl p-12 text-center hover:border-blue-400 transition-all bg-white">
+        <input type="file" onChange={onFileChange} className="hidden" id="file-input" accept="image/*" />
+        <label htmlFor="file-input" className="cursor-pointer flex flex-col items-center">
+          <FileText className="w-16 h-16 text-slate-300 mb-4" />
+          <span className="text-lg font-semibold text-slate-600">
+            {file ? file.name : 'Select Physical Assessment'}
+          </span>
+        </label>
       </div>
+
+      {/* Step 2: The Analysis Button (Only visible if file exists) */}
+      {previewUrl && !extractedText && (
+        <button 
+          onClick={handleAnalyze}
+          disabled={isProcessing}
+          className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-xl hover:bg-blue-700 transition-all shadow-xl flex justify-center items-center gap-3"
+        >
+          {isProcessing ? 'Reading Handwriting...' : 'RUN COBEL AI ANALYSIS'}
+          <Zap className={isProcessing ? 'animate-pulse text-yellow-400' : ''} />
+        </button>
+      )}
+
+      {/* Step 3: The Preview/Correction Bridge */}
+      {extractedText && !diagnosticData && (
+        <div className="bg-slate-900 rounded-3xl p-6 shadow-2xl animate-in fade-in zoom-in duration-300">
+          <label className="text-blue-400 text-xs font-bold uppercase tracking-widest mb-2 block">Extracted Technical Data</label>
+          <textarea 
+            className="w-full h-48 bg-slate-800 text-slate-200 p-4 rounded-xl font-mono text-sm border border-slate-700 focus:border-blue-500 outline-none"
+            value={extractedText}
+            onChange={(e) => setExtractedText(e.target.value)}
+          />
+          <button 
+            onClick={async () => {
+                const result = await processHandwriting('test-user', extractedText);
+                if (result.success) setDiagnosticData(result);
+            }}
+            className="w-full mt-4 bg-green-500 text-white py-3 rounded-xl font-bold hover:bg-green-600"
+          >
+            Confirm Accuracy & Calculate Savings
+          </button>
+        </div>
+      )}
+
+      {/* Step 4: Final Diagnostic Result */}
+      {diagnosticData && (
+        <DiagnosticCard 
+          studentName="Abel C."
+          originalTimeframe={12}
+          timeSavedDays={diagnosticData.acceleration}
+          identifiedTerms={diagnosticData.terms}
+        />
+      )}
     </div>
   );
 }
-
-
-
-
