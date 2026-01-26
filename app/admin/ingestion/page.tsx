@@ -1,3 +1,4 @@
+import { createWorker } from 'tesseract.js';
 import { DiagnosticCard } from '@/components/admin/DiagnosticCard';
 'use client';
 export const dynamic = 'force-dynamic';
@@ -93,4 +94,5 @@ export default function IngestionPage() {
     </div>
   );
 }
+
 
