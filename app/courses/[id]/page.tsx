@@ -1,32 +1,36 @@
 'use client';
 import React from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 
 export default function CourseDetailPage() {
   const params = useParams();
-  const router = useRouter();
-  const id = params?.id;
-
+  const id = params?.id || 'default';
+  
+  // Constructing the direct link to the static vocational assets
   const staticPath = '/courses/Vocational/' + id + '.html';
 
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', fontFamily: 'sans-serif' }}>
-      <div style={{ padding: '15px', borderBottom: '1px solid #ddd', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'white' }}>
-        <button 
-          onClick={() => router.push('/student/dashboard')}
-          style={{ cursor: 'pointer', fontWeight: 'bold', background: '#1e293b', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '6px' }}
-        >
-           MAIN MENU
-        </button>
-        <span style={{ fontSize: '12px', fontWeight: '900', color: '#64748b', textTransform: 'uppercase' }}>
-          Cobel Module: {id}
-        </span>
+    <div style={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', background: 'white' }}>
+      <header style={{ padding: '10px 20px', background: '#0f172a', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 10 }}>
+        <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+          <button 
+            onClick={() => window.location.href = '/student/dashboard'}
+            style={{ background: '#334155', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+          >
+             BACK TO MENU
+          </button>
+          <span style={{ fontSize: '14px', fontWeight: 'bold' }}>COBEL VOCATIONAL SYSTEM</span>
+        </div>
+        <div style={{ fontSize: '11px', opacity: 0.7 }}>MODULE ID: {id}</div>
+      </header>
+      
+      <div style={{ flex: 1, position: 'relative' }}>
+        <iframe 
+          src={staticPath}
+          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
+          title="Course Content"
+        />
       </div>
-      <iframe 
-        src={staticPath}
-        style={{ flex: 1, border: 'none', width: '100%' }}
-        title="Vocational Content"
-      />
     </div>
   );
 }
