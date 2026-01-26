@@ -1,34 +1,32 @@
 'use client';
+import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
 
 export default function CourseDetailPage() {
-  const { id } = useParams();
+  const params = useParams();
   const router = useRouter();
+  const id = params?.id;
 
-  // Mapping the ID to the static folder found in your inventory
-  const staticPath = \/courses/Vocational/\.html\;
+  const staticPath = '/courses/Vocational/' + id + '.html';
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
-      <div className="bg-white border-b p-4 flex justify-between items-center shadow-sm">
+    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', fontFamily: 'sans-serif' }}>
+      <div style={{ padding: '15px', borderBottom: '1px solid #ddd', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'white' }}>
         <button 
           onClick={() => router.push('/student/dashboard')}
-          className="flex items-center gap-2 text-slate-600 hover:text-black font-bold uppercase text-xs"
+          style={{ cursor: 'pointer', fontWeight: 'bold', background: '#1e293b', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '6px' }}
         >
-          <ArrowLeft size={16} /> Main Menu
+           MAIN MENU
         </button>
-        <h1 className="text-sm font-black text-slate-800 uppercase italic">Module: {id}</h1>
-        <div className="w-20"></div> {/* Spacer */}
+        <span style={{ fontSize: '12px', fontWeight: '900', color: '#64748b', textTransform: 'uppercase' }}>
+          Cobel Module: {id}
+        </span>
       </div>
-
-      <div className="flex-1 bg-white">
-        <iframe 
-          src={staticPath}
-          className="w-full h-[calc(100vh-65px)] border-none"
-          title="Cobel Vocational Content"
-        />
-      </div>
+      <iframe 
+        src={staticPath}
+        style={{ flex: 1, border: 'none', width: '100%' }}
+        title="Vocational Content"
+      />
     </div>
   );
 }
