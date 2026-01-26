@@ -1,3 +1,4 @@
+import { DiagnosticCard } from '@/components/admin/DiagnosticCard';
 'use client';
 export const dynamic = 'force-dynamic';
 import React, { useState } from 'react';
@@ -92,3 +93,4 @@ export default function IngestionPage() {
     </div>
   );
 }
+
