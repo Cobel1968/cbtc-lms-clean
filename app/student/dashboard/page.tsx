@@ -35,7 +35,7 @@ export default function StudentPortal() {
     sync_temporal_data();
   }, []);
 
-  return (<a href="/" style={{position:"fixed", top:10, right:10, zIndex:9999, background:"black", color:"white", padding:"5px", fontSize:"10px"}} id="GOTO_HOME">HOME</a>
+  return (<><a href="/" style={{position:"fixed", top:10, right:10, zIndex:9999, background:"black", color:"white", padding:"5px 10px", fontSize:"10px", textDecoration:"none", fontWeight:"bold", borderRadius:"4px"}} id="GOTO_HOME">HOME</a>
     <div className="min-h-screen bg-[#f8fafc] p-6 lg:p-10 lowercase">
       <header className="max-w-6xl mx-auto mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
@@ -124,6 +124,7 @@ export default function StudentPortal() {
     </div>
   );
 }
+
 
 
 
