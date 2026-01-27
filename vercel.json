@@ -1,14 +1,14 @@
-{
-  "version": 2,
-  "installCommand": "npm install --legacy-peer-deps",
-  "build": {
-    "env": {
-      "NODE_VERSION": "20.x"
-    }
-  },
-  "framework": "nextjs",
-  "cleanUrls": true,
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" }
-  ]
+﻿{
+    "rewrites":  [
+                     {
+                         "destination":  "/Food_Hygiene_Hospitality_Luxe.html",
+                         "source":  "/hygiene"
+                     },
+                     {
+                         "destination":  "/Hospitality_Communication_Course.html",
+                         "source":  "/communication"
+                     }
+                 ],
+    "cleanUrls":  true,
+    "framework":  "nextjs"
 }
