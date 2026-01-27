@@ -1,97 +1,85 @@
 'use client';
-export const dynamic = 'force-dynamic';
 import React, { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
-import { MilestoneForecast } from '@/components/admin/MilestoneForecast';
+import { supabase } from '@/lib/supabase';
+import { generateCertificate } from '@/lib/certificate-engine';
+import { Award, Clock, TrendingUp, Download } from 'lucide-react';
 
 export default function StudentProfile() {
   const [profile, setProfile] = useState<any>(null);
-  const USER_ID = "ef4642ff-f1cc-4b05-bea1-a3ba60cc627f"; // Your verified ID
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      const { data } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', USER_ID)
-        .single();
-      if (data) setProfile(data);
-    };
-    fetchProfile();
+    async function getProfileData() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        // Fetch student progress and technical fluency
+        const { data } = await supabase
+          .from('assessment_results')
+          .select('*')
+          .eq('student_id', user.id)
+          .order('created_at', { ascending: false });
+        
+        setProfile({ user, assessments: data || [] });
+      }
+      setLoading(false);
+    }
+    getProfileData();
   }, []);
 
-  if (!profile) return <div className="p-10 text-center font-mono">LOADING COBEL ENGINE DATA...</div>;
+  if (loading) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-white font-black italic uppercase">Loading Cobel Profile...</div>;
+
+  const averageScore = profile?.assessments.length 
+    ? Math.round(profile.assessments.reduce((acc: any, curr: any) => acc + curr.fluency_score, 0) / profile.assessments.length)
+    : 0;
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
-      <div className="max-w-4xl mx-auto space-y-8">
-        
-        {/* Header: Personalized Welcome */}
-        <div className="flex justify-between items-end">
+    <div className="min-h-screen bg-slate-950 text-white p-8">
+      <div className="max-w-4xl mx-auto">
+        <header className="mb-12 flex justify-between items-end">
           <div>
-            <h1 className="text-2xl font-black text-slate-900">Your Learning Trajectory</h1>
-            <p className="text-slate-500">Bilingual Vocational Specialization</p>
+            <h1 className="text-4xl font-black uppercase italic tracking-tighter">My Learning Path</h1>
+            <p className="text-blue-500 font-bold uppercase text-xs tracking-widest">Cobel AI Progress Tracker</p>
           </div>
           <div className="text-right">
-            <span className="text-[10px] font-bold text-blue-600 bg-blue-100 px-3 py-1 rounded-full uppercase">
-              Student ID: {USER_ID.slice(0, 8)}
-            </span>
+            <p className="text-slate-500 text-xs font-bold uppercase">Status</p>
+            <p className="text-green-500 font-black italic uppercase">Accelerated</p>
+          </div>
+        </header>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <div className="bg-slate-900 p-6 rounded-3xl border border-slate-800">
+            <Clock className="text-blue-500 mb-2" />
+            <span className="block text-slate-500 text-[10px] font-black uppercase">Time Saved</span>
+            <span className="text-3xl font-black italic">14 Days</span>
+          </div>
+          <div className="bg-slate-900 p-6 rounded-3xl border border-slate-800">
+            <TrendingUp className="text-green-500 mb-2" />
+            <span className="block text-slate-500 text-[10px] font-black uppercase">Technical Fluency</span>
+            <span className="text-3xl font-black italic">{averageScore}%</span>
+          </div>
+          <div className="bg-slate-900 p-6 rounded-3xl border border-slate-800">
+            <Award className="text-purple-500 mb-2" />
+            <span className="block text-slate-500 text-[10px] font-black uppercase">Certifications</span>
+            <span className="text-3xl font-black italic">{averageScore > 80 ? '1' : '0'}</span>
           </div>
         </div>
 
-        {/* The Forecast: Feature 3 */}
-        <MilestoneForecast user_id={USER_ID} />
-
-        {/* Progress Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          
-          {/* Technical Fluency Card */}
-          <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">
-              Bilingual Technical Fluency
-            </h3>
-            <div className="flex items-center gap-4">
-              <div className="text-5xl font-black text-blue-600">{profile.technical_fluency}%</div>
-              <div className="flex-1 h-3 bg-slate-100 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-blue-600 transition-all duration-1000" 
-                  style={{ width: `${profile.technical_fluency}%` }}
-                />
-              </div>
+        {/* Certificate Section */}
+        {averageScore > 80 && (
+          <div className="bg-gradient-to-r from-blue-600 to-blue-800 p-8 rounded-3xl flex items-center justify-between shadow-2xl shadow-blue-500/20">
+            <div>
+              <h2 className="text-2xl font-black uppercase italic tracking-tighter mb-2">Curriculum Mastery</h2>
+              <p className="text-blue-100 text-sm opacity-80">Your technical proficiency exceeds the vocational benchmark.</p>
             </div>
-            <p className="mt-4 text-xs text-slate-500 leading-relaxed">
-              Based on your <strong>Analog-to-Digital</strong> assessments, your mastery of bilingual technical terms is increasing.
-            </p>
+            <button 
+              onClick={() => generateCertificate(profile.user.email.split('@')[0], 'Bilingual Vocational Training', averageScore)}
+              className="bg-white text-blue-600 px-6 py-4 rounded-2xl font-black uppercase text-xs flex items-center gap-2 hover:scale-105 transition-all"
+            >
+              <Download size={18} /> Download Certificate
+            </button>
           </div>
-
-          {/* Curriculum Density Card */}
-          <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">
-              Curriculum Density
-            </h3>
-            <div className="flex items-center gap-4">
-              <div className="text-5xl font-black text-indigo-600">{profile.curriculum_density}x</div>
-              <div className="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded">
-                OPTIMIZED
-              </div>
-            </div>
-            <p className="mt-4 text-xs text-slate-500 leading-relaxed">
-              The <strong>Temporal Optimization</strong> algorithm has adjusted your path. You are currently learning 
-              {profile.curriculum_density < 1 ? ' faster than ' : ' at '} the standard vocational pace.
-            </p>
-          </div>
-
-        </div>
-
-        {/* Feature 4: Analog-to-Digital Status */}
-        <div className="bg-slate-900 text-white p-8 rounded-3xl text-center">
-          <h3 className="text-lg font-bold mb-2">Ready for your next assessment?</h3>
-          <p className="text-slate-400 text-sm mb-6">Scan your physical assessment to update your technical fluency instantly.</p>
-          <a href="/admin" className="inline-block bg-white text-slate-900 px-8 py-3 rounded-xl font-bold hover:bg-slate-200 transition-all">
-            GO TO UPLOAD PORTAL
-          </a>
-        </div>
-
+        )}
       </div>
     </div>
   );
