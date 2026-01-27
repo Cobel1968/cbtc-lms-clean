@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     // In production, you would call Google Vision or Tesseract here
     const extractedText = "Vocational assessment: Drilling and Safety protocols.";
     const detectedTerms = {
-      fr: ["forage", "sécurité"],
+      fr: ["forage", "sÃ©curitÃ©"],
       en: ["drilling", "safety"],
       confidence: 0.98
     };
