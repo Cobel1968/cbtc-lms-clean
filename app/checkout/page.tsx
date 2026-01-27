@@ -43,7 +43,7 @@ export default function CheckoutPage() {
             {/* UPLOAD RECEIPT */}
             <div className="space-y-4">
               <label className="block text-sm font-black uppercase tracking-widest text-slate-400">
-                Upload Transaction Screenshot / Capture d'écran
+                Upload Transaction Screenshot / Capture d'Ã©cran
               </label>
               <div 
                 onClick={() => setIsUploaded(true)}
@@ -57,7 +57,7 @@ export default function CheckoutPage() {
                 ) : (
                   <>
                     <Upload className="mx-auto text-slate-300 mb-2" size={32} />
-                    <p className="text-xs text-slate-500 font-medium italic">Cliquez pour joindre le reçu de paiement</p>
+                    <p className="text-xs text-slate-500 font-medium italic">Cliquez pour joindre le reÃ§u de paiement</p>
                   </>
                 )}
               </div>
