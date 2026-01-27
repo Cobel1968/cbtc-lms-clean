@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { generateCertificate } from '@/lib/certificate-engine';
+import { generateCertificate } from '../../lib/certificate-engine';
 import { Award, Clock, TrendingUp, Download } from 'lucide-react';
 
 export default function StudentProfile() {
@@ -84,3 +84,4 @@ export default function StudentProfile() {
     </div>
   );
 }
+
