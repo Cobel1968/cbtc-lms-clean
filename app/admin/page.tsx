@@ -1,74 +1,74 @@
 'use client';
-export const dynamic = 'force-dynamic';
-import { HandwritingUpload } from '@/components/HandwritingUpload';
-import { BilingualDictionaryView } from '@/components/admin/BilingualDictionaryView';
-import { MilestoneForecast } from '@/components/admin/MilestoneForecast';
+import { useState } from 'react';
+import { Check, X, Eye, ShieldCheck, Lock } from 'lucide-react';
 
 export default function AdminDashboard() {
-  // Utilizing the verified UUID from our successful PowerShell tests
-  const TEST_USER_ID = "ef4642ff-f1cc-4b05-bea1-a3ba60cc627f";
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [pass, setPass] = useState('');
+  const [pendingPayments, setPendingPayments] = useState([
+    { id: 'TRX-9921', user: 'Student_Abidjan_01', course: 'Survival English', amount: '149 USD', status: 'Pending' }
+  ]);
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
+        <div className="bg-slate-800 p-8 rounded-3xl border border-slate-700 w-full max-w-md text-center">
+          <Lock className="mx-auto text-blue-500 mb-4" size={48} />
+          <h2 className="text-xl font-black text-white uppercase mb-6">Admin Access</h2>
+          <input 
+            type="password" 
+            placeholder="Enter Admin Key" 
+            className="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 text-white mb-4 outline-none focus:border-blue-500"
+            onChange={(e) => setPass(e.target.value)}
+          />
+          <button 
+            onClick={() => pass === 'COBEL2026' && setIsAuthenticated(true)}
+            className="w-full bg-blue-600 text-white py-4 rounded-xl font-black uppercase tracking-widest hover:bg-blue-500 transition-all"
+          >
+            Authorize
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
-        
-        {/* Header Section */}
-        <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div className="min-h-screen bg-slate-900 text-white p-8">
+      <div className="max-w-6xl mx-auto">
+        <header className="flex justify-between items-center mb-12 border-b border-slate-800 pb-6">
           <div>
-            <h1 className="text-3xl font-black text-blue-900 tracking-tighter">
-              Cobel AI Control Center
-            </h1>
-            <p className="text-gray-500 font-medium">
-              Managing Computer-Implemented Pedagogical Logic
-            </p>
+            <h1 className="text-3xl font-black uppercase italic tracking-tighter">Cobel Admin</h1>
+            <p className="text-blue-400 text-xs font-bold uppercase tracking-widest">Enrollment Control Center</p>
           </div>
-          <div className="bg-green-100 text-green-700 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest animate-pulse">
-            Engine Live: Bilingual Mapping Active
-          </div>
+          <button onClick={() => setIsAuthenticated(false)} className="text-slate-500 hover:text-white text-xs font-bold uppercase">Logout</button>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          {/* Left Column: Diagnostics & Forecasting (Feature 3) */}
-          <div className="space-y-8">
-            <section>
-              <h2 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-3">
-                Temporal Optimization
-              </h2>
-              <MilestoneForecast user_id={TEST_USER_ID} />
-            </section>
-
-            <section className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-              <h2 className="text-sm font-bold text-gray-800 mb-4">
-                Manual Assessment Ingestion
-              </h2>
-              <HandwritingUpload user_id={TEST_USER_ID} />
-              <p className="mt-4 text-[10px] text-gray-400 italic">
-                Ingested files are processed via the Analog-to-Digital Pedagogical Bridge.
-              </p>
-            </section>
-            
-            {/* System Health Status */}
-            <div className="bg-blue-900 text-white p-6 rounded-3xl shadow-xl">
-               <h3 className="text-xs uppercase tracking-widest opacity-70">AI Engine ID</h3>
-               <div className="mt-2 text-xl font-mono truncate">
-                 CBTC-LMS-2026-BETA
-               </div>
-               <div className="mt-4 flex items-center gap-2">
-                 <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                 <span className="text-[10px] font-bold opacity-80">READY FOR SCALED UPSKILLING</span>
-               </div>
-            </div>
-          </div>
-
-          {/* Right Column: Vocational Brain (Bilingual Dictionary) */}
-          <div className="lg:col-span-2">
-            <h2 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-3">
-              Technical Knowledge Base
-            </h2>
-            <BilingualDictionaryView />
-          </div>
-
+        <div className="bg-slate-800 rounded-3xl overflow-hidden border border-slate-700">
+          <table className="w-full text-left">
+            <thead className="bg-slate-700/50 text-slate-400 text-xs uppercase tracking-widest">
+              <tr>
+                <th className="p-6">TRX ID</th>
+                <th>Student</th>
+                <th>Course</th>
+                <th>Receipt</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-700">
+              {pendingPayments.map((pay) => (
+                <tr key={pay.id} className="hover:bg-slate-700/30 transition-colors">
+                  <td className="p-6 font-mono text-blue-400">{pay.id}</td>
+                  <td className="font-bold">{pay.user}</td>
+                  <td>{pay.course}</td>
+                  <td><button className="text-xs bg-slate-600 px-3 py-1 rounded-full hover:bg-blue-400 transition-all">View Screenshot</button></td>
+                  <td className="flex gap-2 p-6">
+                    <button className="p-2 bg-green-600 rounded-lg hover:bg-green-500"><Check size={20} /></button>
+                    <button className="p-2 bg-red-600 rounded-lg hover:bg-red-500"><X size={20} /></button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
