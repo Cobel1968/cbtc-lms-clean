@@ -1,3 +1,4 @@
+import { CobelLogo } from './CobelLogo';
 'use client';
 
 import Link from 'next/link';
@@ -59,3 +60,4 @@ export default function NavBar() {
     </nav>
   );
 }
+

@@ -1,40 +1,34 @@
 'use client';
-import Image from 'next/image';
-import Link from 'next/link';
+import React from 'react';
 
-/**
- * COMPONENT: CobelLogo
- * PURPOSE: Global Corporate Branding for CBTC LMS
- * COMPLIANCE: Vercel-Safe (Cloud-hosted asset)
- */
-export default function CobelLogo({ className = "" }: { className?: string }) {
-  // Verified Supabase storage URL to ensure 100% build success on Vercel
-  const cloudLogoUrl = "https://rvlcpygatguvxhuliand.supabase.co/storage/v1/object/public/assets/cobel-logo.png";
-
+export const CobelLogo = ({ className = "h-8" }: { className?: string }) => {
   return (
-    <Link href="/dashboard" className={`flex items-center gap-3 hover:opacity-90 transition-opacity ${className}`}>
-      {/* Container for the cloud-hosted logo */}
-      <div className="relative w-10 h-10 overflow-hidden rounded-xl bg-white shadow-sm border border-slate-100 flex items-center justify-center">
-        <Image 
-          src={cloudLogoUrl}
-          alt="Cobel Business Training Center"
-          width={40} 
-          height={40}
-          className="object-contain p-1"
-          priority
-          unoptimized // Prevents Vercel build-time processing errors
+    <div className={`flex items-center gap-2 ${className}`}>
+      <svg 
+        viewBox="0 0 100 100" 
+        className="h-full w-auto fill-none" 
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        {/* The "C" Frame */}
+        <path 
+          d="M80 20C70 10 50 10 35 15C15 25 10 50 15 70C20 85 45 95 65 90C80 85 90 75 90 75" 
+          stroke="currentColor" 
+          strokeWidth="12" 
+          strokeLinecap="round" 
         />
-      </div>
-
-      {/* Corporate Typography */}
-      <div className="flex flex-col leading-none">
-        <span className="font-black text-xl tracking-tighter uppercase italic text-slate-900">
-          cobel<span className="text-indigo-600">btc</span>
-        </span>
-        <span className="text-[8px] font-bold text-slate-400 uppercase tracking-[0.3em] mt-0.5">
-          pedagogical engine v1.0
-        </span>
-      </div>
-    </Link>
+        {/* The "Engine" Spark */}
+        <path 
+          d="M45 40L60 55L40 60L55 75" 
+          stroke="#3b82f6" 
+          strokeWidth="10" 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+        />
+        <circle cx="50" cy="50" r="5" fill="#3b82f6" className="animate-pulse" />
+      </svg>
+      <span className="text-white font-black italic tracking-tighter text-xl uppercase">
+        Cobel<span className="text-blue-500">BTC</span>
+      </span>
+    </div>
   );
-}
+};
