@@ -6,11 +6,7 @@ export default function CobelHeader() {
     <header className="bg-white border-b shadow-sm p-4">
       <div className="container mx-auto flex justify-between items-center">
         <Link href="/" className="flex items-center">
-          <img 
-            src="/images/logo1.png" 
-            alt="Cobel BTC" 
-            className="h-10 w-auto object-contain"
-            onError={(e) => {
+          <div className="hidden"></div> {
               // Rollback to text if the file move failed or image is deleted
               e.currentTarget.style.display = 'none';
               const textFallback = document.createElement('span');
