@@ -1,31 +1,16 @@
 'use client';
+import React from 'react';
 import Link from 'next/link';
+import { CobelLogo } from './CobelLogo';
 
 export default function CobelHeader() {
   return (
-    <header className="bg-white border-b shadow-sm p-4">
+    <header className="bg-slate-950 border-b border-slate-900 p-4 sticky top-0 z-50">
       <div className="container mx-auto flex justify-between items-center">
         <Link href="/" className="flex items-center">
-          <div className="hidden"></div> {
-              // Rollback to text if the file move failed or image is deleted
-              e.currentTarget.style.display = 'none';
-              const textFallback = document.createElement('span');
-              textFallback.className = 'text-xl font-bold text-blue-600 tracking-tight';
-              textFallback.innerText = 'COBEL BTC';
-              e.currentTarget.parentNode.appendChild(textFallback);
-            }}
-          />
+          <CobelLogo className="h-8" />
         </Link>
-        <nav className="flex gap-6">
-          <Link href="/courses" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
-            Training Modules
-          </Link>
-          <Link href="/diagnostic" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
-            AI Diagnostic
-          </Link>
-        </nav>
       </div>
     </header>
   );
 }
-
