@@ -1,1 +1,12 @@
-C:\Users\SURFACE
+'use client';
+import Navbar from '../components/Navbar';
+import HeroSection from '../components/HeroSection';
+
+export default function Home() {
+  return (
+    <main className="min-h-screen bg-slate-950">
+      <Navbar />
+      <HeroSection />
+    </main>
+  );
+}
