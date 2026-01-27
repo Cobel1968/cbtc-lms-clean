@@ -2,7 +2,8 @@
 export const dynamic = 'force-dynamic';
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Lock, User, ShieldCheck, Zap, Loader2, AlertCircle as AlertIcon, Terminal } from 'lucide-react'
+import Link from 'next/link' // Import Link for navigation
+import { Lock, User, ShieldCheck, Zap, Loader2, AlertCircle as AlertIcon, Terminal, HelpCircle } from 'lucide-react'
 import { supabase } from '@/lib/supabaseClient' 
 import { useLanguage } from '@/app/contexts/LanguageContext'
 
@@ -15,7 +16,6 @@ export default function LoginPage() {
   
   const { language } = useLanguage() || { language: 'en', t: (k: any) => k };
 
-  // ✅ New: Verification trigger to bypass hanging login sessions
   const handleTestPipeline = async () => {
     setLoading(true);
     const { error } = await supabase.auth.signInWithOtp({
@@ -41,8 +41,6 @@ export default function LoginPage() {
       })
 
       if (error) throw error
-      
-      // ✅ Use replace instead of push to prevent back-button loops in middleware
       router.replace('/dashboard')
     } catch (err: any) {
       setErrorMsg(err.message || "Authentication failed")
@@ -97,6 +95,17 @@ export default function LoginPage() {
                   required
                 />
               </div>
+              
+              {/* ✅ PASSWORD RECOVERY LINK */}
+              <div className="flex justify-end px-2">
+                <Link 
+                  href="/forgot-password" 
+                  className="text-[11px] font-bold text-indigo-600 hover:text-indigo-400 uppercase tracking-wider flex items-center gap-1 transition-colors"
+                >
+                  <HelpCircle size={12} />
+                  {language === 'fr' ? "Clé oubliée ?" : "Forgot Access Key?"}
+                </Link>
+              </div>
             </div>
 
             <div className="flex flex-col gap-3">
@@ -109,7 +118,6 @@ export default function LoginPage() {
                 {loading ? "Authenticating..." : "Secure Access / Connexion"}
               </button>
 
-              {/* ✅ TEST PIPELINE BUTTON: Used to clear "hanging" sessions via Magic Link */}
               <button 
                 type="button"
                 onClick={handleTestPipeline}

@@ -4,10 +4,14 @@ import { useParams } from 'next/navigation';
 
 export default function CourseDetailPage() {
   const params = useParams();
-  const id = params?.id || 'default';
   
-  // Constructing the direct link to the static vocational assets
-  const staticPath = '/courses/Vocational/' + id + '.html';
+  // 1. Get the ID
+  // 2. Remove underscores
+  // 3. Force to lowercase to match the physical files in /public
+  const rawId = params?.id || '';
+  const cleanId = String(rawId).replace(/_/g, '').toLowerCase();
+  
+  const staticPath = '/courses/Vocational/' + cleanId + '.html';
 
   return (
     <div style={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', background: 'white' }}>
@@ -21,7 +25,7 @@ export default function CourseDetailPage() {
           </button>
           <span style={{ fontSize: '14px', fontWeight: 'bold' }}>COBEL VOCATIONAL SYSTEM</span>
         </div>
-        <div style={{ fontSize: '11px', opacity: 0.7 }}>MODULE ID: {id}</div>
+        <div style={{ fontSize: '11px', opacity: 0.7 }}>LOADING: {cleanId}.html</div>
       </header>
       
       <div style={{ flex: 1, position: 'relative' }}>
@@ -29,6 +33,7 @@ export default function CourseDetailPage() {
           src={staticPath}
           style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
           title="Course Content"
+          onError={() => console.error("Iframe failed to load path:", staticPath)}
         />
       </div>
     </div>

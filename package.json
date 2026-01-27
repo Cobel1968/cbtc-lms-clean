@@ -45,5 +45,21 @@
     "supabase": "^1.145.4",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.3.3"
-  }
+  },
+  "description": "**Author:** Abel C.  \r **Innovation Type:** Computer-Implemented Pedagogical Logic / Adaptive Learning Algorithm  \r **Market Focus:** Vocational Training (Hospitality/Trade) - Côte d'Ivoire (XOF)",
+  "main": "doctor.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cobel1968/cbtc-lms-clean.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Cobel1968/cbtc-lms-clean/issues"
+  },
+  "homepage": "https://github.com/Cobel1968/cbtc-lms-clean#readme"
 }
