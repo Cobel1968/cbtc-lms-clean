@@ -1,0 +1,81 @@
+'use client';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabaseClient';
+import { useRouter } from 'next/navigation';
+
+export default function DataAuditPage() {
+    const [records, setRecords] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const router = useRouter();
+
+    useEffect(() => {
+        const fetchAuditData = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                setIsLoading(false);
+                return;
+            }
+
+            const { data, error } = await supabase
+                .from('user_progress')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('updated_at', { ascending: false });
+
+            if (!error) setRecords(data);
+            setIsLoading(false);
+        };
+        fetchAuditData();
+    }, []);
+
+    return (
+        <div style={{ padding: '40px', maxWidth: '900px', margin: '0 auto', fontFamily: 'sans-serif' }}>
+            <h1 style={{ color: '#1e40af' }}>Vérification du Profil Digital (Audit)</h1>
+            <p style={{ color: '#64748b' }}>Preuve de synchronisation de l'innovation Cobel AI Engine.</p>
+
+            {isLoading ? (
+                <p>Interrogation de la base de données...</p>
+            ) : (
+                <div style={{ marginTop: '30px' }}>
+                    {records.length > 0 ? (
+                        records.map((rec) => (
+                            <div key={rec.id} style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '20px', marginBottom: '15px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <span style={{ fontWeight: 'bold', fontSize: '18px' }}>Cours: {rec.course_id}</span>
+                                    <span style={{ padding: '5px 12px', background: '#dcfce7', color: '#166534', borderRadius: '20px', fontWeight: 'bold' }}>
+                                        {rec.last_score}/20
+                                    </span>
+                                </div>
+                                <div style={{ marginTop: '10px', fontSize: '14px', color: '#64748b' }}>
+                                    Précision OCR : <strong>{rec.ocr_accuracy}%</strong> | Mis à jour le : {new Date(rec.updated_at).toLocaleString()}
+                                </div>
+                                <div style={{ marginTop: '15px' }}>
+                                    <strong>Termes Techniques Identifiés:</strong>
+                                    <div style={{ display: 'flex', gap: '8px', marginTop: '5px', flexWrap: 'wrap' }}>
+                                        {rec.technical_terms_mastered?.map(term => (
+                                            <span key={term} style={{ background: '#eff6ff', color: '#1e40af', padding: '4px 10px', borderRadius: '4px', fontSize: '12px', border: '1px solid #bfdbfe' }}>
+                                                {term}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div style={{ textAlign: 'center', padding: '50px', border: '2px dashed #e2e8f0', borderRadius: '12px' }}>
+                            <p>Aucune donnée trouvée. Veuillez d'abord valider une analyse.</p>
+                            <button onClick={() => router.push('/diagnostic')} style={{ padding: '10px 20px', cursor: 'pointer' }}>Retour au Diagnostic</button>
+                        </div>
+                    )}
+                </div>
+            )}
+            
+            <button 
+                onClick={() => router.push('/diagnostic')}
+                style={{ marginTop: '30px', width: '100%', padding: '15px', background: '#1e40af', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}
+            >
+                Confirmer & Passer à la Prochaine Fonctionnalité →
+            </button>
+        </div>
+    );
+}

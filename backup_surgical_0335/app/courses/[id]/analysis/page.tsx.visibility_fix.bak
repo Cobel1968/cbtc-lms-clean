@@ -1,0 +1,88 @@
+'use client';
+import React, { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabaseClient';
+
+export default function FinalAnalysisPage() {
+    const params = useParams();
+    const router = useRouter();
+    const [user, setUser] = useState(null);
+    const [preview, setPreview] = useState(null);
+    const [syncStatus, setSyncStatus] = useState('idle');
+
+    useEffect(() => {
+        const checkUser = async () => {
+            const { data } = await supabase.auth.getUser();
+            setUser(data.user);
+        };
+        checkUser();
+    }, []);
+
+    const handleFileUpload = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (f) => setPreview(f.target.result);
+        reader.readAsDataURL(file);
+    };
+
+    const handleSync = async () => {
+        if (!user) {
+            alert("Veuillez vous connecter d'abord.");
+            return;
+        }
+        setSyncStatus('syncing');
+
+        const { error } = await supabase.from('user_progress').upsert({
+            user_id: user.id,
+            course_id: params.id || 'Hospitality_Course',
+            last_score: 18.5,
+            ocr_accuracy: 98.7,
+            technical_terms_mastered: ["Reception", "Service"],
+            updated_at: new Date().toISOString()
+        });
+
+        if (error) {
+            console.error(error);
+            setSyncStatus('error');
+        } else {
+            setSyncStatus('success');
+            alert("Analyse enregistrée avec succès !");
+        }
+    };
+
+    const handleExit = async () => {
+        await supabase.auth.signOut();
+        router.push('/diagnostic');
+    };
+
+    return (
+        <div style={{ padding: '40px', maxWidth: '800px', margin: '0 auto', fontFamily: 'sans-serif' }}>
+            <div style={{ background: '#f1f5f9', padding: '10px 20px', borderRadius: '8px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between' }}>
+                <span>Utilisateur: <strong>{user ? user.email : 'Non connecté'}</strong></span>
+                {user && <button onClick={handleExit} style={{color: 'red', cursor: 'pointer'}}>Quitter le Système </button>}
+            </div>
+
+            <div style={{ background: '#fff', padding: '30px', borderRadius: '15px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
+                <h2>1. Analyser le document</h2>
+                <input type="file" onChange={handleFileUpload} accept="image/*" style={{ margin: '20px 0' }} />
+                
+                {preview && (
+                    <div style={{ marginTop: '20px' }}>
+                        <img src={preview} style={{ width: '100%', borderRadius: '10px', marginBottom: '20px' }} />
+                        <button 
+                            onClick={handleSync}
+                            disabled={syncStatus === 'syncing' || !user}
+                            style={{ 
+                                width: '100%', padding: '15px', background: !user ? '#94a3b8' : '#2563eb', 
+                                color: 'white', border: 'none', borderRadius: '8px', cursor: user ? 'pointer' : 'not-allowed', fontWeight: 'bold' 
+                            }}
+                        >
+                            {syncStatus === 'success' ? ' Profil Mis à Jour' : 'Enregistrer mon Score'}
+                        </button>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}

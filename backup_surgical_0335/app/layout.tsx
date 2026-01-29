@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
         <LanguageProvider>
           <GlobalNav />
           <main className="pb-20 md:pb-0">
-            <LanguageProvider>{children}</LanguageProvider>
+            {children}
           </main>
           <MobileTabs />
         </LanguageProvider>
