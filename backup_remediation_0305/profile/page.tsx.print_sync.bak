@@ -1,0 +1,79 @@
+'use client';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabaseClient';
+
+export default function CertifiedDashboard() {
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function loadProfile() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) { setLoading(false); return; }
+
+            const { data: progress } = await supabase
+                .from('user_progress')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('updated_at', { ascending: false })
+                .limit(1);
+
+            if (progress && progress[0]) {
+                const latest = progress[0];
+                const baseDays = 90;
+                const savings = latest.last_score >= 15 ? 15 : 0;
+                
+                // Calculate if student is "Finish-Line Ready"
+                const isReady = latest.last_score >= 18; 
+
+                setData({
+                    ...latest,
+                    savings,
+                    isReady,
+                    projectedDate: new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+                });
+            }
+            setLoading(false);
+        }
+        loadProfile();
+    }, []);
+
+    if (loading) return <div style={{padding:'50px', textAlign:'center'}}>Chargement...</div>;
+
+    return (
+        <div style={{ minHeight: '100vh', background: '#f8fafc', padding: '20px', fontFamily: 'sans-serif' }}>
+            <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '1100px', margin: '0 auto 40px auto' }}>
+                <img src="/logo.png" alt="Logo" style={{ height: '60px' }} onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/200x60?text=COBEL+BTC'; }} />
+                <div style={{ textAlign: 'right' }}>
+                    <h2 style={{ margin: 0, color: '#1e40af' }}>Portail de Réussite</h2>
+                    <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>IA Pilotée par Abel C.</p>
+                </div>
+            </header>
+
+            <main style={{ maxWidth: '1100px', margin: '0 auto' }}>
+                <div style={{ background: '#fff', padding: '40px', borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                    <h1 style={{ color: '#0f172a' }}>Félicitations pour votre Maîtrise Bilingue!</h1>
+                    <p style={{ color: '#64748b', fontSize: '18px' }}>Votre score de {data?.last_score}/20 a permis une optimisation de {data?.savings} jours.</p>
+                    
+                    {data?.isReady ? (
+                        <div style={{ marginTop: '40px' }}>
+                            <div style={{ border: '8px double #1e40af', padding: '30px', maxWidth: '500px', margin: '0 auto 40px auto' }}>
+                                <h3 style={{ textTransform: 'uppercase', letterSpacing: '2px' }}>Certificat d'Excellence</h3>
+                                <p>Décerné pour maîtrise des termes: </p>
+                                <p style={{ fontWeight: 'bold' }}>{data?.technical_terms_mastered?.join(', ')}</p>
+                            </div>
+                            <button 
+                                onClick={() => window.print()}
+                                style={{ padding: '15px 40px', background: '#1e40af', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '16px' }}
+                            >
+                                🖨️ Télécharger mon Certificat Cobel
+                            </button>
+                        </div>
+                    ) : (
+                        <p style={{ marginTop: '40px', color: '#ef4444' }}>Continuez vos évaluations pour débloquer la certification finale.</p>
+                    )}
+                </div>
+            </main>
+        </div>
+    );
+}

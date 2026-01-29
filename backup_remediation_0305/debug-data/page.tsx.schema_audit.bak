@@ -1,0 +1,67 @@
+'use client';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabaseClient';
+
+export default function DebugDataPage() {
+    const [audit, setAudit] = useState({ courses: [], modules: [], questions: 0, loading: true });
+
+    useEffect(() => {
+        async function fetchData() {
+            // 1. Get Courses
+            const { data: courses } = await supabase.from('courses').select('*');
+            // 2. Get Modules
+            const { data: modules } = await supabase.from('modules').select('*');
+            // 3. Count Questions
+            const { count: qCount } = await supabase.from('questions').select('*', { count: 'exact', head: true });
+
+            setAudit({
+                courses: courses || [],
+                modules: modules || [],
+                questions: qCount || 0,
+                loading: false
+            });
+        }
+        fetchData();
+    }, []);
+
+    if (audit.loading) return <div style={{padding: '50px'}}>Interrogating SQL Tables...</div>;
+
+    return (
+        <div style={{ padding: '40px', fontFamily: 'sans-serif', background: '#fff', minHeight: '100vh' }}>
+            <h1 style={{ borderBottom: '2px solid #1e40af', paddingBottom: '10px' }}> Cobel AI Engine: Inflation Audit</h1>
+            
+            <section style={{ marginTop: '30px' }}>
+                <h2> Courses Found ({audit.courses.length})</h2>
+                <ul>{audit.courses.map(c => <li key={c.id}><strong>{c.title}</strong> (ID: {c.id})</li>)}</ul>
+            </section>
+
+            <section style={{ marginTop: '30px' }}>
+                <h2> Modules Found ({audit.modules.length})</h2>
+                <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+                    <thead>
+                        <tr style={{ background: '#f1f5f9', textAlign: 'left' }}>
+                            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Module ID</th>
+                            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Title</th>
+                            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Course ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {audit.modules.map(m => (
+                            <tr key={m.id}>
+                                <td style={{ padding: '10px', border: '1px solid #ddd' }}>{m.id}</td>
+                                <td style={{ padding: '10px', border: '1px solid #ddd' }}>{m.title}</td>
+                                <td style={{ padding: '10px', border: '1px solid #ddd' }}>{m.course_id}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </section>
+
+            <section style={{ marginTop: '30px', padding: '20px', background: audit.questions >= 191 ? '#dcfce7' : '#fee2e2' }}>
+                <h2> Question Bank Status</h2>
+                <p style={{ fontSize: '24px' }}><strong>{audit.questions} / 191</strong> questions inflated.</p>
+                {audit.questions === 0 && <p style={{ color: '#b91c1c' }}> ACTION REQUIRED: Ingest data from "assessments" folder.</p>}
+            </section>
+        </div>
+    );
+}

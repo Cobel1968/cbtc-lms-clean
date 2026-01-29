@@ -1,4 +1,3 @@
-export const viewport = { width: 'device-width', initialScale: 1 };
 import './globals.css';
 import { LanguageProvider } from '../contexts/LanguageContext';
 import GlobalNav from '@/components/layout/GlobalNav';
@@ -6,7 +5,8 @@ import MobileTabs from '@/components/layout/MobileTabs';
 
 export const metadata = {
   title: 'Cobel AI Engine',
-  };
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
+};
 
 export default function RootLayout({ children }) {
   return (
