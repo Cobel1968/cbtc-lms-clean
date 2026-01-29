@@ -1,0 +1,16 @@
+  {
+    "module_title": "Oil and Gas Vocational English",
+    "questions": [
+      { "text_en": "Explain the function of a Blowout Preventer (BOP).", "text_fr": "Expliquez le fonctionnement d'un bloc d'obturation du puits (BOP).", "technical_term": "Blowout Preventer", "difficulty": 0.9 },
+      { "text_en": "Identify the standard units for measuring crude oil viscosity.", "text_fr": "Identifiez les unités standard pour mesurer la viscosité du pétrole brut.", "technical_term": "Viscosity Measurement", "difficulty": 0.7 },
+      { "text_en": "What are the environmental risks associated with hydraulic fracturing?", "text_fr": "Quels sont les risques environnementaux associés à la fracturation hydraulique ?", "technical_term": "Hydraulic Fracturing", "difficulty": 0.8 }
+    ]
+  },
+  {
+    "module_title": "Luxury Hospitality Protocol",
+    "questions": [
+      { "text_en": "Describe the proper procedure for a VIP 'Meet and Greet'.", "text_fr": "Décrivez la procédure appropriée pour l'accueil d'un VIP.", "technical_term": "VIP Protocol", "difficulty": 0.5 },
+      { "text_en": "What is the standard response time for a guest concierge request?", "text_fr": "Quel est le temps de réponse standard pour une demande de conciergerie ?", "technical_term": "Concierge Response", "difficulty": 0.4 },
+      { "text_en": "Explain the nuances of 'Silver Service' table setting.", "text_fr": "Expliquez les nuances de la mise en place du 'Silver Service'.", "technical_term": "Silver Service", "difficulty": 0.7 }
+    ]
+  }

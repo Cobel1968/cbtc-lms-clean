@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Principes et Mise en Œuvre de l'Assurance Qualité</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Identique aux versions anglaises */
+    :root { --primary: #2c7da0; --primary-dark: #1a5c7a; --light: #e9f5ff; --success: #51cf66; --danger: #ff6b6b; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.6; margin: 0; padding: 0; background: #f8f9fa; color: #333; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+    header { background: var(--primary); color: white; padding: 2rem; text-align: center; border-radius: 0 0 12px 12px; }
+    h1 { margin: 0; font-size: 2.2rem; }
+    .progress-bar { height: 10px; background: #e9ecef; border-radius: 5px; overflow: hidden; margin: 1.5rem 0; }
+    .progress { height: 100%; background: var(--primary); width: 0%; transition: width 0.5s ease; }
+    .module { background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin: 2rem 0; padding: 2rem; }
+    .quiz { margin: 1.5rem 0; padding: 1rem; background: var(--light); border-radius: 8px; }
+    .options label { display: block; margin: 0.8rem 0; cursor: pointer; }
+    button { background: var(--primary); color: white; border: none; padding: 0.8rem 1.6rem; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    button:hover { background: var(--primary-dark); }
+    .result { margin-top: 1rem; font-weight: bold; min-height: 1.5em; }
+    .success { color: var(--success); }
+    .error { color: var(--danger); }
+    canvas { max-width: 100%; margin: 2rem auto; display: block; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Assurance Qualité – Principes & Mise en Œuvre</h1>
+  <p>Construire des systèmes qui préviennent les défauts – Industrie & Services</p>
+</header>
+
+<div class="container">
+  <div class="progress-bar"><div class="progress" id="progress"></div></div>
+
+  <section class="module">
+    <h2>Module 1 – Assurance Qualité vs Contrôle Qualité</h2>
+    <p>L'AQ est **proactive** (prévention), le CQ est **réactif** (détection).</p>
+    
+    <div class="quiz">
+      <p><strong>Question 1 :</strong> Quelle approche vise à prévenir les défauts ?</p>
+      <div class="options">
+        <label><input type="radio" name="q1" value="a"> a) Contrôle Qualité</label>
+        <label><input type="radio" name="q1" value="b"> b) Assurance Qualité</label>
+        <label><input type="radio" name="q1" value="c"> c) Les deux de manière égale</label>
+      </div>
+      <button onclick="checkAnswer(1, 'b')">Vérifier la réponse</button>
+      <div id="result1" class="result"></div>
+    </div>
+  </section>
+
+  <section class="module">
+    <h2>Module 2 – ISO 9001 et Approche Processus</h2>
+    <p>Les systèmes d'AQ suivent des normes comme l'ISO 9001:2015.</p>
+
+    <canvas id="aqNormesChart" height="180"></canvas>
+  </section>
+
+  <section class="module">
+    <h2>Module 3 – Cycle PDCA en Assurance Qualité</h2>
+    <p>Plan-Do-Check-Act – cycle d'amélioration continue.</p>
+  </section>
+</div>
+
+<script>
+// Script identique mais avec préfixe différent pour le localStorage
+const modules = document.querySelectorAll('.module');
+const progress = document.getElementById('progress');
+
+function updateProgress() {
+  let completed = 0;
+  modules.forEach((m, i) => {
+    if (localStorage.getItem(`aq-module-${i+1}`)) completed++;
+  });
+  progress.style.width = (completed / modules.length * 100) + '%';
+}
+
+function checkAnswer(qNum, correct) {
+  const selected = document.querySelector(`input[name="q${qNum}"]:checked`);
+  const result = document.getElementById(`result${qNum}`);
+  
+  if (!selected) {
+    result.textContent = "Veuillez sélectionner une réponse";
+    result.className = "result error";
+    return;
+  }
+
+  if (selected.value === correct) {
+    result.textContent = "Correct ! ✓";
+    result.className = "result success";
+    localStorage.setItem(`aq-module-${qNum}`, "done");
+  } else {
+    result.textContent = "Incorrect ✗ – Réessayez !";
+    result.className = "result error";
+  }
+  updateProgress();
+}
+
+new Chart(document.getElementById('aqNormesChart'), {
+  type: 'pie',
+  data: {
+    labels: ['ISO 9001', 'ISO 14001', 'ISO 45001', 'Six Sigma', 'Lean'],
+    datasets: [{
+      data: [65, 18, 12, 8, 7],
+      backgroundColor: ['#2c7da0', '#00b4d8', '#90e0ef', '#caf0f8', '#48cae4']
+    }]
+  },
+  options: { responsive: true }
+});
+
+updateProgress();
+</script>
+</body>
+</html>

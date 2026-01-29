@@ -1,48 +1,23 @@
-'use client'; // Required to use usePathname
-import { Inter } from "next/font/google";
-import "./globals.css";
-import { usePathname } from 'next/navigation'; // Added to detect current route
+import './globals.css';
+import { LanguageProvider } from '../contexts/LanguageContext';
+import GlobalNav from '@/components/layout/GlobalNav';
+import MobileTabs from '@/components/layout/MobileTabs';
 
-import { LanguageProvider } from "@/app/contexts/LanguageContext";
-import { CartProvider } from "@/app/contexts/CartContext";
-import CobelHeader from '@/components/CobelHeader'; 
-import StateDebugger from "@/components/debug/StateDebugger";
+export const metadata = {
+  title: 'Cobel AI Engine',
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
+};
 
-const inter = Inter({ subsets: ["latin"] });
-
-// Note: Metadata must be in a separate Server Component if you use 'use client' here.
-// For now, we focus on the Layout logic.
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const pathname = usePathname();
-
-  // Define routes where the Main Header should be hidden to reduce friction
-  const isAuthPage = pathname === '/' || 
-                     pathname === '/login' || 
-                     pathname === '/forgot-password' || 
-                     pathname === '/reset-password';
-
+export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className="bg-slate-50 min-h-screen text-slate-900 antialiased">
         <LanguageProvider>
-          <CartProvider>
-            <div className="min-h-screen flex flex-col bg-gray-50">
-              {/* Only show Header if NOT on an Auth Page */}
-              {!isAuthPage && <CobelHeader />} 
-              
-              <main className="flex-grow flex flex-col">
-                {children}
-              </main>
-              
-              {/* Debugger visibility can be toggled similarly if needed */}
-              <StateDebugger />
-            </div>
-          </CartProvider>
+          <GlobalNav />
+          <main className="pb-20 md:pb-0">
+            {children}
+          </main>
+          <MobileTabs />
         </LanguageProvider>
       </body>
     </html>

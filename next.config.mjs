@@ -11,6 +11,19 @@ const nextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
+  async headers() {
+    return [
+      {
+        source: '/courses/Vocational/:path*',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN',
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

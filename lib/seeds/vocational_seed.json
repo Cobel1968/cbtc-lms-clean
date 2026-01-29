@@ -1,0 +1,16 @@
+[
+  {
+    "module_title": "Academic Listening & Transcription",
+    "questions": [
+      { "text_en": "Summarize the safety protocols for offshore drilling.", "text_fr": "Résumez les protocoles de sécurité pour le forage en mer.", "technical_term": "Offshore Safety", "difficulty": 0.7 },
+      { "text_en": "Transcribe the following technical warning.", "text_fr": "Transcrivez l'avertissement technique suivant.", "technical_term": "Technical Transcription", "difficulty": 0.8 }
+    ]
+  },
+  {
+    "module_title": "AI Prompt Engineering (Basic)",
+    "questions": [
+      { "text_en": "Define 'Zero-Shot' prompting in a technical context.", "text_fr": "Définissez le 'Zero-Shot' prompting dans un contexte technique.", "technical_term": "Zero-Shot Logic", "difficulty": 0.5 },
+      { "text_en": "How does context window size affect output accuracy?", "text_fr": "Comment la taille de la fenêtre de contexte affecte-t-elle la précision des résultats ?", "technical_term": "Context Window", "difficulty": 0.6 }
+    ]
+  }
+]

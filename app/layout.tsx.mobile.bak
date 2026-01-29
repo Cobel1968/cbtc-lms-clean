@@ -1,0 +1,24 @@
+import './globals.css';
+import GlobalNav from '@/components/layout/GlobalNav';
+
+export const metadata = {
+  title: 'Cobel Business Training Center',
+  description: 'Adaptive Learning & Vocational Excellence',
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body className="bg-slate-50 min-h-screen text-slate-900">
+        <GlobalNav />
+        <main>
+          {children}
+        </main>
+      </body>
+    </html>
+  );
+}

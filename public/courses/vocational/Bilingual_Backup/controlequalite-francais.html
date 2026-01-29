@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fondamentaux du Contrôle Qualité pour les Professionnels de l'Industrie</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #2c7da0;
+      --primary-dark: #1a5c7a;
+      --light: #e9f5ff;
+      --success: #51cf66;
+      --danger: #ff6b6b;
+    }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.6; margin: 0; padding: 0; background: #f8f9fa; color: #333; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+    header { background: var(--primary); color: white; padding: 2rem; text-align: center; border-radius: 0 0 12px 12px; }
+    h1 { margin: 0; font-size: 2.2rem; }
+    .progress-bar { height: 10px; background: #e9ecef; border-radius: 5px; overflow: hidden; margin: 1.5rem 0; }
+    .progress { height: 100%; background: var(--primary); width: 0%; transition: width 0.5s ease; }
+    .module { background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin: 2rem 0; padding: 2rem; }
+    .quiz { margin: 1.5rem 0; padding: 1rem; background: var(--light); border-radius: 8px; }
+    .options label { display: block; margin: 0.8rem 0; cursor: pointer; }
+    button { background: var(--primary); color: white; border: none; padding: 0.8rem 1.6rem; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    button:hover { background: var(--primary-dark); }
+    .result { margin-top: 1rem; font-weight: bold; min-height: 1.5em; }
+    .success { color: var(--success); }
+    .error { color: var(--danger); }
+    canvas { max-width: 100%; margin: 2rem auto; display: block; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Fondamentaux du Contrôle Qualité</h1>
+  <p>Cours professionnel pour les équipes qualité en industrie et fabrication</p>
+</header>
+
+<div class="container">
+  <div class="progress-bar"><div class="progress" id="progress"></div></div>
+
+  <section class="module">
+    <h2>Module 1 – Introduction au Contrôle Qualité</h2>
+    <p>Le Contrôle Qualité (CQ) vise à **détecter** les défauts dans les produits ou services avant qu'ils n'atteignent le client.</p>
+    
+    <div class="quiz">
+      <p><strong>Question 1 :</strong> Quel est l'objectif principal du Contrôle Qualité ?</p>
+      <div class="options">
+        <label><input type="radio" name="q1" value="a"> a) Prévenir les défauts avant qu'ils n'apparaissent</label>
+        <label><input type="radio" name="q1" value="b"> b) Détecter et corriger les défauts après production</label>
+        <label><input type="radio" name="q1" value="c"> c) Concevoir de meilleurs produits dès le départ</label>
+      </div>
+      <button onclick="checkAnswer(1, 'b')">Vérifier la réponse</button>
+      <div id="result1" class="result"></div>
+    </div>
+  </section>
+
+  <section class="module">
+    <h2>Module 2 – Outils Clés du CQ</h2>
+    <p>Les outils courants incluent le diagramme de Pareto, les cartes de contrôle, le diagramme en arête de poisson et les histogrammes.</p>
+    
+    <div class="quiz">
+      <p><strong>Question 2 :</strong> Quel outil est le plus adapté pour identifier les causes les plus fréquentes de défauts ?</p>
+      <div class="options">
+        <label><input type="radio" name="q2" value="a"> a) Carte de contrôle</label>
+        <label><input type="radio" name="q2" value="b"> b) Diagramme de Pareto</label>
+        <label><input type="radio" name="q2" value="c"> c) Histogramme</label>
+      </div>
+      <button onclick="checkAnswer(2, 'b')">Vérifier la réponse</button>
+      <div id="result2" class="result"></div>
+    </div>
+
+    <canvas id="cqToolsChart" height="180"></canvas>
+  </section>
+
+  <section class="module">
+    <h2>Module 3 – Échantillonnage d'Acceptation</h2>
+    <p>Méthode statistique pour accepter/rejeter des lots en fonction de l'inspection d'un échantillon.</p>
+  </section>
+</div>
+
+<script>
+// Même script JavaScript que la version anglaise (identique)
+const modules = document.querySelectorAll('.module');
+const progress = document.getElementById('progress');
+
+function updateProgress() {
+  let completed = 0;
+  modules.forEach((m, i) => {
+    if (localStorage.getItem(`cq-module-${i+1}`)) completed++;
+  });
+  progress.style.width = (completed / modules.length * 100) + '%';
+}
+
+function checkAnswer(qNum, correct) {
+  const selected = document.querySelector(`input[name="q${qNum}"]:checked`);
+  const result = document.getElementById(`result${qNum}`);
+  
+  if (!selected) {
+    result.textContent = "Veuillez sélectionner une réponse";
+    result.className = "result error";
+    return;
+  }
+
+  if (selected.value === correct) {
+    result.textContent = "Correct ! ✓";
+    result.className = "result success";
+    localStorage.setItem(`cq-module-${qNum}`, "done");
+  } else {
+    result.textContent = "Incorrect ✗ – Réessayez !";
+    result.className = "result error";
+  }
+  updateProgress();
+}
+
+new Chart(document.getElementById('cqToolsChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Pareto', 'Arête de poisson', 'Carte de contrôle', 'Histogramme', 'Fiche de contrôle'],
+    datasets: [{
+      label: 'Fréquence d\'utilisation dans l\'industrie (%)',
+      data: [92, 78, 65, 58, 45],
+      backgroundColor: ['#2c7da0', '#00b4d8', '#90e0ef', '#caf0f8', '#48cae4'],
+      borderWidth: 1
+    }]
+  },
+  options: {
+    scales: { y: { beginAtZero: true, max: 100 } },
+    plugins: { legend: { display: false } }
+  }
+});
+
+updateProgress();
+</script>
+</body>
+</html>

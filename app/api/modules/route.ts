@@ -1,6 +1,7 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { supabase } from '@/lib/supabase';
 import { NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -9,8 +10,6 @@ export async function GET(request: Request) {
   if (!courseId) {
     return NextResponse.json({ error: 'Course ID is required' }, { status: 400 });
   }
-
-  const supabase = createRouteHandlerClient({ cookies });
   
   const { data, error } = await supabase
     .from('modules')

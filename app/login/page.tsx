@@ -1,141 +1,43 @@
 'use client';
-export const dynamic = 'force-dynamic';
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link' // Import Link for navigation
-import { Lock, User, ShieldCheck, Zap, Loader2, AlertCircle as AlertIcon, Terminal, HelpCircle } from 'lucide-react'
-import { supabase } from '@/lib/supabaseClient' 
-import { useLanguage } from '@/app/contexts/LanguageContext'
+import React, { useState } from 'react';
+import { supabase } from '@/lib/supabaseClient';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [errorMsg, setErrorMsg] = useState<string | null>(null)
-  const router = useRouter()
-  
-  const { language } = useLanguage() || { language: 'en', t: (k: any) => k };
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState(null);
+    const router = useRouter();
 
-  const handleTestPipeline = async () => {
-    setLoading(true);
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    if (error) setErrorMsg(error.message);
-    else setErrorMsg("Check email: Verification link sent to bypass gateway.");
-    setLoading(false);
-  }
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) setError(error.message);
+        else router.push('/diagnostic'); // Direct entry to the pedagogical engine
+    };
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setErrorMsg(null)
-
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
-      if (error) throw error
-      router.replace('/dashboard')
-    } catch (err: any) {
-      setErrorMsg(err.message || "Authentication failed")
-      setLoading(false)
-    }
-  }
-
-  return (
-    <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-6">
-      <div className="w-full max-w-md bg-white rounded-[40px] shadow-2xl shadow-indigo-100 border border-slate-100 overflow-hidden">
-        <div className="p-10">
-          <div className="flex flex-col items-center mb-10 text-center">
-            <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-indigo-200">
-              <Zap className="text-white" size={32} fill="white" />
-            </div>
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight uppercase">Cobel AI Engine</h1>
-            <p className="text-slate-400 text-sm font-medium">
-              {language === 'fr' ? "Portail d'Innovation Vocationnelle (2026)" : "Vocational Innovation Portal (2026)"}
-            </p>
-          </div>
-
-          {errorMsg && (
-            <div className={`mb-6 p-4 rounded-2xl text-xs font-bold flex items-center gap-2 ${
-              errorMsg.includes("sent") ? "bg-emerald-50 text-emerald-600 border border-emerald-100" : "bg-red-50 text-red-600 border border-red-100"
-            }`}>
-              <AlertIcon size={14} />
-              {errorMsg}
-            </div>
-          )}
-
-          <form onSubmit={handleLogin} className="space-y-6">
-            <div className="space-y-4">
-              <div className="relative">
-                <User className="absolute left-4 top-4 text-slate-300" size={18} />
-                <input 
-                  type="email" 
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email Address" 
-                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-600/20 font-medium text-sm text-slate-900"
-                  required
-                />
-              </div>
-              <div className="relative">
-                <Lock className="absolute left-4 top-4 text-slate-300" size={18} />
-                <input 
-                  type="password" 
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Access Key / Mot de passe" 
-                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-600/20 font-medium text-sm text-slate-900"
-                  required
-                />
-              </div>
-              
-              {/* ✅ PASSWORD RECOVERY LINK */}
-              <div className="flex justify-end px-2">
-                <Link 
-                  href="/forgot-password" 
-                  className="text-[11px] font-bold text-indigo-600 hover:text-indigo-400 uppercase tracking-wider flex items-center gap-1 transition-colors"
-                >
-                  <HelpCircle size={12} />
-                  {language === 'fr' ? "Clé oubliée ?" : "Forgot Access Key?"}
-                </Link>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-3">
-              <button 
-                type="submit"
-                disabled={loading}
-                className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-indigo-600 transition-all shadow-xl shadow-slate-200 disabled:opacity-70"
-              >
-                {loading ? <Loader2 className="animate-spin" size={18} /> : <ShieldCheck size={18} />}
-                {loading ? "Authenticating..." : "Secure Access / Connexion"}
-              </button>
-
-              <button 
-                type="button"
-                onClick={handleTestPipeline}
-                className="w-full py-3 bg-white text-slate-500 border border-slate-200 rounded-2xl text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-slate-50 transition-all"
-              >
-                <Terminal size={14} />
-                Repair Session / Debug Redirect
-              </button>
-            </div>
-          </form>
+    return (
+        <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc' }}>
+            <form onSubmit={handleLogin} style={{ background: '#fff', padding: '40px', borderRadius: '15px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', width: '100%', maxWidth: '400px' }}>
+                <h1 style={{ color: '#1e40af', marginBottom: '10px', textAlign: 'center' }}>Cobel LMS</h1>
+                <p style={{ color: '#64748b', textAlign: 'center', marginBottom: '30px' }}>Centre de Formation Business</p>
+                
+                {error && <p style={{ color: '#ef4444', fontSize: '14px', textAlign: 'center' }}>{error}</p>}
+                
+                <div style={{ marginBottom: '15px' }}>
+                    <label style={{ display: 'block', marginBottom: '5px' }}>Email</label>
+                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }} required />
+                </div>
+                
+                <div style={{ marginBottom: '25px' }}>
+                    <label style={{ display: 'block', marginBottom: '5px' }}>Mot de passe</label>
+                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }} required />
+                </div>
+                
+                <button type="submit" style={{ width: '100%', padding: '12px', background: '#1e40af', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
+                    Se Connecter
+                </button>
+            </form>
         </div>
-        
-        <div className="bg-slate-50 p-6 text-center">
-          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">
-            Bilingual Technical Mapping Validated
-          </p>
-        </div>
-      </div>
-    </div>
-  );
+    );
 }
