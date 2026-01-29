@@ -31,3 +31,5 @@ Thumbs.db
 /scripts/*.DISABLED.js
 .vercel
 .env*.local
+
+backup_*
