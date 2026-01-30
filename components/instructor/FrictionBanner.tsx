@@ -3,7 +3,7 @@ import { AlertTriangle } from 'lucide-react';
 
 interface FrictionBannerProps {
   issue: string;
-  missingTerms: string[];
+  missingTerms: string[]; audioUrl?: string;
   onOverride: () => void; onViewScan: () => void;
 }
 
@@ -41,4 +41,5 @@ export default function FrictionBanner({ issue, missingTerms, onOverride }: Fric
     </div>
   );
 }
+
 
