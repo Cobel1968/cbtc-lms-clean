@@ -1,10 +1,8 @@
 'use client';
-export const dynamic = 'force-dynamic';
 
 import { useState } from 'react';
 import { supabase } from '@/lib/supabaseDB';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -27,58 +25,48 @@ export default function LoginPage() {
       if (authError) throw authError;
 
       if (data.user) {
-        router.push('/dashboard');
-        router.refresh();
+        // Force a hard navigation to ensure Middleware picks up the new cookie
+        window.location.href = '/dashboard';
       }
     } catch (err: any) {
-      setError(err.message || 'Echec de la connexion');
+      setError(err.message || 'Identifiants invalides');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
-      <div className="p-8 bg-white shadow-xl rounded-2xl w-full max-w-md border border-gray-100">
-        <h1 className="text-2xl font-bold mb-6 text-gray-900 text-center">Connexion Cobel LMS</h1>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'screen', padding: '20px' }}>
+      <form onSubmit={handleLogin} style={{ background: 'white', padding: '40px', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', width: '100%', maxWidth: '400px' }}>
+        <h1 style={{ textAlign: 'center', marginBottom: '24px' }}>Connexion Cobel LMS</h1>
         
-        <form onSubmit={handleLogin} className="space-y-4">
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Mot de passe"
-            className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button 
-            type="submit" 
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50"
-          >
-            {loading ? 'Chargement...' : 'Se connecter'}
-          </button>
-        </form>
+        <input
+          type="email"
+          placeholder="Email"
+          style={{ width: '100%', padding: '12px', marginBottom: '16px', border: '1px solid #ddd', borderRadius: '4px' }}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Mot de passe"
+          style={{ width: '100%', padding: '12px', marginBottom: '24px', border: '1px solid #ddd', borderRadius: '4px' }}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        
+        <button 
+          type="submit" 
+          disabled={loading}
+          style={{ width: '100%', padding: '12px', background: '#0070f3', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', opacity: loading ? 0.7 : 1 }}
+        >
+          {loading ? 'Chargement...' : 'Se connecter'}
+        </button>
 
-        {error && <p className="mt-4 text-center text-sm text-red-500">{error}</p>}
-
-        <div className="mt-6 text-center space-y-2">
-          <p className="text-sm text-gray-600">
-            Nouveau ? <Link href="/register" className="text-blue-600 hover:underline">Créer un compte</Link>
-          </p>
-          <Link href="/forgot-password" size="sm" className="text-xs text-gray-400 hover:text-blue-500">
-            Mot de passe oublié ?
-          </Link>
-        </div>
-      </div>
+        {error && <p style={{ color: 'red', marginTop: '16px', textAlign: 'center' }}>{error}</p>}
+      </form>
     </div>
   );
 }
