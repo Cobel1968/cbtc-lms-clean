@@ -11,24 +11,23 @@ export const createBuildSafeClient = () => {
   return createClient(url, key);
 };
 
+// 2. Explicitly Named Exports for Vercel
 export const supabase = createBuildSafeClient();
 
-// 2. Restored Auth Functions (Build-Safe)
-export const requestPasswordReset = async (email: string) => {
+export async function requestPasswordReset(email: string) {
   const client = createBuildSafeClient();
   return await client.auth.resetPasswordForEmail(email, {
-    redirectTo: `${window.location.origin}/reset-password`,
+    redirectTo: `${typeof window !== 'undefined' ? window.location.origin : ''}/reset-password`,
   });
-};
+}
 
-export const finalizePasswordReset = async (password: string) => {
+export async function finalizePasswordReset(password: string) {
   const client = createBuildSafeClient();
   return await client.auth.updateUser({ password });
-};
+}
 
-// 3. User Creation Helper
-export const createUser = async (userData: any) => {
+export async function createUser(userData: any) {
   const client = createBuildSafeClient();
   const { data, error } = await client.from('users').insert([userData]).select().single();
   return { data, error };
-};
+}
