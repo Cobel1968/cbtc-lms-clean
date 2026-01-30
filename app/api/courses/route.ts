@@ -1,7 +1,7 @@
+export const dynamic = 'force-dynamic';
 import { supabase } from '@/lib/supabaseDB';
 import { NextResponse } from 'next/server';
 
-export const dynamic = 'force-dynamic';
 
 // GET: Retrieves all published vocational tracks
 export async function GET(req: Request) {

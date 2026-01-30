@@ -1,9 +1,9 @@
+export const dynamic = 'force-dynamic';
 import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
 import { MockOcrExtraction } from '@/lib/OcrService';
 import { IssueCertificate } from '@/app/actions/IssueCertificate';
 
-export const dynamic = 'force-dynamic';
 
 /**
  * FEATURE 4: Analog-to-Digital Pedagogical Bridge

@@ -1,7 +1,5 @@
 'use client';
-
 export const dynamic = 'force-dynamic';
-
 import { useEffect, useState } from 'react';
 import { AlertTriangle, Gauge, Zap, ChevronRight, Activity } from 'lucide-react';
 import supabase from '@/lib/supabaseDB';

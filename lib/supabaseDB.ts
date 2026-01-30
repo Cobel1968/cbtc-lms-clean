@@ -1,35 +1,10 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder'
 
-// 1. Named Export (The modern way)
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
-
-export const createUser = async (email: string, role: string) => supabase.from('users').insert({ email, role });
-export const createEnrollment = async (userId: string, courseId: string) => supabase.from('enrollments').insert({ user_id: userId, course_id: courseId });
-export const getBilingualCatalog = async () => supabase.from('courses').select('*');
-
-export const createServerClient = (cookies: any) => ({
-  auth: {},
-  from: (table: string) => supabase.from(table),
-  get: (name: string) => (cookies && typeof cookies.get === 'function') ? cookies.get(name) : null
-});
-
-export const db = { createUser, createEnrollment, getBilingualCatalog };
-
-// 2. Default Export (The FIX for your 'Attempted import error')
-export default supabase;
-// --- Added Auth Handlers for Password Recovery ---
-export const requestPasswordReset = async (email: string) => 
-  supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.origin + '/auth/callback?next=/login/reset-password',
-  });
-
-export const finalizePasswordReset = async (password: string) => 
-  supabase.auth.updateUser({ password });
-
-// Expose to window for browser diagnostics and CourseGrid access
-if (typeof window !== 'undefined') {
-  (window as any).supabase = supabase;
-}
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: typeof window !== 'undefined',
+  }
+})

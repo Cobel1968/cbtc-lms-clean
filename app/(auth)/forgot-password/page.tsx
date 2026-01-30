@@ -1,4 +1,5 @@
 'use client';
+export const dynamic = 'force-dynamic';
 import { useState } from 'react';
 import { requestPasswordReset } from '@/lib/supabaseDB';
 import Link from 'next/link';

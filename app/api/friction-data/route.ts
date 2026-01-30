@@ -1,8 +1,8 @@
+export const dynamic = 'force-dynamic';
 import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
 
 // Innovation: Temporal Optimization - Ensures real-time data for the friction dashboard
-export const dynamic = 'force-dynamic';
 
 export async function GET() {
   // Use our unified server client utility

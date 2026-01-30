@@ -1,4 +1,5 @@
-﻿'use client'
+'use client';
+export const dynamic = 'force-dynamic';
 import { useEffect, useState } from 'react'
 import AdaptiveProgressBar from '@/components/shared/AdaptiveProgressBar'
 import IELTSProgress from '@/components/student/IELTSProgress'

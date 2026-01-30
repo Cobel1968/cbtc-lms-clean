@@ -1,4 +1,5 @@
-﻿import FrictionDashboard from '@/components/instructor/FrictionDashboard';
+export const dynamic = 'force-dynamic';
+import FrictionDashboard from '@/components/instructor/FrictionDashboard';
 import { supabase } from '@/lib/supabase';
 
 export default async function InstructorPage() {
