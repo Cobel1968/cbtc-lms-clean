@@ -4,7 +4,7 @@ import { AlertTriangle } from 'lucide-react';
 interface FrictionBannerProps {
   issue: string;
   missingTerms: string[];
-  onOverride: () => void;
+  onOverride: () => void; onViewScan: () => void;
 }
 
 export default function FrictionBanner({ issue, missingTerms, onOverride }: FrictionBannerProps) {
@@ -41,3 +41,4 @@ export default function FrictionBanner({ issue, missingTerms, onOverride }: Fric
     </div>
   );
 }
+
