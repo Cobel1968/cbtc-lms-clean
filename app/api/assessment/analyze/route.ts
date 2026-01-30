@@ -5,14 +5,19 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   try {
-    const { imageUrl, studentId } = await req.json();
+    // Check for URL presence inside the handler to prevent build-time panics
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+      console.warn("Supabase URL missing during request execution");
+      return NextResponse.json({ error: 'Configuration missing' }, { status: 500 });
+    }
 
-    // 1. ANALOG-TO-DIGITAL EXTRACTION (Simulation of OCR Pipeline)
-    // In production, you would call an AI Vision API here
+    const body = await req.json();
+    const { imageUrl, studentId } = body;
+
+    // 1. ANALOG-TO-DIGITAL EXTRACTION (Simulation)
     const extractedText = "L'étudiant a des difficultés avec le système d'embrayage."; 
     
     // 2. BILINGUAL TECHNICAL MAPPING
-    // Searching for technical terms in the extracted text
     const technicalDictionary = [
       { fr: 'embrayage', en: 'clutch', weight: 85 },
       { fr: 'frein', en: 'brake', weight: 40 }
@@ -24,7 +29,7 @@ export async function POST(req: NextRequest) {
 
     // 3. UPDATE CURRICULUM DENSITY
     if (foundFriction.length > 0) {
-      await supabase.from('friction_logs').insert(
+      const { error: dbError } = await supabase.from('friction_logs').insert(
         foundFriction.map(f => ({
           student_id: studentId,
           term: f.fr,
@@ -32,10 +37,12 @@ export async function POST(req: NextRequest) {
           timestamp: new Date().toISOString()
         }))
       );
+      if (dbError) throw dbError;
     }
 
     return NextResponse.json({ success: true, termsFound: foundFriction });
-  } catch (error) {
-    return NextResponse.json({ error: 'Extraction failed' }, { status: 500 });
+  } catch (error: any) {
+    console.error("OCR Error:", error.message);
+    return NextResponse.json({ error: 'Extraction failed', details: error.message }, { status: 500 });
   }
 }
