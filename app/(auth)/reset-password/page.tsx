@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { finalizePasswordReset } from '@/lib/supabase';
+import { finalizePasswordReset } from '@/lib/supabaseDB';
 import { useRouter } from 'next/navigation';
 
 export default function ResetPassword() {

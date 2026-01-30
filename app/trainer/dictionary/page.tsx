@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseDB';
 import { Book, Plus, Trash2, Languages, Loader2 } from 'lucide-react';
 
 export default function TechnicalDictionary() {

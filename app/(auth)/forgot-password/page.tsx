@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { requestPasswordReset } from '@/lib/supabase';
+import { requestPasswordReset } from '@/lib/supabaseDB';
 import Link from 'next/link';
 
 export default function ForgotPassword() {

@@ -1,6 +1,6 @@
 'use client';
 export const dynamic = 'force-dynamic';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseDB';
 
 /**
  * Feature 4: Analog-to-Digital Pedagogical Bridge

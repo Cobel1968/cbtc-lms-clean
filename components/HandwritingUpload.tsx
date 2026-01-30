@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseDB';
 import { Upload, Loader2, CheckCircle } from 'lucide-react';
 import MilestoneNotification from './MilestoneNotification';
 

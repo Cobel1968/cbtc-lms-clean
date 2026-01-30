@@ -1,24 +1,23 @@
-export const viewport = { width: 'device-width', initialScale: 1 };
-import './globals.css';
-import { LanguageProvider } from '../contexts/LanguageContext';
-import GlobalNav from '@/components/layout/GlobalNav';
-import MobileTabs from '@/components/layout/MobileTabs';
+import "./globals.css";
+import Navbar from "@/components/Navbar";
 
 export const metadata = {
-  title: 'Cobel AI Engine',
-  };
+  title: "CBTC - Du Banc Au Travail",
+  description: "Cobel Business Training Center - Adaptive LMS",
+};
 
-export default function RootLayout({ children }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <body className="bg-slate-50 min-h-screen text-slate-900 antialiased">
-        <LanguageProvider>
-          <GlobalNav />
-          <main className="pb-20 md:pb-0">
-            <LanguageProvider>{children}</LanguageProvider>
-          </main>
-          <MobileTabs />
-        </LanguageProvider>
+      <body className="bg-slate-50 min-h-screen">
+        <Navbar />
+        <main className="pt-4">
+          {children}
+        </main>
       </body>
     </html>
   );

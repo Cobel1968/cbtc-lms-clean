@@ -1,24 +1,46 @@
-'use client';
-import React from 'react';
 import Link from 'next/link';
-import { CobelLogo } from './CobelLogo';
-import { Menu, User } from 'lucide-react';
+import Image from 'next/image';
 
 export default function Navbar() {
   return (
-    <nav className="bg-slate-950/80 backdrop-blur-md border-b border-slate-900 sticky top-0 z-[100] px-6 py-4">
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
-        <Link href="/">
-          <CobelLogo className="h-8" />
-        </Link>
-        <div className="hidden md:flex items-center gap-8">
-          <Link href="/courses" className="text-slate-400 hover:text-white text-xs font-black uppercase tracking-widest transition-all">Courses</Link>
-          <Link href="/trainer" className="text-slate-400 hover:text-white text-xs font-black uppercase tracking-widest transition-all">Trainer</Link>
-          <Link href="/profile" className="bg-blue-600/10 text-blue-500 border border-blue-500/20 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all flex items-center gap-2">
-            <User size={14} /> Profile
-          </Link>
+    <nav className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-20">
+          <div className="flex items-center">
+            <Link href="/" className="flex-shrink-0 flex items-center gap-3">
+              <Image 
+                src="/new-logo.png" 
+                alt="CBTC Logo" 
+                width={50} 
+                height={50} 
+                className="rounded-full"
+              />
+              <div className="flex flex-col">
+                <span className="text-2xl font-bold text-[#00629B] tracking-tight">CBTC</span>
+                <span className="text-[10px] uppercase tracking-widest text-[#E91E63] font-semibold">
+                  Du Banc Au Travail
+                </span>
+              </div>
+            </Link>
+            
+            <div className="hidden sm:ml-10 sm:flex sm:space-x-8">
+              <Link href="/admin-dashboard" className="border-transparent text-gray-500 hover:text-[#00629B] hover:border-[#00629B] inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">
+                Dashboard
+              </Link>
+              <Link href="/upload-assessment" className="border-transparent text-gray-500 hover:text-[#00629B] hover:border-[#00629B] inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">
+                Assessments
+              </Link>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <button className="bg-[#E91E63] text-white px-5 py-2 rounded-full text-sm font-bold hover:bg-[#c2185b] transition-all shadow-md hover:shadow-lg">
+              Login
+            </button>
+            <div className="h-8 w-[2px] bg-gray-100 mx-2"></div>
+            <span className="text-[12px] text-gray-400 font-medium italic">Bilingual Engine v1.2</span>
+          </div>
         </div>
-        <button className="md:hidden text-white"><Menu /></button>
       </div>
     </nav>
   );

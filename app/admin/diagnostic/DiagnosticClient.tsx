@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseDB';
 import { Activity, FileText, Clock, Languages, Search } from 'lucide-react';
 
 export default function DiagnosticClient() {
