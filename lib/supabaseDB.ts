@@ -1,21 +1,15 @@
 import { createClient } from '@supabase/supabase-js'
 
-// We define a function instead of a constant to prevent build-time crashes
-export const getSupabase = () => {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+export const createBuildSafeClient = () => {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (!supabaseUrl || !supabaseAnonKey) {
-    // During build, we return a mock or handle gracefully
-    console.warn("Supabase credentials missing - providing build-time placeholder");
-    return createClient(
-      'https://placeholder-for-build.supabase.co', 
-      'placeholder-key'
-    );
+  if (!url || !key) {
+    // Return a dummy client during build so the process doesn't crash
+    return createClient('https://placeholder.supabase.co', 'placeholder');
   }
-
-  return createClient(supabaseUrl, supabaseAnonKey);
+  return createClient(url, key);
 };
 
-// Export a lazy instance for easy use
-export const supabase = getSupabase();
+// Also keep the named export but make it a getter
+export const supabase = createBuildSafeClient();
