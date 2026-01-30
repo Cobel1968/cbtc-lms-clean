@@ -20,3 +20,11 @@ export const db = { createUser, createEnrollment, getBilingualCatalog };
 
 // 2. Default Export (The FIX for your 'Attempted import error')
 export default supabase;
+// --- Added Auth Handlers for Password Recovery ---
+export const requestPasswordReset = async (email: string) => 
+  supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + '/auth/callback?next=/login/reset-password',
+  });
+
+export const finalizePasswordReset = async (password: string) => 
+  supabase.auth.updateUser({ password });
