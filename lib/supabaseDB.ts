@@ -28,3 +28,8 @@ export const requestPasswordReset = async (email: string) =>
 
 export const finalizePasswordReset = async (password: string) => 
   supabase.auth.updateUser({ password });
+
+// Expose to window for browser diagnostics and CourseGrid access
+if (typeof window !== 'undefined') {
+  (window as any).supabase = supabase;
+}
