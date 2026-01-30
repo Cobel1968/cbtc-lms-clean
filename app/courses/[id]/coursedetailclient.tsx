@@ -1,3 +1,4 @@
+﻿import { manualMilestoneOverride } from '@/lib/instructorActions';
 'use client';
 export const dynamic = 'force-dynamic';
 // aliasing react hooks to strict snake_case
@@ -99,7 +100,7 @@ export default function coursedetailclient({ course }: course_detail_props) {
                 <div className="flex items-center justify-between text-gray-600">
                   <div className="flex items-center gap-2">
                     <icon_clock size={18} />
-                    <span>{language === 'fr' ? 'Durée' : 'Duration'}</span>
+                    <span>{language === 'fr' ? 'DurÃ©e' : 'Duration'}</span>
                   </div>
                   <span className="font-bold">{course.duration_weeks} {language === 'fr' ? 'semaines' : 'weeks'}</span>
                 </div>
@@ -128,7 +129,7 @@ export default function coursedetailclient({ course }: course_detail_props) {
               </button>
 
               <p className="text-center text-xs text-gray-400 mt-4 uppercase tracking-tighter">
-                {language === 'fr' ? 'Paiement sécurisé via Cobel BTC' : 'Secure payment via Cobel BTC'}
+                {language === 'fr' ? 'Paiement sÃ©curisÃ© via Cobel BTC' : 'Secure payment via Cobel BTC'}
               </p>
             </div>
           </div>
@@ -137,3 +138,4 @@ export default function coursedetailclient({ course }: course_detail_props) {
     </div>
   );
 }
+
