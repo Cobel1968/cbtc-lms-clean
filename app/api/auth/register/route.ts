@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-// Use the shielded named exports we created earlier
-import { supabase, createServerClient, createUser } from '@/lib/supabaseDB';
+import { supabase, createUser } from '@/lib/supabaseDB';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,7 +19,7 @@ export async function POST(req: Request) {
       );
     }
     
-    // 2. Auth Signup
+    // 2. Auth Signup in Supabase
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
@@ -33,7 +32,7 @@ export async function POST(req: Request) {
       );
     }
     
-    // 3. Profile Creation via the DB utility
+    // 3. Profile Creation in the 'users' table via the shared helper
     const { data: newUser, error: createError } = await createUser({
       id: authData.user.id,
       email: authData.user.email!,
@@ -51,6 +50,7 @@ export async function POST(req: Request) {
       );
     }
     
+    // 4. Successful Response
     return NextResponse.json({ 
       data: {
         token: authData.session?.access_token || '',
