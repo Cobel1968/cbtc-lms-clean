@@ -1,6 +1,7 @@
-export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabaseDB';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
   try {
@@ -8,84 +9,33 @@ export async function POST(req: Request) {
 
     if (!email || !password) {
       return NextResponse.json(
-        { error: 'Identifiants requis pour accÃƒÂ©der Ãƒ  CBTC' },
+        { error: 'Email et mot de passe requis' },
         { status: 400 }
       );
     }
 
+    // Use our shielded client factory
     const supabase = createServerClient();
 
-    // Authenticate with Supabase Auth
-    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (authError || !authData.user) {
-      return NextResponse.json(
-        { error: 'Email ou mot de passe incorrect' },
-        { status: 401 }
-      );
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 401 });
     }
 
-    // Get user profile from users table
-    const { data: existingUser, error: getUserError } = await supabase
-      .from('users')
-      .select('*')
-      .eq('email', email)
-      .maybeSingle();
-
-    let userProfile: any = existingUser;
-
-    if (getUserError || !existingUser) {
-      // If user doesn't exist in users table, create one from auth user
-      const payload = {
-        id: authData.user.id,
-        email: authData.user.email,
-        first_name: null,
-        last_name: null,
-        phone: null,
-        role: 'student',
-        is_active: true,
-        avatar_url: null,
-        bio: null
-      };
-
-      const { data: newUser, error: createError } = await supabase
-        .from('users')
-        .insert(payload)
-        .select('*')
-        .single();
-
-      if (createError || !newUser) {
-        return NextResponse.json(
-          { error: 'Erreur lors de la crÃƒÂ©ation du profil utilisateur' },
-          { status: 500 }
-        );
-      }
-
-      userProfile = newUser;
-    }
-
+    // Successful Login: Session is passed to the client-side cookie handler
     return NextResponse.json({
-      data: {
-        token: authData.session?.access_token || '',
-        user: {
-          id: userProfile.id,
-          email: userProfile.email,
-          role: userProfile.role,
-          first_name: userProfile.first_name,
-          last_name: userProfile.last_name,
-          created_at: userProfile.created_at
-        }
-      },
-      message: 'Connexion CBTC rÃƒÂ©ussie ! Redirection...'
+      message: 'Connexion réussie',
+      user: data.user,
+      session: data.session,
     });
-
   } catch (error: any) {
     console.error('Login error:', error);
     return NextResponse.json(
-      { error: 'Erreur de connexion' },
+      { error: 'Erreur serveur interne', details: error.message },
       { status: 500 }
     );
   }
