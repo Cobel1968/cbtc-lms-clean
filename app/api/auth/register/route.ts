@@ -1,10 +1,16 @@
-export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
-import { createServerClient }  from '@/lib/supabaseDB';
-import * as db  from '@/lib/supabaseDB';
+// Use the shielded named exports we created earlier
+import { supabase, createServerClient, createUser } from '@/lib/supabaseDB';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
   try {
+    // 1. Guard against build-time environment absence
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+    }
+
     const { email, password, first_name, last_name, phone } = await req.json();
     
     if (!email || !password) {
@@ -14,9 +20,7 @@ export async function POST(req: Request) {
       );
     }
     
-    const supabase = createServerClient();
-    
-    // Create user in Supabase Auth
+    // 2. Auth Signup
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
@@ -24,15 +28,15 @@ export async function POST(req: Request) {
     
     if (authError || !authData.user) {
       return NextResponse.json(
-        { error: authError?.message || 'Erreur lors de la crÃ©ation du compte' }, 
+        { error: authError?.message || 'Erreur lors de la création du compte' }, 
         { status: 400 }
       );
     }
     
-    // Create user profile in users table
-    const { data: newUser, error: createError } = await db.createUser({
-      id: authData.user?.id,
-      email: authData.user?.email!,
+    // 3. Profile Creation via the DB utility
+    const { data: newUser, error: createError } = await createUser({
+      id: authData.user.id,
+      email: authData.user.email!,
       first_name: first_name || null,
       last_name: last_name || null,
       phone: phone || null,
@@ -42,7 +46,7 @@ export async function POST(req: Request) {
     
     if (createError || !newUser) {
       return NextResponse.json(
-        { error: 'Erreur lors de la crÃ©ation du profil utilisateur' },
+        { error: 'Erreur lors de la création du profil utilisateur' },
         { status: 500 }
       );
     }
@@ -60,7 +64,7 @@ export async function POST(req: Request) {
           created_at: newUser.created_at,
         },
       },
-      message: 'Compte crÃ©Ã© avec succÃ¨s !',
+      message: 'Compte créé avec succès !',
     });
     
   } catch (error: any) {
