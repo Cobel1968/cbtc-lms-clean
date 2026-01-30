@@ -33,3 +33,8 @@ Thumbs.db
 .env*.local
 
 backup_*
+
+# Ghost/Backup Files
+*.bak*
+app/**/*.bak*
+*.2026*
