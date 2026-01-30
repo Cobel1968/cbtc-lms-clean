@@ -7,7 +7,8 @@ export async function middleware(req: NextRequest) {
   const supabase = createMiddlewareClient({ req, res })
   const { data: { session } } = await supabase.auth.getSession()
 
-  // Protect Instructor Routes
+  const trainerRoles = ['instructor', 'trainer', 'lead_trainer', 'admin', 'super_admin'];
+
   if (req.nextUrl.pathname.startsWith('/instructor')) {
     if (!session) return NextResponse.redirect(new URL('/login', req.url))
     
@@ -17,7 +18,7 @@ export async function middleware(req: NextRequest) {
       .eq('id', session.user.id)
       .single()
 
-    if (profile?.role !== 'instructor' && profile?.role !== 'admin') {
+    if (!trainerRoles.includes(profile?.role)) {
       return NextResponse.redirect(new URL('/unauthorized', req.url))
     }
   }

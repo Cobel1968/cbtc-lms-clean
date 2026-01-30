@@ -1,23 +1,23 @@
-'use client';
+﻿'use client';
 export const dynamic = 'force-dynamic';
 // lib/coursesdata.ts
 
 export const coursesData = [
   {
     id: 'hospitality-01',
-    name: { en: 'Vocational Hospitality', fr: 'Hôtellerie Professionnelle' },
+    name: { en: 'Vocational Hospitality', fr: 'HÃ´tellerie Professionnelle' },
     description: { 
       en: 'Professional communication for the tourism industry.', 
       fr: 'Communication professionnelle pour l\'industrie du tourisme.' 
     },
     price_xof: 150000,
     duration_weeks: 12,
-    level: { label: { en: 'Beginner', fr: 'Débutant' } },
+    level: { label: { en: 'Beginner', fr: 'DÃ©butant' } },
     category: { label: { en: 'Service', fr: 'Service' } },
     curriculum: [
       { 
         title: { en: 'Guest Relations', fr: 'Relations Clients' },
-        description: { en: 'Handling check-ins and check-outs.', fr: 'Gestion des arrivées et départs.' }
+        description: { en: 'Handling check-ins and check-outs.', fr: 'Gestion des arrivÃ©es et dÃ©parts.' }
       }
     ]
   },
@@ -35,3 +35,4 @@ export const sortCourses = (courses: any[], option: string) => {
   if (option === 'popularity') return [...courses].sort((a, b) => (b.enrollmentCount || 0) - (a.enrollmentCount || 0));
   return courses;
 }
+
