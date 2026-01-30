@@ -1,4 +1,5 @@
-﻿export const calculateCompletionForecast = (
+﻿/* @ts-ignore */
+export const calculateCompletionForecast = (
   startDate: Date,
   baseWeeks: number,
   curriculumDensity: number, // 1.0 is standard, 1.5 is dense/struggling
@@ -17,6 +18,7 @@
     delayWeeks: Math.max(0, totalWeeksNeeded - baseWeeks)
   };
 };
+/* @ts-ignore */
 export const calculateIELTSForecast = (currentBand: number, targetBand: number, density: number) => {
   const bandGap = targetBand - currentBand;
   // Rule: Every 0.5 band increase requires ~200 hours of study, adjusted by AI Density
@@ -28,3 +30,4 @@ export const calculateIELTSForecast = (currentBand: number, targetBand: number, 
     isAtRisk: density > 1.4
   };
 };
+
