@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabaseClient';
+import { createServerClient } from '@/lib/supabaseProvider';
 
 export async function POST(req: Request) {
   try {
@@ -8,7 +8,7 @@ export async function POST(req: Request) {
 
     if (!email || !password) {
       return NextResponse.json(
-        { error: 'Identifiants requis pour accÃ©der Ã  CBTC' },
+        { error: 'Identifiants requis pour accÃƒÂ©der Ãƒ  CBTC' },
         { status: 400 }
       );
     }
@@ -59,7 +59,7 @@ export async function POST(req: Request) {
 
       if (createError || !newUser) {
         return NextResponse.json(
-          { error: 'Erreur lors de la crÃ©ation du profil utilisateur' },
+          { error: 'Erreur lors de la crÃƒÂ©ation du profil utilisateur' },
           { status: 500 }
         );
       }
@@ -79,7 +79,7 @@ export async function POST(req: Request) {
           created_at: userProfile.created_at
         }
       },
-      message: 'Connexion CBTC rÃ©ussie ! Redirection...'
+      message: 'Connexion CBTC rÃƒÂ©ussie ! Redirection...'
     });
 
   } catch (error: any) {

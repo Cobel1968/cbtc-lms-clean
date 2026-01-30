@@ -1,7 +1,7 @@
 'use client';
 export const dynamic = 'force-dynamic';
 import React, { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabaseProvider';
 
 export const BilingualDictionaryView = () => {
   const [terms, setTerms] = useState<any[]>([]);

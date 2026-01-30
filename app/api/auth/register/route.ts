@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
-import { createServerClient }  from '@/lib/supabaseClient';
-import * as db  from '@/lib/supabaseClient';
+import { createServerClient }  from '@/lib/supabaseProvider';
+import * as db  from '@/lib/supabaseProvider';
 
 export async function POST(req: Request) {
   try {
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     
     if (authError || !authData.user) {
       return NextResponse.json(
-        { error: authError?.message || 'Erreur lors de la création du compte' }, 
+        { error: authError?.message || 'Erreur lors de la crÃ©ation du compte' }, 
         { status: 400 }
       );
     }
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
     
     if (createError || !newUser) {
       return NextResponse.json(
-        { error: 'Erreur lors de la création du profil utilisateur' },
+        { error: 'Erreur lors de la crÃ©ation du profil utilisateur' },
         { status: 500 }
       );
     }
@@ -60,7 +60,7 @@ export async function POST(req: Request) {
           created_at: newUser.created_at,
         },
       },
-      message: 'Compte créé avec succès !',
+      message: 'Compte crÃ©Ã© avec succÃ¨s !',
     });
     
   } catch (error: any) {

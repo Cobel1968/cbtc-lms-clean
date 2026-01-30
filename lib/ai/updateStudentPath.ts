@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabaseProvider';
 
 /**
  * COBEL AI ENGINE - Temporal Optimization
@@ -41,10 +41,10 @@ export async function updateStudentPath(userId: string, extractedTerms: any[]) {
 
     if (updateError) throw updateError;
 
-    console.log(`🚀 Temporal Optimization Applied: New timeframe is ${newTimeframe} days.`);
+    console.log(`ðŸš€ Temporal Optimization Applied: New timeframe is ${newTimeframe} days.`);
     return { success: true, newTimeframe };
   } catch (err) {
-    console.error("❌ Optimization Engine Error:", err);
+    console.error("âŒ Optimization Engine Error:", err);
     return { success: false };
   }
 }

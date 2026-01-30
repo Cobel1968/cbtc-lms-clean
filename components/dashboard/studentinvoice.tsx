@@ -1,7 +1,7 @@
 'use client';
 export const dynamic = 'force-dynamic';
 import React, { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient'; // Ensure this path is also lowercase
+import { supabase } from '@/lib/supabaseProvider'; // Ensure this path is also lowercase
 
 export const StudentInvoice = ({ enrollmentId }: { enrollmentId: string }) => {
   const [data, setData] = useState<any>(null);

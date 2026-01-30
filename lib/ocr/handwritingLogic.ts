@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabaseProvider';
 
 const VOCATIONAL_DICTIONARY: Record<string, { en: string; cat: string; weight: number }> = {
     // Quality & Finance

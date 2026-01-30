@@ -4,7 +4,7 @@
  * Filename: TemporalOptimization.ts
  */
 
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabaseProvider';
 
 export const calculate_optimized_timeframe = async (user_id: string, course_id: string) => {
   // 1. Fetch the student's current fluency and the course's base duration

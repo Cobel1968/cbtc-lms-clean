@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import * as db from '@/lib/supabaseClient';
+import * as db from '@/lib/supabaseProvider';
 import { createClient } from '@supabase/supabase-js';
 
 // strictly lowercase client initialization

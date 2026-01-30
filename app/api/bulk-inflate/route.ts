@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabaseProvider';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
@@ -16,7 +16,7 @@ export async function GET() {
         const questions = Array.from({ length: count }).map((_, i) => ({
             id: crypto.randomUUID(),
             text_en: `Technical Assessment: ${mod.title_en} - Item ${i + 1}`,
-            text_fr: `Évaluation technique: ${mod.title_fr} - Élément ${i + 1}`,
+            text_fr: `Ã‰valuation technique: ${mod.title_fr} - Ã‰lÃ©ment ${i + 1}`,
             technical_term: `${mod.title_en.split(' ')[0]}_Term_${i}`,
             difficulty: 0.7
         }));

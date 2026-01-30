@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/lib/supabaseProvider";
 
 // Retrieve the API URL from your environment
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.cobelcenter.com";

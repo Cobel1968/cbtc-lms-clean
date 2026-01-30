@@ -1,73 +1,30 @@
-export const dynamic = 'force-dynamic';
+import { supabase } from '@/lib/supabaseProvider';
 import { NextResponse } from 'next/server';
-import { createServerClient }  from '@/lib/supabaseClient';
-import * as db  from '@/lib/supabaseClient';
 
-export async function POST(req: Request) {
-  try {
-    const { email, password, first_name, last_name, phone } = await req.json();
-    
-    if (!email || !password) {
-      return NextResponse.json(
-        { error: 'Email et mot de passe sont requis' }, 
-        { status: 400 }
-      );
-    }
-    
-    const supabase = createServerClient();
-    
-    // Create user in Supabase Auth
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email,
-      password,
+export async function GET() {
+    const { data: modules } = await supabase.from('modules').select('id, title_en, title_fr');
+    if (!modules) return NextResponse.json({ error: "No modules found" });
+
+    const totalTarget = 191;
+    const perModule = Math.floor(totalTarget / modules.length);
+    let currentTotal = 0;
+
+    const updates = modules.map((mod, index) => {
+        const count = (index === modules.length - 1) ? (totalTarget - currentTotal) : perModule;
+        currentTotal += count;
+
+        const questions = Array.from({ length: count }).map((_, i) => ({
+            id: crypto.randomUUID(),
+            text_en: `Technical Assessment: ${mod.title_en} - Item ${i + 1}`,
+            text_fr: `Ã‰valuation technique: ${mod.title_fr} - Ã‰lÃ©ment ${i + 1}`,
+            technical_term: `${mod.title_en.split(' ')[0]}_Term_${i}`,
+            difficulty: 0.7
+        }));
+
+        // Stringify the JSON so the 'category' TEXT column accepts it
+        return supabase.from('modules').update({ category: JSON.stringify(questions) }).eq('id', mod.id);
     });
-    
-    if (authError || !authData.user) {
-      return NextResponse.json(
-        { error: authError?.message || 'Erreur lors de la création du compte' }, 
-        { status: 400 }
-      );
-    }
-    
-    // Create user profile in users table
-    const { data: newUser, error: createError } = await db.createUser({
-      id: authData.user?.id,
-      email: authData.user?.email!,
-      first_name: first_name || null,
-      last_name: last_name || null,
-      phone: phone || null,
-      role: 'student',
-      is_active: true,
-    });
-    
-    if (createError || !newUser) {
-      return NextResponse.json(
-        { error: 'Erreur lors de la création du profil utilisateur' },
-        { status: 500 }
-      );
-    }
-    
-    return NextResponse.json({ 
-      data: {
-        token: authData.session?.access_token || '',
-        user: {
-          id: newUser.id,
-          email: newUser.email,
-          role: newUser.role,
-          first_name: newUser.first_name,
-          last_name: newUser.last_name,
-          phone: newUser.phone,
-          created_at: newUser.created_at,
-        },
-      },
-      message: 'Compte créé avec succès !',
-    });
-    
-  } catch (error: any) {
-    console.error('Registration error:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erreur lors de l\'inscription' }, 
-      { status: 500 }
-    );
-  }
+
+    await Promise.all(updates);
+    return NextResponse.json({ message: "Category Injection Complete", total: currentTotal });
 }
