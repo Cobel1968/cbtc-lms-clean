@@ -1,44 +1,84 @@
 'use client';
 export const dynamic = 'force-dynamic';
-import React, { useState } from 'react';
+
+import { useState } from 'react';
 import { supabase } from '@/lib/supabaseDB';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function LoginPage() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState(null);
-    const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) setError(error.message);
-        else router.push('/diagnostic'); // Direct entry to the pedagogical engine
-    };
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-    return (
-        <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc' }}>
-            <form onSubmit={handleLogin} style={{ background: '#fff', padding: '40px', borderRadius: '15px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', width: '100%', maxWidth: '400px' }}>
-                <h1 style={{ color: '#1e40af', marginBottom: '10px', textAlign: 'center' }}>Cobel LMS</h1>
-                <p style={{ color: '#64748b', textAlign: 'center', marginBottom: '30px' }}>Centre de Formation Business</p>
-                
-                {error && <p style={{ color: '#ef4444', fontSize: '14px', textAlign: 'center' }}>{error}</p>}
-                
-                <div style={{ marginBottom: '15px' }}>
-                    <label style={{ display: 'block', marginBottom: '5px' }}>Email</label>
-                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }} required />
-                </div>
-                
-                <div style={{ marginBottom: '25px' }}>
-                    <label style={{ display: 'block', marginBottom: '5px' }}>Mot de passe</label>
-                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }} required />
-                </div>
-                
-                <button type="submit" style={{ width: '100%', padding: '12px', background: '#1e40af', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
-                    Se Connecter
-                </button>
-            </form>
+    try {
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError) throw authError;
+
+      if (data.user) {
+        router.push('/dashboard');
+        router.refresh();
+      }
+    } catch (err: any) {
+      setError(err.message || 'Echec de la connexion');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
+      <div className="p-8 bg-white shadow-xl rounded-2xl w-full max-w-md border border-gray-100">
+        <h1 className="text-2xl font-bold mb-6 text-gray-900 text-center">Connexion Cobel LMS</h1>
+        
+        <form onSubmit={handleLogin} className="space-y-4">
+          <input
+            type="email"
+            placeholder="Email"
+            className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Mot de passe"
+            className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50"
+          >
+            {loading ? 'Chargement...' : 'Se connecter'}
+          </button>
+        </form>
+
+        {error && <p className="mt-4 text-center text-sm text-red-500">{error}</p>}
+
+        <div className="mt-6 text-center space-y-2">
+          <p className="text-sm text-gray-600">
+            Nouveau ? <Link href="/register" className="text-blue-600 hover:underline">Créer un compte</Link>
+          </p>
+          <Link href="/forgot-password" size="sm" className="text-xs text-gray-400 hover:text-blue-500">
+            Mot de passe oublié ?
+          </Link>
         </div>
-    );
+      </div>
+    </div>
+  );
 }
