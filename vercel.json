@@ -1,5 +1,1 @@
-{
-  "version": 2,
-  "cleanUrls": true,
-  "framework": "nextjs"
-}
+{"version": 2, "cleanUrls": true, "framework": "nextjs"}
