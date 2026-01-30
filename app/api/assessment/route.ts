@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 // D:\CBTC-FINAL\cbtc-lms\app\api\assessment\route.ts
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';

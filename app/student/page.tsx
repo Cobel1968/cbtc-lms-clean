@@ -35,7 +35,7 @@ export default function StudentPortal() {
       <header className="max-w-6xl mx-auto mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight uppercase italic">
-            jean&apos;s portal
+            jean's portal
           </h1>
           <div className="flex items-center gap-2 mt-1">
             <Sparkles size={16} className="text-indigo-600 animate-pulse" />

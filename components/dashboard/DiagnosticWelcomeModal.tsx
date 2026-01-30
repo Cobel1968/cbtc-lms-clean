@@ -45,7 +45,7 @@ export default function DiagnosticWelcomeModal({
 
         <div className="bg-slate-50 p-4 rounded-2xl mb-6 border border-slate-100">
           <p className="text-xs text-slate-500 font-medium italic">
-            &quot;Solving knowledge gaps and bilingual friction in vocational training.&quot;
+            "Solving knowledge gaps and bilingual friction in vocational training."
           </p>
         </div>
 
@@ -61,7 +61,7 @@ export default function DiagnosticWelcomeModal({
             onClick={onClose} 
             className="w-full py-2 text-slate-400 hover:text-slate-600 font-semibold text-sm transition-colors"
           >
-            I&apos;ll do this later
+            I'll do this later
           </button>
         </div>
       </div>

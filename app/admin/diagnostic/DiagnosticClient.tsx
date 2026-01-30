@@ -79,9 +79,9 @@ export default function DiagnosticClient() {
                       <h4 className="text-[10px] uppercase font-black text-gray-400 mb-3 flex items-center gap-1">
                         <Search size={12} /> Raw OCR Ingestion
                       </h4>
-                      {/* FIXED: Using &quot; to prevent build errors */}
+                      {/* FIXED: Using " to prevent build errors */}
                       <p className="text-sm text-gray-600 italic leading-relaxed">
-                        &quot;{item.raw_ocr_text || 'No text extracted'}&quot;
+                        "{item.raw_ocr_text || 'No text extracted'}"
                       </p>
                     </div>
 

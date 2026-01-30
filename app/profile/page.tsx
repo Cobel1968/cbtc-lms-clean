@@ -1,6 +1,6 @@
-&apos;use client&apos;;
-import React, { useState, useEffect } from &apos;react&apos;;
-import { supabase } from &apos;@/lib/supabaseDB&apos;;
+'use client';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabaseDB';
 
 export default function MaxOccupancyDossier() {
     const [data, setData] = useState(null);
@@ -10,17 +10,17 @@ export default function MaxOccupancyDossier() {
         async function loadProfile() {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) { setLoading(false); return; }
-            const { data: progress } = await supabase.from(&apos;user_progress&apos;).select(&apos;*&apos;).eq(&apos;user_id&apos;, user.id).order(&apos;updated_at&apos;, { ascending: false }).limit(1);
+            const { data: progress } = await supabase.from('user_progress').select('*').eq('user_id', user.id).order('updated_at', { ascending: false }).limit(1);
             if (progress?.[0]) {
                 setData({ 
                     ...progress[0], 
                     savings: progress[0].last_score >= 15 ? 15 : 0,
                     verifyURL: `http://localhost:3001/verify/${progress[0].id}`,
                     fullTranscript: [
-                        { m: &quot;Analyse de Maintenance PrÃ©ventive&quot;, s: &quot;98% (OCR Validated)&quot;, n: &quot;Excellent bilingual technical command.&quot; },
-                        { m: &quot;SÃ©curitÃ© des SystÃ¨mes Industriels&quot;, s: &quot;OptimisÃ© (AI Path)&quot;, n: &quot;Mastery demonstrated in diagnostic phase.&quot; },
-                        { m: &quot;Gestion d&apos;Atelier AutomatisÃ©&quot;, s: &quot;85% (Digital Eval)&quot;, n: &quot;Strong command of technical French.&quot; },
-                        { m: &quot;Rapport de ConformitÃ© Technique&quot;, s: &quot;92% (Handwriting)&quot;, n: &quot;Processed via Analog-to-Digital Bridge.&quot; }
+                        { m: "Analyse de Maintenance PrÃƒÂ©ventive", s: "98% (OCR Validated)", n: "Excellent bilingual technical command." },
+                        { m: "SÃƒÂ©curitÃƒÂ© des SystÃƒÂ¨mes Industriels", s: "OptimisÃƒÂ© (AI Path)", n: "Mastery demonstrated in diagnostic phase." },
+                        { m: "Gestion d'Atelier AutomatisÃƒÂ©", s: "85% (Digital Eval)", n: "Strong command of technical French." },
+                        { m: "Rapport de ConformitÃƒÂ© Technique", s: "92% (Handwriting)", n: "Processed via Analog-to-Digital Bridge." }
                     ]
                 });
             }
@@ -29,10 +29,10 @@ export default function MaxOccupancyDossier() {
         loadProfile();
     }, []);
 
-    if (loading) return <div style={{padding:&apos;50px&apos;, textAlign:&apos;center&apos;}}>Optimisation du rendu final...</div>;
+    if (loading) return <div style={{padding:'50px', textAlign:'center'}}>Optimisation du rendu final...</div>;
 
     return (
-        <div style={{ minHeight: &apos;100vh&apos;, background: &apos;#f1f5f9&apos;, fontFamily: &apos;serif&apos; }}>
+        <div style={{ minHeight: '100vh', background: '#f1f5f9', fontFamily: 'serif' }}>
             <style>{`
                 @media print {
                     .no-print { display: none !important; }
@@ -64,73 +64,73 @@ export default function MaxOccupancyDossier() {
                 .transcript-page { display: none; background: white; padding: 40px; }
             `}</style>
 
-            <header className=&quot;no-print&quot; style={{ padding: &apos;20px&apos;, display: &apos;flex&apos;, justifyContent: &apos;space-between&apos;, background: &apos;#fff&apos;, borderBottom: &apos;1px solid #ddd&apos;, fontFamily: &apos;sans-serif&apos; }}>
-                <span style={{ fontWeight: &apos;bold&apos;, color: &apos;#1e40af&apos; }}>COBEL BTC - FINAL BUILD</span>
-                <button onClick={() => window.print()} style={{ padding: &apos;10px 20px&apos;, background: &apos;#1e40af&apos;, color: &apos;#fff&apos;, border: &apos;none&apos;, borderRadius: &apos;5px&apos;, cursor: &apos;pointer&apos;, fontWeight: &apos;bold&apos; }}>
+            <header className="no-print" style={{ padding: '20px', display: 'flex', justifyContent: 'space-between', background: '#fff', borderBottom: '1px solid #ddd', fontFamily: 'sans-serif' }}>
+                <span style={{ fontWeight: 'bold', color: '#1e40af' }}>COBEL BTC - FINAL BUILD</span>
+                <button onClick={() => window.print()} style={{ padding: '10px 20px', background: '#1e40af', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>
                      Imprimer Dossier (Format Max)
                 </button>
             </header>
 
             {/* PAGE 1: THE CERTIFICATE (LANDSCAPE MAX OCCUPANCY) */}
-            <div className=&quot;cert-page&quot;>
+            <div className="cert-page">
                 <div style={{ 
-                    border: &apos;15px double #1e40af&apos;, 
-                    padding: &apos;60px&apos;, 
-                    textAlign: &apos;center&apos;, 
-                    width: &apos;100%&apos;, 
-                    height: &apos;100%&apos;, 
-                    display: &apos;flex&apos;, 
-                    flexDirection: &apos;column&apos;, 
-                    justifyContent: &apos;center&apos;,
-                    boxSizing: &apos;border-box&apos; 
+                    border: '15px double #1e40af', 
+                    padding: '60px', 
+                    textAlign: 'center', 
+                    width: '100%', 
+                    height: '100%', 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    justifyContent: 'center',
+                    boxSizing: 'border-box' 
                 }}>
                     {/* PROPORTIONAL LOGO (Increased to 90px for full frame) */}
-                    <img src=&quot;/new-logo.png&quot; alt=&quot;Logo&quot; style={{ height: &apos;90px&apos;, marginBottom: &apos;20px&apos;, objectFit: &apos;contain&apos; }} />
+                    <img src="/new-logo.png" alt="Logo" style={{ height: '90px', marginBottom: '20px', objectFit: 'contain' }} />
                     
-                    <div style={{ color: &apos;#1e40af&apos;, fontSize: &apos;14px&apos;, letterSpacing: &apos;8px&apos;, fontWeight: &apos;bold&apos; }}>CERTIFICATION OFFICIELLE DE MAÃŽTRISE</div>
-                    <h1 style={{ fontSize: &apos;56px&apos;, margin: &apos;20px 0&apos;, color: &apos;#0f172a&apos; }}>Attestation de RÃ©ussite</h1>
-                    <h2 style={{ color: &apos;#1e40af&apos;, fontSize: &apos;36px&apos;, fontStyle: &apos;italic&apos; }}>{data?.course_id}</h2>
+                    <div style={{ color: '#1e40af', fontSize: '14px', letterSpacing: '8px', fontWeight: 'bold' }}>CERTIFICATION OFFICIELLE DE MAÃƒÅ½TRISE</div>
+                    <h1 style={{ fontSize: '56px', margin: '20px 0', color: '#0f172a' }}>Attestation de RÃƒÂ©ussite</h1>
+                    <h2 style={{ color: '#1e40af', fontSize: '36px', fontStyle: 'italic' }}>{data?.course_id}</h2>
                     
-                    <p style={{ marginTop: &apos;40px&apos;, fontSize: &apos;22px&apos; }}>Score Global : <strong>{data?.last_score}/20</strong></p>
+                    <p style={{ marginTop: '40px', fontSize: '22px' }}>Score Global : <strong>{data?.last_score}/20</strong></p>
 
-                    <div style={{ marginTop: &apos;80px&apos;, display: &apos;flex&apos;, justifyContent: &apos;space-between&apos;, alignItems: &apos;center&apos;, padding: &apos;0 40px&apos; }}>
-                        <div style={{ width: &apos;280px&apos;, borderTop: &apos;2px solid #000&apos;, paddingTop: &apos;15px&apos;, fontSize: &apos;14px&apos;, fontWeight: &apos;bold&apos; }}>Signature Mentor</div>
+                    <div style={{ marginTop: '80px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 40px' }}>
+                        <div style={{ width: '280px', borderTop: '2px solid #000', paddingTop: '15px', fontSize: '14px', fontWeight: 'bold' }}>Signature Mentor</div>
                         
                         {/* PROPORTIONAL QR (Increased to 90px to match logo) */}
-                        <div style={{ textAlign: &apos;center&apos; }}>
+                        <div style={{ textAlign: 'center' }}>
                             <img 
-                                src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(data?.verifyURL || &apos;&apos;)}`} 
-                                style={{ height: &apos;90px&apos;, width: &apos;90px&apos;, border: &apos;1px solid #1e40af&apos;, padding: &apos;5px&apos; }} 
+                                src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(data?.verifyURL || '')}`} 
+                                style={{ height: '90px', width: '90px', border: '1px solid #1e40af', padding: '5px' }} 
                             />
-                            <p style={{ fontSize: &apos;8px&apos;, marginTop: &apos;5px&apos;, color: &apos;#64748b&apos; }}>VERIFICATION AI ENGINE</p>
+                            <p style={{ fontSize: '8px', marginTop: '5px', color: '#64748b' }}>VERIFICATION AI ENGINE</p>
                         </div>
 
-                        <div style={{ width: &apos;280px&apos;, borderTop: &apos;2px solid #000&apos;, paddingTop: &apos;15px&apos;, fontSize: &apos;14px&apos;, fontWeight: &apos;bold&apos; }}>Direction Cobel BTC</div>
+                        <div style={{ width: '280px', borderTop: '2px solid #000', paddingTop: '15px', fontSize: '14px', fontWeight: 'bold' }}>Direction Cobel BTC</div>
                     </div>
                 </div>
             </div>
 
             {/* PAGE 2: THE TRANSCRIPT (PORTRAIT) */}
-            <div className=&quot;transcript-page&quot; style={{ fontFamily: &apos;sans-serif&apos; }}>
-                <div style={{ borderBottom: &apos;3px solid #1e40af&apos;, paddingBottom: &apos;10px&apos;, display: &apos;flex&apos;, justifyContent: &apos;space-between&apos;, alignItems: &apos;center&apos; }}>
-                    <h2 style={{ margin: 0, color: &apos;#1e40af&apos; }}>Transcript de CompÃ©tences Bilingues</h2>
-                    <span style={{ fontSize: &apos;12px&apos;, background: &apos;#f1f5f9&apos;, padding: &apos;5px 10px&apos;, borderRadius: &apos;4px&apos; }}>VERIFIED PROVENANCE</span>
+            <div className="transcript-page" style={{ fontFamily: 'sans-serif' }}>
+                <div style={{ borderBottom: '3px solid #1e40af', paddingBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <h2 style={{ margin: 0, color: '#1e40af' }}>Transcript de CompÃƒÂ©tences Bilingues</h2>
+                    <span style={{ fontSize: '12px', background: '#f1f5f9', padding: '5px 10px', borderRadius: '4px' }}>VERIFIED PROVENANCE</span>
                 </div>
                 
-                <table style={{ width: &apos;100%&apos;, marginTop: &apos;50px&apos;, borderCollapse: &apos;collapse&apos; }}>
+                <table style={{ width: '100%', marginTop: '50px', borderCollapse: 'collapse' }}>
                     <thead>
-                        <tr style={{ background: &apos;#1e40af&apos;, color: &apos;white&apos;, textAlign: &apos;left&apos; }}>
-                            <th style={{ padding: &apos;15px&apos;, border: &apos;1px solid #cbd5e1&apos; }}>Module Technique</th>
-                            <th style={{ padding: &apos;15px&apos;, border: &apos;1px solid #cbd5e1&apos; }}>Validation</th>
-                            <th style={{ padding: &apos;15px&apos;, border: &apos;1px solid #cbd5e1&apos; }}>Notes d&apos;Innovation</th>
+                        <tr style={{ background: '#1e40af', color: 'white', textAlign: 'left' }}>
+                            <th style={{ padding: '15px', border: '1px solid #cbd5e1' }}>Module Technique</th>
+                            <th style={{ padding: '15px', border: '1px solid #cbd5e1' }}>Validation</th>
+                            <th style={{ padding: '15px', border: '1px solid #cbd5e1' }}>Notes d'Innovation</th>
                         </tr>
                     </thead>
                     <tbody>
                         {data?.fullTranscript.map((t, i) => (
                             <tr key={i}>
-                                <td style={{ padding: &apos;15px&apos;, border: &apos;1px solid #cbd5e1&apos; }}>{t.m}</td>
-                                <td style={{ padding: &apos;15px&apos;, border: &apos;1px solid #cbd5e1&apos;, fontWeight: &apos;bold&apos;, color: &apos;#16a34a&apos; }}>{t.s}</td>
-                                <td style={{ padding: &apos;15px&apos;, border: &apos;1px solid #cbd5e1&apos;, fontSize: &apos;12px&apos; }}>{t.n}</td>
+                                <td style={{ padding: '15px', border: '1px solid #cbd5e1' }}>{t.m}</td>
+                                <td style={{ padding: '15px', border: '1px solid #cbd5e1', fontWeight: 'bold', color: '#16a34a' }}>{t.s}</td>
+                                <td style={{ padding: '15px', border: '1px solid #cbd5e1', fontSize: '12px' }}>{t.n}</td>
                             </tr>
                         ))}
                     </tbody>
