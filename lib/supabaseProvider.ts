@@ -21,7 +21,7 @@ export const createServerClient = (cookies: any) => {
   return {
     auth: {},
     from: (table: string) => supabase.from(table),
-    // This solves the 'reading get' error
-    get: (name: string) => cookies?.get ? cookies.get(name) : null
+    // This solves the 'reading get' error by checking if cookies object exists
+    get: (name: string) => (cookies && typeof cookies.get === 'function') ? cookies.get(name) : null
   };
 };
