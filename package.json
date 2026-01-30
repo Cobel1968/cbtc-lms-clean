@@ -6,7 +6,7 @@
     "dev": "next dev",
     "check": "node scripts/check-case.js",
     "fix-case": "node scripts/fix-filenames.js",
-    "build": "NODE_OPTIONS='--max-old-space-size=4096' next build",
+    "build": "cross-env NODE_OPTIONS='--max-old-space-size=4096' next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -40,6 +40,7 @@
     "@types/react": "^18.2.61",
     "@types/react-dom": "^18.2.19",
     "@types/react-signature-canvas": "^1.0.5",
+    "cross-env": "^7.0.3",
     "eslint": "^8.57.1",
     "eslint-config-next": "14.2.35",
     "postcss": "^8.4.35",
@@ -49,18 +50,10 @@
   },
   "description": "**Author:** Abel C. \r **Innovation Type:** Computer-Implemented Pedagogical Logic / Adaptive Learning Algorithm \r **Market Focus:** Vocational Training (Hospitality/Trade) - Côte d'Ivoire (XOF)",
   "main": "doctor.js",
-  "directories": {
-    "lib": "lib"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Cobel1968/cbtc-lms-clean.git"
   },
-  "keywords": [],
   "author": "Abel C.",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Cobel1968/cbtc-lms-clean/issues"
-  },
-  "homepage": "https://github.com/Cobel1968/cbtc-lms-clean#readme"
+  "license": "ISC"
 }
