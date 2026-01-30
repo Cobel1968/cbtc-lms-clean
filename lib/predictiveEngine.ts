@@ -17,3 +17,14 @@
     delayWeeks: Math.max(0, totalWeeksNeeded - baseWeeks)
   };
 };
+export const calculateIELTSForecast = (currentBand: number, targetBand: number, density: number) => {
+  const bandGap = targetBand - currentBand;
+  // Rule: Every 0.5 band increase requires ~200 hours of study, adjusted by AI Density
+  const baseHours = (bandGap / 0.5) * 200;
+  const adjustedHours = baseHours * density;
+  
+  return {
+    estimatedHours: Math.round(adjustedHours),
+    isAtRisk: density > 1.4
+  };
+};
