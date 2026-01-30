@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabaseProvider'; // Using the lowercase path we stabilized
+import { createClient } from '@/lib/supabaseDB'; // Using the lowercase path we stabilized
 import { 
   process_handwritten_assessment, 
   update_curriculum_from_handwriting 

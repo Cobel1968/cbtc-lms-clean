@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseProvider';
+import { supabase } from '@/lib/supabaseDB';
 
 export default function IntegrityAudit() {
     const [records, setRecords] = useState([]);

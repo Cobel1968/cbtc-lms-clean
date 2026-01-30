@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabaseProvider';
+import { supabase } from '@/lib/supabaseDB';
 
 export default function StudentHome() {
     const [profile, setProfile] = useState(null);

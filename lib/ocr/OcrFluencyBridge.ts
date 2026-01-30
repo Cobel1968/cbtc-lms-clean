@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { supabase } from '@/lib/supabaseProvider';
+import { supabase } from '@/lib/supabaseDB';
 
 export interface HandwritingAnalysisResult {
   confidence: number;

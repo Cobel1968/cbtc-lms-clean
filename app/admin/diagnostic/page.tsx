@@ -1,7 +1,7 @@
 'use client';
 export const dynamic = 'force-dynamic';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseProvider';
+import { supabase } from '@/lib/supabaseDB';
 import { Activity, FileText, Clock, Languages, Search , AlertCircle} from 'lucide-react';
 
 export default function DiagnosticTool() {

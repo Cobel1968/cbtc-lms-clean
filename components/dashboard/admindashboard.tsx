@@ -1,7 +1,7 @@
 'use client';
 export const dynamic = 'force-dynamic';
 import React, { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseProvider';
+import { supabase } from '@/lib/supabaseDB';
 
 export const AdminDashboard = () => {
   const [stats, setStats] = useState({ total_revenue: 0, active_students: 0, pending_payments: 0 });

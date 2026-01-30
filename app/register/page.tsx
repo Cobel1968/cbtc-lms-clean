@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Zap, User, Mail, Lock, ShieldCheck, Loader2 , AlertCircle} from 'lucide-react';
 // âœ… Corrected: Importing the named export 'supabase' from the client library
-import { supabase } from '@/lib/supabaseProvider';
+import { supabase } from '@/lib/supabaseDB';
 
 export default function RegisterPage() {
   const router = useRouter();

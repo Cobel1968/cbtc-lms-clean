@@ -1,7 +1,7 @@
 'use client';
 export const dynamic = 'force-dynamic';
 import React, { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseProvider';
+import { supabase } from '@/lib/supabaseDB';
 
 export const MilestoneForecast = ({ user_id }: { user_id: string }) => {
   const [prediction, setPrediction] = useState<{weeks: number, date: string} | null>(null);

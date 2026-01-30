@@ -6,7 +6,6 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 export default supabase
 
-// Build-safe database methods
 export const db = {
   createUser: async (email: string, role: string) => {
     return await supabase.from('users').insert({ email, role });
@@ -16,12 +15,10 @@ export const db = {
   }
 };
 
-// Safety wrapper for Server Client to prevent 'undefined get' errors
 export const createServerClient = (cookies: any) => {
   return {
     auth: {},
     from: (table: string) => supabase.from(table),
-    // This solves the 'reading get' error by checking if cookies object exists
     get: (name: string) => (cookies && typeof cookies.get === 'function') ? cookies.get(name) : null
   };
 };

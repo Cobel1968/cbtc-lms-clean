@@ -1,7 +1,7 @@
 'use client';
 export const dynamic = 'force-dynamic';
 import React, { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseProvider';
+import { supabase } from '@/lib/supabaseDB';
 
 export const TrainerView = () => {
   const [pendingEnrollments, setPendingEnrollments] = useState<any[]>([]);

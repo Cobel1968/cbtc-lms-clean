@@ -2,7 +2,7 @@
 export const dynamic = 'force-dynamic';
 import React, { useEffect, useState } from 'react';
 // Corrected: lowercase filename, no hyphen
-import { getBilingualCatalog } from '@/lib/supabaseProvider'; 
+import { getBilingualCatalog } from '@/lib/supabaseDB'; 
 
 export const CourseGrid = () => {
   const [courses, setCourses] = useState<any[]>([]);

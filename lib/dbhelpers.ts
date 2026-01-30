@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabaseProvider';
+import { supabase } from '@/lib/supabaseDB';
 
 /**
  * PROACTIVE PRICING FETCH

@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { supabase } from '@/lib/supabaseProvider'; 
+import { supabase } from '@/lib/supabaseDB'; 
 import AssessmentUploader from '@/components/assessment/assessmentuploader'; 
 
 export default function CourseDetailPage() {
