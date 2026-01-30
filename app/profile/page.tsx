@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabaseProvider';
 
 export default function MaxOccupancyDossier() {
     const [data, setData] = useState(null);
@@ -17,10 +17,10 @@ export default function MaxOccupancyDossier() {
                     savings: progress[0].last_score >= 15 ? 15 : 0,
                     verifyURL: `http://localhost:3001/verify/${progress[0].id}`,
                     fullTranscript: [
-                        { m: "Analyse de Maintenance Préventive", s: "98% (OCR Validated)", n: "Excellent bilingual technical command." },
-                        { m: "Sécurité des Systèmes Industriels", s: "Optimisé (AI Path)", n: "Mastery demonstrated in diagnostic phase." },
-                        { m: "Gestion d'Atelier Automatisé", s: "85% (Digital Eval)", n: "Strong command of technical French." },
-                        { m: "Rapport de Conformité Technique", s: "92% (Handwriting)", n: "Processed via Analog-to-Digital Bridge." }
+                        { m: "Analyse de Maintenance PrÃ©ventive", s: "98% (OCR Validated)", n: "Excellent bilingual technical command." },
+                        { m: "SÃ©curitÃ© des SystÃ¨mes Industriels", s: "OptimisÃ© (AI Path)", n: "Mastery demonstrated in diagnostic phase." },
+                        { m: "Gestion d'Atelier AutomatisÃ©", s: "85% (Digital Eval)", n: "Strong command of technical French." },
+                        { m: "Rapport de ConformitÃ© Technique", s: "92% (Handwriting)", n: "Processed via Analog-to-Digital Bridge." }
                     ]
                 });
             }
@@ -87,8 +87,8 @@ export default function MaxOccupancyDossier() {
                     {/* PROPORTIONAL LOGO (Increased to 90px for full frame) */}
                     <img src="/new-logo.png" alt="Logo" style={{ height: '90px', marginBottom: '20px', objectFit: 'contain' }} />
                     
-                    <div style={{ color: '#1e40af', fontSize: '14px', letterSpacing: '8px', fontWeight: 'bold' }}>CERTIFICATION OFFICIELLE DE MAÎTRISE</div>
-                    <h1 style={{ fontSize: '56px', margin: '20px 0', color: '#0f172a' }}>Attestation de Réussite</h1>
+                    <div style={{ color: '#1e40af', fontSize: '14px', letterSpacing: '8px', fontWeight: 'bold' }}>CERTIFICATION OFFICIELLE DE MAÃŽTRISE</div>
+                    <h1 style={{ fontSize: '56px', margin: '20px 0', color: '#0f172a' }}>Attestation de RÃ©ussite</h1>
                     <h2 style={{ color: '#1e40af', fontSize: '36px', fontStyle: 'italic' }}>{data?.course_id}</h2>
                     
                     <p style={{ marginTop: '40px', fontSize: '22px' }}>Score Global : <strong>{data?.last_score}/20</strong></p>
@@ -113,7 +113,7 @@ export default function MaxOccupancyDossier() {
             {/* PAGE 2: THE TRANSCRIPT (PORTRAIT) */}
             <div className="transcript-page" style={{ fontFamily: 'sans-serif' }}>
                 <div style={{ borderBottom: '3px solid #1e40af', paddingBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h2 style={{ margin: 0, color: '#1e40af' }}>Transcript de Compétences Bilingues</h2>
+                    <h2 style={{ margin: 0, color: '#1e40af' }}>Transcript de CompÃ©tences Bilingues</h2>
                     <span style={{ fontSize: '12px', background: '#f1f5f9', padding: '5px 10px', borderRadius: '4px' }}>VERIFIED PROVENANCE</span>
                 </div>
                 

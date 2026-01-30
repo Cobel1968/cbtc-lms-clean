@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabaseProvider';
 
 export default function HydrationSafeAudit() {
     const [report, setReport] = useState({ modules: [], loading: true, error: null });
@@ -37,7 +37,7 @@ export default function HydrationSafeAudit() {
 
     return (
         <div style={{ padding: '40px', fontFamily: 'sans-serif', maxWidth: '800px', margin: 'auto' }}>
-            <h1 style={{ color: '#2563eb' }}>📡 Cobel AI Engine: Final Data Sync</h1>
+            <h1 style={{ color: '#2563eb' }}>ðŸ“¡ Cobel AI Engine: Final Data Sync</h1>
             <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
                 <h2 style={{ margin: '0' }}>Total Questions Found: {report.modules.reduce((a, b) => a + b.count, 0)} / 191</h2>
             </div>
@@ -55,7 +55,7 @@ export default function HydrationSafeAudit() {
                             <td style={{ padding: '12px', border: '1px solid #ddd' }}>{m.name}</td>
                             <td style={{ padding: '12px', border: '1px solid #ddd' }}>{m.count}</td>
                             <td style={{ padding: '12px', border: '1px solid #ddd', fontWeight: 'bold', color: m.count > 0 ? '#059669' : '#dc2626' }}>
-                                {m.count > 0 ? '✅ LIVE' : '❌ EMPTY'}
+                                {m.count > 0 ? 'âœ… LIVE' : 'âŒ EMPTY'}
                             </td>
                         </tr>
                     ))}

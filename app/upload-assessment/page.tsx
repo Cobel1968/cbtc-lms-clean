@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabaseProvider';
 
 export default function UploadAssessment() {
     const [file, setFile] = useState(null);
@@ -26,7 +26,7 @@ export default function UploadAssessment() {
             // In production, this would be an AI Vision call.
             const extracted = [
                 { term: "Clause Logic", lang: "EN", confidence: 0.98 },
-                { term: "Syntaxe Avancée", lang: "FR", confidence: 0.94 }
+                { term: "Syntaxe AvancÃ©e", lang: "FR", confidence: 0.94 }
             ];
             const score = 95; // Calculated fluency score
 

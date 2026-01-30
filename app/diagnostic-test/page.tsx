@@ -17,7 +17,7 @@ function DiagnosticEngine() {
   useEffect(() => {
     // Only import the client-side library once mounted
     const initSupabase = async () => {
-      const { default: client } = await import('@/lib/supabaseClient');
+      const { default: client } = await import('@/lib/supabaseProvider');
       setSupabase(client);
     };
     initSupabase();

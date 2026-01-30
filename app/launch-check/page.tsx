@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabaseProvider';
 
 export default function LaunchCheck() {
     const [checks, setChecks] = useState({

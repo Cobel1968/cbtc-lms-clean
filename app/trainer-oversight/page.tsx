@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabaseProvider';
 
 export default function TrainerOversight() {
     const [stats, setStats] = useState([]);

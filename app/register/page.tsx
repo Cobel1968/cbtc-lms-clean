@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Zap, User, Mail, Lock, ShieldCheck, Loader2 , AlertCircle} from 'lucide-react';
-// ✅ Corrected: Importing the named export 'supabase' from the client library
-import { supabase } from '@/lib/supabaseClient';
+// âœ… Corrected: Importing the named export 'supabase' from the client library
+import { supabase } from '@/lib/supabaseProvider';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -72,7 +72,7 @@ export default function RegisterPage() {
               <Zap className="text-white" size={32} fill="white" />
             </div>
             <h1 className="text-2xl font-black text-slate-900 tracking-tight uppercase">Join Cobel AI</h1>
-            <p className="text-slate-400 text-sm font-medium">Create your vocational profile / Créer votre profil</p>
+            <p className="text-slate-400 text-sm font-medium">Create your vocational profile / CrÃ©er votre profil</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -140,7 +140,7 @@ export default function RegisterPage() {
 
           <div className="mt-8 text-center">
             <p className="text-sm text-slate-500 font-medium">
-              Already have an account? / Déjà un compte?{' '}
+              Already have an account? / DÃ©jÃ  un compte?{' '}
               <Link href="/login" className="text-indigo-600 font-bold hover:underline">
                 Sign in
               </Link>

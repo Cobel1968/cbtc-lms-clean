@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
 import { AlertTriangle, Gauge, Zap, ChevronRight, Activity } from 'lucide-react';
-import supabase from '@/lib/supabaseClient';
+import supabase from '@/lib/supabaseProvider';
 
 export default function FrictionReport() {
   const [logs, setLogs] = useState<any[]>([]);
