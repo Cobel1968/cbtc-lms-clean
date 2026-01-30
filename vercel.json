@@ -1,15 +1,5 @@
-﻿{
+{
   "version": 2,
-  "framework": "nextjs",
   "cleanUrls": true,
-  "functions": {
-    "app/api/assessment/*.ts": {
-      "maxDuration": 60,
-      "memory": 1024
-    }
-  },
-  "rewrites": [
-    { "source": "/hygiene", "destination": "/Food_Hygiene_Hospitality_Luxe.html" },
-    { "source": "/communication", "destination": "/Hospitality_Communication_Course.html" }
-  ]
+  "framework": "nextjs"
 }
