@@ -1,4 +1,5 @@
-﻿import { manualMilestoneOverride } from '@/lib/instructorActions';
+﻿import FrictionBanner from '@/components/instructor/FrictionBanner';
+import { manualMilestoneOverride } from '@/lib/instructorActions';
 'use client';
 export const dynamic = 'force-dynamic';
 // aliasing react hooks to strict snake_case
@@ -138,4 +139,5 @@ export default function coursedetailclient({ course }: course_detail_props) {
     </div>
   );
 }
+
 
