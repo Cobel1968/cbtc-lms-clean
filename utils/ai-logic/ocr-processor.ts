@@ -1,18 +1,44 @@
 export const analyzeTechnicalFluency = (rawText: string) => {
-  const technicalLexicon = {
-    en: ['voltage', 'circuit', 'torque', 'manifold', 'injector', 'maintenance'],
-    fr: ['tension', 'courant', 'couple', 'collecteur', 'injecteur', 'entretien']
+  const lexicon = {
+    automotive: {
+      en: ['piston', 'gasket', 'crankshaft', 'engine', 'braking'],
+      fr: ['piston', 'joint', 'vilebrequin', 'moteur', 'freinage']
+    },
+    electrical: {
+      en: ['ohmmeter', 'fuse', 'transformer', 'voltage', 'circuit'],
+      fr: ['ohmmètre', 'fusible', 'transformateur', 'tension', 'courant']
+    },
+    business: {
+      en: ['revenue', 'compliance', 'strategy', 'profit', 'audit'],
+      fr: ['chiffre d\'affaires', 'conformité', 'stratégie', 'bénéfice', 'audit']
+    }
   };
 
   const words = rawText.toLowerCase().split(/\W+/);
   
-  const enCount = words.filter(w => technicalLexicon.en.includes(w)).length;
-  const frCount = words.filter(w => technicalLexicon.fr.includes(w)).length;
+  // Scoring across all domains
+  let enPoints = 0;
+  let frPoints = 0;
+  let detectedDomain = "General Vocational";
 
-  // Logic: 10% fluency boost for every unique technical term found
+  const domains = Object.keys(lexicon) as Array<keyof typeof lexicon>;
+  
+  domains.forEach(domain => {
+    const enMatches = words.filter(w => lexicon[domain].en.includes(w)).length;
+    const frMatches = words.filter(w => lexicon[domain].fr.includes(w)).length;
+    
+    enPoints += enMatches;
+    frPoints += frMatches;
+
+    if (enMatches > 2 || frMatches > 2) {
+      detectedDomain = domain.charAt(0).toUpperCase() + domain.slice(1);
+    }
+  });
+
   return {
-    englishBoost: Math.min(enCount * 10, 100),
-    frenchBoost: Math.min(frCount * 10, 100),
-    detectedTerms: words.filter(w => [...technicalLexicon.en, ...technicalLexicon.fr].includes(w))
+    englishFluency: Math.min(enPoints * 12, 100),
+    frenchFluency: Math.min(frPoints * 12, 100),
+    domain: detectedDomain,
+    timestamp: new Date().toISOString()
   };
 };
