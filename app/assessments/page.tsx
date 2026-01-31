@@ -1,76 +1,65 @@
 "use client";
-import { useState, useEffect } from 'react';
-import { createClient } from '@/utils/supabase/client';
-import { useRouter } from 'next/navigation';
+import Navigation from '@/components/navigation';
+import { useState } from 'react';
 
-export default function AssessmentsPage() {
-  const supabase = createClient();
-  const router = useRouter();
-  const [courses, setCourses] = useState<any[]>([]);
-  const [students, setStudents] = useState<any[]>([]);
-  const [selectedCourse, setSelectedCourse] = useState("");
-  const [selectedStudent, setSelectedStudent] = useState("");
-  const [title, setTitle] = useState("");
-  const [preview, setPreview] = useState<string | null>(null);
+export default function HandwritingBridge() {
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  useEffect(() => {
-    async function loadData() {
-      const { data: c } = await supabase.from('courses').select('*');
-      const { data: s } = await supabase.from('students').select('*');
-      if (c) setCourses(c);
-      if (s) setStudents(s);
-    }
-    loadData();
-  }, []);
-
-  const handleFile = (e: any) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onloadend = () => setPreview(reader.result as string);
-    reader.readAsDataURL(file);
-  };
-
-  const startScan = () => {
-    if (!selectedStudent || !selectedCourse || !title) {
-      alert("Please select Student, Course, and Module Title first!");
-      return;
-    }
-    // Anchor the Golden Thread
-    localStorage.setItem('assigned_student_id', selectedStudent);
-    localStorage.setItem('assigned_course_id', selectedCourse);
-    localStorage.setItem('last_scanned_title', title);
-    localStorage.setItem('last_scanned_evidence', preview || "");
-    
-    router.push('/analytics');
+  const handleStartScan = () => {
+    setIsProcessing(true);
+    // Simulate OCR processing delay
+    setTimeout(() => setIsProcessing(false), 3000);
   };
 
   return (
-    <div className="p-10 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-black mb-8">New Pedagogical Scan</h1>
-      <div className="space-y-6 bg-white p-8 rounded-[2rem] border shadow-xl">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <select onChange={(e) => setSelectedCourse(e.target.value)} className="p-4 bg-slate-50 border rounded-xl font-bold">
-            <option value="">-- Select Course --</option>
-            {courses.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
-          </select>
-          <select onChange={(e) => setSelectedStudent(e.target.value)} className="p-4 bg-slate-50 border rounded-xl font-bold">
-            <option value="">-- Select Student --</option>
-            {students.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-          </select>
+    <div className="min-h-screen bg-slate-50">
+      <Navigation />
+      
+      <main className="max-w-5xl mx-auto py-20 px-6">
+        <div className="bg-white rounded-[3rem] shadow-[0_50px_100px_-20px_rgba(0,51,102,0.2)] border border-slate-100 overflow-hidden">
+          <div className="bg-[#003366] p-12 text-center relative overflow-hidden">
+             {/* Decorative Background Icon */}
+            <div className="absolute -right-10 -top-10 text-white opacity-5 rotate-12">
+              <svg className="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            </div>
+            
+            <h2 className="text-white text-4xl font-black uppercase tracking-tighter italic">Handwriting Bridge</h2>
+            <p className="text-[#10B981] text-xs font-black uppercase tracking-[0.4em] mt-3">Bilingual Technical Fluency Ingestion</p>
+          </div>
+
+          <div className="p-16 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+            <div className="space-y-8">
+              <div className="border-4 border-dashed border-slate-200 rounded-[2.5rem] p-12 hover:border-[#003366] transition-all bg-slate-50 group">
+                <input type="file" id="assessment-upload" className="hidden" />
+                <label htmlFor="assessment-upload" className="cursor-pointer block text-center">
+                  <div className="bg-white w-20 h-20 rounded-3xl shadow-md flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                    <svg className="w-10 h-10 text-[#003366]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                  </div>
+                  <span className="text-[#003366] font-black uppercase text-xs tracking-widest">Select physical assessment</span>
+                </label>
+              </div>
+            </div>
+
+            <div className="bg-[#003366]/5 p-10 rounded-[2.5rem] border border-[#003366]/10">
+              <h3 className="text-[#003366] font-black uppercase text-sm tracking-widest mb-6">Engine Specifications</h3>
+              <div className="space-y-4 text-[11px] font-bold text-slate-500 uppercase tracking-tight">
+                <div className="flex items-center gap-3"><span className="w-2 h-2 bg-[#10B981] rounded-full"/> OCR Pre-processing Active</div>
+                <div className="flex items-center gap-3"><span className="w-2 h-2 bg-[#10B981] rounded-full"/> Bilingual Vocational Mapping</div>
+                <div className="flex items-center gap-3"><span className="w-2 h-2 bg-[#10B981] rounded-full"/> Contextual Extraction</div>
+              </div>
+
+              <button 
+                onClick={handleStartScan}
+                className={`mt-10 w-full py-6 rounded-2xl font-black uppercase tracking-[0.3em] transition-all shadow-2xl ${
+                  isProcessing ? 'bg-slate-400 cursor-wait' : 'bg-[#003366] hover:bg-[#E91E63] text-white active:scale-95'
+                }`}
+              >
+                {isProcessing ? 'Engine Processing...' : 'Start AI Engine Scan'}
+              </button>
+            </div>
+          </div>
         </div>
-        <input 
-          placeholder="Module Name (e.g., Engine Safety)" 
-          className="w-full p-4 bg-slate-50 border rounded-xl font-bold"
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <input type="file" onChange={handleFile} className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-blue-50 file:text-blue-700" />
-        
-        {preview && (
-          <button onClick={startScan} className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black shadow-lg">
-            INITIALIZE AI DIAGNOSTIC
-          </button>
-        )}
-      </div>
+      </main>
     </div>
   );
 }
