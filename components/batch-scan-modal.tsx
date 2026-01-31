@@ -5,40 +5,38 @@ import { createClient } from '@/utils/supabase/client';
 export default function BatchScanModal({ studentId }: { studentId: string }) {
   const [uploading, setUploading] = useState(false);
   const [status, setStatus] = useState('');
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const supabase = createClient();
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setPreviewUrl(URL.createObjectURL(file));
+      setStatus('Image ready for verification...');
+    }
+  };
+
+  const handleSync = async () => {
+    if (!previewUrl) return;
+    
     try {
       setUploading(true);
-      setStatus('Ingesting Physical Assessment...');
+      setStatus('AI Engine: Analyzing Handwriting...');
       
-      const file = event.target.files?.[0];
-      if (!file) return;
-
-      // 1. Upload to the 'assessments' bucket we created
-      const fileExt = file.name.split('.').pop();
-      const fileName = \/\.\;
-      
-      const { error: uploadError } = await supabase.storage
-        .from('assessments')
-        .upload(fileName, file);
-
-      if (uploadError) throw uploadError;
-
-      // 2. Trigger the AI Engine Processing Logic [cite: 2026-01-01]
-      // We simulate the OCR string for the demo, which triggers our SQL function
-      const mockOcrText = "Technical terms identified: Cylinder, Alternator, Circuit, Resistance";
-      
+      // We call the RPC we created in the database [cite: 2026-01-01]
       const { error: rpcError } = await supabase.rpc('process_assessment_ocr', {
         target_student_id: studentId,
-        raw_text: mockOcrText,
+        raw_text: "Demo: Cylinder pressure test 90% pass", // Simulated OCR output
         detected_language: 'EN'
       });
 
       if (rpcError) throw rpcError;
 
-      setStatus('Sync Complete: Curriculum Density Updated.');
-      setTimeout(() => setStatus(''), 3000);
+      setStatus('Success: Temporal Optimization Applied.');
+      setTimeout(() => {
+        setPreviewUrl(null);
+        setStatus('');
+      }, 3000);
     } catch (error: any) {
       alert(error.message);
     } finally {
@@ -47,16 +45,39 @@ export default function BatchScanModal({ studentId }: { studentId: string }) {
   };
 
   return (
-    <div className="flex flex-col gap-4 p-4 border border-white/10 rounded-xl bg-white/5">
-      <h4 className="text-[10px] font-black uppercase tracking-widest opacity-50">Analog-to-Digital Bridge</h4>
-      <input 
-        type="file" 
-        accept="image/*" 
-        onChange={handleFileUpload} 
-        disabled={uploading}
-        className="text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer"
-      />
-      {status && <p className="text-[10px] font-bold text-emerald-400 animate-pulse uppercase">{status}</p>}
+    <div className="flex flex-col gap-6 p-6 border border-white/10 rounded-2xl bg-slate-950">
+      <div className="flex items-center justify-between">
+        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400">Pedagogical Bridge v2.0</h4>
+        {status && <span className="text-[9px] font-bold text-emerald-400 animate-pulse">{status}</span>}
+      </div>
+
+      {!previewUrl ? (
+        <label className="group cursor-pointer border-2 border-dashed border-white/10 rounded-xl p-8 text-center hover:border-blue-500/50 transition-colors">
+          <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+          <span className="text-xs font-bold opacity-40 group-hover:opacity-100 transition-opacity uppercase">Upload Physical Assessment</span>
+        </label>
+      ) : (
+        <div className="space-y-4">
+          <div className="relative aspect-video rounded-lg overflow-hidden border border-white/10 bg-black">
+             <img src={previewUrl} alt="Scan Preview" className="object-contain w-full h-full opacity-80" />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <button 
+              onClick={() => setPreviewUrl(null)}
+              className="py-3 bg-white/5 hover:bg-white/10 rounded-lg text-[10px] font-black uppercase transition-all"
+            >
+              Cancel
+            </button>
+            <button 
+              onClick={handleSync}
+              disabled={uploading}
+              className="py-3 bg-blue-600 hover:bg-blue-500 rounded-lg text-[10px] font-black uppercase transition-all disabled:opacity-50"
+            >
+              Confirm & Sync AI
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
