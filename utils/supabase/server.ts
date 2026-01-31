@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient as supabaseCreateClient } from '@supabase/supabase-js';
 
 export const createClient = () => {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
@@ -6,7 +6,10 @@ export const createClient = () => {
 
   if (!supabaseUrl || !supabaseKey) {
     console.error(" Cobel AI Engine: Missing API Keys in Environment");
+    // We return a dummy client or throw to prevent the 400 error crash
+    return {} as any;
   }
 
-  return createClient(supabaseUrl, supabaseKey);
+  // Use the renamed import here to avoid circular logic
+  return supabaseCreateClient(supabaseUrl, supabaseKey);
 };
