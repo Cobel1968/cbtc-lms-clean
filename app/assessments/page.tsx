@@ -1,12 +1,24 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { createClient } from '@/utils/supabase/client';
 
 export default function AssessmentsPage() {
-  const [preview, setPreview] = useState<string | null>(null);
-  const [title, setTitle] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
+  const supabase = createClient();
   const router = useRouter();
+  const [students, setStudents] = useState<any[]>([]);
+  const [selectedStudent, setSelectedStudent] = useState("");
+  const [title, setTitle] = useState("");
+  const [preview, setPreview] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  useEffect(() => {
+    async function getStudents() {
+      const { data } = await supabase.from('students').select('id, name');
+      if (data) setStudents(data);
+    }
+    getStudents();
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -17,49 +29,59 @@ export default function AssessmentsPage() {
     }
   };
 
-  const runExtraction = () => {
-    if (!title) return alert("Please enter an Assessment Title for the transcript.");
+  const startBridge = () => {
+    if (!selectedStudent || !title) return alert("Assign a student and title first!");
     setIsProcessing(true);
-    setTimeout(() => {
-      localStorage.setItem('last_scanned_evidence', preview || "");
-      localStorage.setItem('last_scanned_title', title);
-      router.push('/analytics');
-    }, 2000);
+    localStorage.setItem('assigned_student_id', selectedStudent);
+    localStorage.setItem('last_scanned_title', title);
+    localStorage.setItem('last_scanned_evidence', preview || "");
+    setTimeout(() => router.push('/analytics'), 1500);
   };
 
   return (
     <div className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-black mb-2">Pedagogical Bridge</h1>
-      <p className="text-slate-500 mb-8 font-medium">Capture Evidence for Transcript Reporting [cite: 2026-01-01]</p>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-black">Pedagogical Bridge</h1>
+        <button onClick={() => router.push('/admin-dashboard')} className="text-sm font-bold text-slate-400 hover:text-slate-900">
+           RETURN TO DASHBOARD
+        </button>
+      </div>
       
-      <div className="space-y-6">
-        <div className="bg-white p-6 rounded-2xl border-2 border-slate-100 shadow-sm">
-          <label className="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-tighter">Assessment Title / Module Name</label>
-          <input 
-            type="text" 
-            placeholder="e.g. Mechanical Engine Systems - Quiz 1" 
-            className="w-full p-4 bg-slate-50 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
+      <div className="bg-white p-8 rounded-[2rem] border shadow-sm space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-[10px] font-black text-slate-400 uppercase mb-2">Assign to Student</label>
+            <select 
+              className="w-full p-4 bg-slate-50 border rounded-xl outline-none"
+              value={selectedStudent}
+              onChange={(e) => setSelectedStudent(e.target.value)}
+            >
+              <option value="">Select Student...</option>
+              <option value="bulk">Bulk Assignment (All Students)</option>
+              {students.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-[10px] font-black text-slate-400 uppercase mb-2">Module Title</label>
+            <input 
+              type="text" 
+              placeholder="e.g., Engine Diagnostics" 
+              className="w-full p-4 bg-slate-50 border rounded-xl outline-none"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </div>
         </div>
 
-        <div className="border-4 border-dashed border-slate-200 rounded-[2rem] p-12 text-center bg-white">
+        <div className="border-4 border-dashed border-slate-100 rounded-2xl p-10 text-center">
           {!preview ? (
-            <label className="cursor-pointer">
-              <div className="text-5xl mb-4"></div>
-              <h3 className="text-lg font-bold text-slate-800">Scan Physical Document</h3>
-              <input type="file" className="hidden" onChange={handleFileChange} accept="image/*" />
-            </label>
+            <input type="file" onChange={handleFileChange} className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700" />
           ) : (
-            <div className="space-y-6">
-              <img src={preview} alt="Scan" className="max-h-72 mx-auto rounded-lg shadow-md border" />
-              <button 
-                onClick={runExtraction}
-                disabled={isProcessing}
-                className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black tracking-widest hover:bg-blue-700 shadow-xl disabled:bg-slate-300">
-                {isProcessing ? "PROCESSING HANDWRITING..." : "EXTRACT BILINGUAL DATA"}
-              </button>
+            <div className="space-y-4">
+               <img src={preview} className="max-h-48 mx-auto rounded-lg shadow" />
+               <button onClick={startBridge} disabled={isProcessing} className="w-full bg-slate-900 text-white py-4 rounded-xl font-black tracking-widest">
+                 {isProcessing ? "ANALYZING..." : "START AI SCAN"}
+               </button>
             </div>
           )}
         </div>
