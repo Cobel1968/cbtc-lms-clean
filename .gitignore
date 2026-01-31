@@ -5,3 +5,8 @@
 
 # Legacy Backups
 backup_deep_tissue_*/
+
+# Sensitive Credentials
+.env
+.env.local
+.env.production
