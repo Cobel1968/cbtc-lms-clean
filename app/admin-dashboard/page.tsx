@@ -48,11 +48,11 @@ export default async function AdminDashboard() {
                    }
                 </td>
                 <td className="px-6 py-4">
-                  <Link href="/assessments">
+                  <div className="flex gap-2"><Link href="/history"><button className="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-slate-200">HISTORY</button></Link></div><Link href="/assessments">
                     <button className="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-xs font-bold hover:shadow-lg transition-all">
                       COBEL REVIEW
                     </button>
-                  </Link>
+                  </Link></div>
                 </td>
               </tr>
             ))}
