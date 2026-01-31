@@ -34,7 +34,7 @@ export default function AnalyticsPage() {
           student_id: student.id,
           english_fluency: englishScore, 
           french_fluency: frenchScore,
-          trainer_notes: 'Verified via CBTC Engine'
+          trainer_notes: localStorage.getItem('last_scanned_title') || 'Standard Assessment'
         });
 
       if (!error) {
