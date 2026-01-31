@@ -46,3 +46,24 @@ body {
 
 .text-mastery { color: var(--mastery-emerald); }
 .bg-cobel { background-color: var(--cobel-blue); }
+
+/* Global Cobel AI Button Responsiveness */
+button, .btn-responsive {
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+button:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: scale(0.92);
+  filter: brightness(0.9);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
