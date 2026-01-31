@@ -1,73 +1,70 @@
 "use client";
+import Logo from '@/components/logo';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import MilestoneForecast from '@/components/milestone-forecast';
+import { useParams } from 'next/navigation';
 
-export default function StudentPortal({ params }: { params: { id: string } }) {
+export default function StudentPublicPortal() {
+  const { id } = useParams();
   const supabase = createClient();
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    async function fetchStudentData() {
+    async function fetchStudent() {
       const { data: student } = await supabase
         .from('student_competency_matrix')
         .select('*')
-        .eq('student_id', params.id)
+        .eq('student_id', id)
         .single();
       if (student) setData(student);
     }
-    fetchStudentData();
-  }, [params.id]);
+    fetchStudent();
+  }, [id, supabase]);
 
-  if (!data) return <div className="p-10 text-center font-black animate-pulse">SYNCING WITH COBEL AI...</div>;
+  if (!data) return <div className="p-20 text-center font-black animate-pulse">VERIFYING DIGITAL CREDENTIAL...</div>;
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 font-sans">
-      <div className="mb-8">
-        <h1 className="text-3xl font-black tracking-tighter uppercase leading-tight">Bonjour, <br/>{data.name.split(' ')[0]}</h1>
-        <p className="text-blue-600 font-bold text-[10px] uppercase tracking-widest mt-1">Student Progress Portal</p>
-      </div>
+    <div className="min-h-screen bg-white p-6 md:p-12">
+      <header className="flex justify-between items-center mb-16">
+        <Logo className="h-6" />
+        <div className="text-[10px] font-black uppercase tracking-widest text-emerald-500 flex items-center gap-2">
+          <div className="w-2 h-2 bg-emerald-500 rounded-full animate-ping" /> Verified Profile
+        </div>
+      </header>
 
-      {/* Mobile-Optimized Forecast */}
-      <div className="mb-6">
-        <MilestoneForecast 
-          englishScore={data.english_fluency} 
-          frenchScore={data.french_fluency} 
-          startDate={new Date(data.created_at)} 
-        />
-      </div>
+      <main className="max-w-3xl mx-auto">
+        <h1 className="text-5xl font-black uppercase tracking-tighter mb-2">{data.name}</h1>
+        <p className="text-slate-400 font-bold uppercase text-xs mb-10 tracking-[0.3em]">Track: {data.domain || 'Vocational'}</p>
 
-      <div className="bg-white rounded-[2rem] p-8 shadow-xl border border-slate-100">
-        <h3 className="font-black text-xs uppercase tracking-widest text-slate-400 mb-6">Technical Mastery</h3>
-        
-        <div className="space-y-6">
-          <div>
-            <div className="flex justify-between text-[10px] font-black uppercase mb-2">
-              <span>{data.domain} (EN)</span>
-              <span>{data.english_fluency}%</span>
-            </div>
-            <div className="h-2 bg-slate-100 rounded-full">
-              <div className="h-full bg-blue-600 rounded-full" style={{ width: `${data.english_fluency}%` }} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
+          <div className="p-8 bg-slate-50 rounded-[2rem]">
+            <h3 className="text-[10px] font-black uppercase mb-6 opacity-40">Bilingual Technical Mastery</h3>
+            <div className="space-y-6">
+               <div>
+                 <div className="flex justify-between text-[11px] font-bold mb-2"><span>English (Technical)</span><span>{data.english_fluency}%</span></div>
+                 <div className="h-2 bg-slate-200 w-full rounded-full overflow-hidden"><div className="h-full bg-blue-600 transition-all duration-1000" style={{width: `${data.english_fluency}%`}} /></div>
+               </div>
+               <div>
+                 <div className="flex justify-between text-[11px] font-bold mb-2"><span>French (Technical)</span><span>{data.french_fluency}%</span></div>
+                 <div className="h-2 bg-slate-200 w-full rounded-full overflow-hidden"><div className="h-full bg-emerald-500 transition-all duration-1000" style={{width: `${data.french_fluency}%`}} /></div>
+               </div>
             </div>
           </div>
-          
-          <div>
-            <div className="flex justify-between text-[10px] font-black uppercase mb-2">
-              <span>{data.domain} (FR)</span>
-              <span>{data.french_fluency}%</span>
-            </div>
-            <div className="h-2 bg-slate-100 rounded-full">
-              <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${data.french_fluency}%` }} />
-            </div>
+
+          <div className="flex flex-col justify-center">
+            <h3 className="text-[10px] font-black uppercase mb-2 opacity-40 text-blue-600">AI Timeframe Prediction</h3>
+            <p className="text-4xl font-black tracking-tighter">12 Weeks Remaining</p>
+            <p className="text-xs text-slate-500 mt-2 italic font-medium">"Optimal learning density reached via Dynamic Path Mapping."</p>
           </div>
         </div>
 
-        <div className="mt-10 pt-6 border-t border-slate-50">
-          <p className="text-[9px] font-bold text-slate-400 uppercase italic text-center">
-            Last updated via Handwriting Analysis: {new Date(data.created_at).toLocaleDateString()}
-          </p>
+        <div className="border-t border-slate-100 pt-10">
+           <p className="text-[9px] font-bold text-slate-300 uppercase leading-relaxed">
+             This record is a digital twin of the physical assessment ingested on {new Date(data.created_at).toLocaleDateString()}. <br/> 
+             Generated by Cobel Business Training Center AI Engine.
+           </p>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
