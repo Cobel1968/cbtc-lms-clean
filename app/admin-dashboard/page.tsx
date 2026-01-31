@@ -58,7 +58,7 @@ export default async function AdminDashboard() {
                 </td>
                 <td className="p-6 text-right">
                   <a href="/history/readiness" className="text-[10px] font-black text-blue-600 hover:underline tracking-widest">
-                    [READINESS REPORT]
+                    [READINESS REPORT]</a> <button className='ml-4 text-[10px] font-black text-emerald-600 uppercase tracking-widest'>[Quick Scan]</button>
                   </a>
                 </td>
               </tr>
