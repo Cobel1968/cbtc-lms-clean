@@ -33,3 +33,16 @@ body {
     padding: 0 !important;
   }
 }
+:root {
+  --cobel-blue: #2563eb;
+  --mastery-emerald: #10b981;
+  --workshop-slate: #0f172a;
+}
+
+/* Custom Class for Brand Consistency */
+.cbtc-gradient {
+  background: linear-gradient(135deg, var(--workshop-slate) 0%, #1e293b 100%);
+}
+
+.text-mastery { color: var(--mastery-emerald); }
+.bg-cobel { background-color: var(--cobel-blue); }
