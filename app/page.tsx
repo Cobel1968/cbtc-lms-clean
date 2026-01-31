@@ -1,3 +1,4 @@
+import Logo from '@/components/logo';
 "use client";
 import Link from 'next/link';
 
@@ -8,7 +9,7 @@ export default function GlobalLandingPage() {
       <header className="p-10 md:p-20 max-w-7xl mx-auto">
         <div className="border-l-4 border-black pl-6 mb-12">
           <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-none uppercase">
-            Cobel <br/>AI Engine
+            <Logo className='h-20' />
           </h1>
           <p className="mt-4 text-sm font-bold tracking-[0.3em] text-blue-600 uppercase">
             Vocational Training & Bilingual Technical Mastery

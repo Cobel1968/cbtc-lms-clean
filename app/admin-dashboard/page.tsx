@@ -1,3 +1,4 @@
+import Logo from '@/components/logo';
 "use client";
 import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
@@ -26,7 +27,7 @@ export default function AdminDashboard() {
 
       <div className="flex justify-between items-center mb-10 bg-slate-900 p-6 rounded-[2rem] shadow-2xl">
         <div className="flex gap-6 items-center">
-          <h1 className="text-white text-2xl font-black tracking-tighter">COBEL ADMIN</h1>
+          <h1 className="text-white text-2xl font-black tracking-tighter"><Logo className='h-6' light /></h1>
           <button 
             onClick={() => setIsBatchModalOpen(true)}
             className="bg-emerald-500 hover:bg-emerald-400 text-slate-900 text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest transition-all"
