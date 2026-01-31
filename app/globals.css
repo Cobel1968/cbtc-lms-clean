@@ -3,67 +3,47 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 255, 255, 255;
-  --background-end-rgb: 255, 255, 255;
-  --primary-cbtc: #00629B;
-  --secondary-cbtc: #E91E63;
+  --cbtc-navy: #003366;
+  --cbtc-crimson: #E91E63;
+  --cbtc-emerald: #10B981;
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: #ffffff;
+/* --- GLOBAL BUTTON RESPONSIVENESS --- */
+button {
+  @apply transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  position: relative;
+  overflow: hidden;
 }
 
-.cbtc-button-primary {
-  @apply bg-[#00629B] text-white px-4 py-2 rounded hover:bg-[#004B76] transition-colors;
+/* Hover Glow Effect */
+button:hover:not(:disabled) {
+  filter: brightness(1.15);
+  box-shadow: 0 10px 20px -10px rgba(0,0,0,0.3);
+  transform: translateY(-2px);
 }
 
-.cbtc-gradient-text {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#00629B] to-[#E91E63];
-}@media print {
-  nav, button, .no-print {
-    display: none !important;
-  }
-  .print-page-break {
-    page-break-after: always;
-  }
-  body {
-    background: white !important;
-    padding: 0 !important;
-  }
-}
-:root {
-  --cobel-blue: #2563eb;
-  --mastery-emerald: #10b981;
-  --workshop-slate: #0f172a;
+/* Flash Interaction (Visual confirmation of 'working') */
+button:active:after {
+  content: "";
+  background: rgba(255, 255, 255, 0.2);
+  display: block;
+  position: absolute;
+  padding-top: 300%;
+  padding-left: 350%;
+  margin-left: -20px !important;
+  margin-top: -120%;
+  opacity: 0;
+  transition: all 0.8s;
 }
 
-/* Custom Class for Brand Consistency */
-.cbtc-gradient {
-  background: linear-gradient(135deg, var(--workshop-slate) 0%, #1e293b 100%);
+button:active:after {
+  padding: 0;
+  margin: 0;
+  opacity: 1;
+  transition: 0s;
 }
 
-.text-mastery { color: var(--mastery-emerald); }
-.bg-cobel { background-color: var(--cobel-blue); }
-
-/* Global Cobel AI Button Responsiveness */
-button, .btn-responsive {
-  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-button:hover {
-  filter: brightness(1.1);
-  transform: translateY(-1px);
-}
-
-button:active {
-  transform: scale(0.92);
-  filter: brightness(0.9);
-}
-
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none !important;
-}
+/* Custom Brand Classes */
+.btn-navy { @apply bg-[#003366] text-white font-black uppercase tracking-widest; }
+.btn-crimson { @apply bg-[#E91E63] text-white font-black uppercase tracking-widest; }
+.btn-emerald { @apply bg-[#10B981] text-white font-black uppercase tracking-widest; }
