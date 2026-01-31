@@ -1,51 +1,49 @@
 import { createClient } from '@/utils/supabase/server';
+import Link from 'next/link';
 
 export default async function AdminDashboard() {
   const supabase = await createClient();
-  const { data: students } = await supabase.from('student_competency_matrix').select('*');
+  const { data: rawStudents, error } = await supabase.from('student_competency_matrix').select('*');
+
+  if (error) console.error("Database Fetch Error:", error);
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">Trainer Oversight</h1>
-          <p className="text-slate-500 font-medium">Live Temporal Optimization Metrics [cite: 2026-01-01]</p>
-        </div>
-        <div className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg font-bold border border-blue-100">
-          {students?.length || 0} ACTIVE NODES
+        <h1 className="text-3xl font-bold">Trainer Oversight</h1>
+        <div className="bg-blue-100 text-blue-700 px-4 py-2 rounded-lg font-bold">
+          {rawStudents?.length || 0} NODES
         </div>
       </div>
       
-      <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-slate-50 border-b border-slate-200">
-              <th className="px-6 py-4 text-xs font-bold uppercase text-slate-500">Student Identity</th>
-              <th className="px-6 py-4 text-xs font-bold uppercase text-slate-500">Bilingual Fluency (E/F)</th>
-              <th className="px-6 py-4 text-xs font-bold uppercase text-slate-500">Temporal Forecast</th>
-              <th className="px-6 py-4 text-xs font-bold uppercase text-slate-500">Pedagogical Status</th>
+      <div className="bg-white rounded-xl shadow-md border overflow-hidden">
+        <table className="w-full text-left">
+          <thead className="bg-slate-50 border-b">
+            <tr>
+              <th className="px-6 py-4">Student Identity</th>
+              <th className="px-6 py-4">Bilingual Fluency</th>
+              <th className="px-6 py-4">Status</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
-            {students?.map((student) => (
-              <tr key={student.student_id} className="hover:bg-slate-50 transition-colors">
-                <td className="px-6 py-4">
-                  <span className="font-semibold text-slate-800">{student.name || 'External Entry'}</span>
+          <tbody>
+            {rawStudents?.map((s: any) => (
+              <tr key={s.student_id || s.id} className="border-b">
+                <td className="px-6 py-4 font-bold text-slate-900">
+                  {/* Case-agnostic name check */}
+                  {s.name || s.Name || s.student_name || "Unknown Identity"}
                 </td>
                 <td className="px-6 py-4">
-                  <div className="w-full bg-slate-100 h-2 rounded-full flex overflow-hidden">
-                    <div className="bg-blue-500 h-full" style={{width: '75%'}}></div>
-                    <div className="bg-rose-400 h-full" style={{width: '25%'}}></div>
+                  <div className="flex gap-1">
+                    <div className="h-2 w-16 bg-blue-500 rounded"></div>
+                    <div className="h-2 w-8 bg-rose-400 rounded"></div>
                   </div>
-                  <span className="text-[10px] text-slate-400 mt-1 block">Vocational Mapping Active</span>
-                </td>
-                <td className="px-6 py-4 text-sm text-slate-600 font-mono">
-                  {student.diploma_eligible ? 'Feb 2026' : 'TBD'}
                 </td>
                 <td className="px-6 py-4">
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${student.diploma_eligible ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
-                    {student.diploma_eligible ? 'READY' : 'COBEL REVIEW'}
-                  </span>
+                  <Link href="/assessments">
+                    <button className="bg-amber-100 text-amber-700 px-4 py-1 rounded-full text-xs font-bold hover:bg-amber-200 transition-all">
+                      COBEL REVIEW
+                    </button>
+                  </Link>
                 </td>
               </tr>
             ))}
