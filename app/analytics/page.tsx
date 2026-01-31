@@ -23,7 +23,7 @@ export default function AnalyticsPage() {
     const { data: student } = await supabase
       .from('students')
       .select('id')
-      .eq('name', 'Mr. Soro')
+      .eq('id', localStorage.getItem('assigned_student_id'))
       .single();
 
     if (student) {
