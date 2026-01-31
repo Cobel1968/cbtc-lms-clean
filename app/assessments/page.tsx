@@ -22,7 +22,7 @@ export default function AssessmentsPage() {
     setTimeout(() => {
       setIsProcessing(false);
       alert("Bilingual Extraction Complete: Technical terms identified in English & French.");
-      router.push('/admin-dashboard');
+      router.push('/analytics');
     }, 3000);
   };
 
