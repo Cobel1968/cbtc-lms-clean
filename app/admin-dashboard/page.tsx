@@ -43,7 +43,7 @@ export default async function AdminDashboard() {
                 <td className="px-8 py-6">
                   <div className="font-black text-slate-900 text-lg">{s.name}</div>
                   <div className="inline-block mt-1 px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[10px] font-black uppercase tracking-tight border border-blue-100">
-                    {s.latest_title}
+                    {s.latest_title} <span className={	ext-[8px] px-2 py-0.5 rounded ml-2 font-bold border }>{s.domain || 'General'}</span>
                   </div>
                 </td>
                 <td className="px-8 py-6">
