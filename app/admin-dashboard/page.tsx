@@ -1,3 +1,4 @@
+import MilestoneForecast from '@/components/milestone-forecast';
 import { createClient } from '@/utils/supabase/server';
 import Link from 'next/link';
 
