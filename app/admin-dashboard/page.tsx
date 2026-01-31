@@ -1,94 +1,62 @@
 "use client";
-import Logo from '@/components/logo';
+import Navigation from '@/components/navigation';
+import StudentQR from '@/components/qr-generator';
+import MilestoneForecast from '@/components/milestone-forecast';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { useRouter } from 'next/navigation';
-import MilestoneForecast from '@/components/milestone-forecast';
-import BatchScanModal from '@/components/batch-scan-modal';
 
 export default function AdminDashboard() {
-  const supabase = createClient();
-  const router = useRouter();
   const [students, setStudents] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const supabase = createClient();
 
   useEffect(() => {
-    async function checkUserAndLoad() {
-      // 1. Check if session exists
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        router.push('/');
-        return;
-      }
-
-      // 2. Check Role (Admin/Trainer only)
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single();
-
-      if (profile?.role !== 'admin' && profile?.role !== 'trainer') {
-        router.push('/');
-        return;
-      }
-
-      // 3. Load Student Data
-      const { data } = await supabase.from('student_competency_matrix').select('*');
+    async function fetchStudents() {
+      const { data } = await supabase.from('profiles').select('*');
       if (data) setStudents(data);
-      setLoading(false);
     }
-    
-    checkUserAndLoad();
-  }, [supabase, router]);
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.push('/');
-    router.refresh();
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="text-[10px] font-black uppercase tracking-[0.5em] text-white animate-pulse">
-          Authenticating Cobel System...
-        </div>
-      </div>
-    );
-  }
+    fetchStudents();
+  }, [supabase]);
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white p-8">
-      <header className="flex justify-between items-center mb-12 border-b border-white/10 pb-6">
-        <Logo className="h-8" light />
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={handleSignOut}
-            className="text-[10px] font-black uppercase tracking-widest px-4 py-2 border border-white/20 rounded-full hover:bg-white hover:text-black transition-all"
-          >
-            Sign Out
-          </button>
-        </div>
-      </header>
-
-      <div className="grid grid-cols-1 gap-6">
-        {students.map((student) => (
-          <div key={student.student_id} className="bg-white/5 p-6 rounded-2xl border border-white/10">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold uppercase tracking-tighter">{student.name}</h3>
-              <div className="flex gap-2">
-                <span className="px-3 py-1 bg-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest">
-                  {student.domain || 'General'}
-                </span>
-                <BatchScanModal studentId={student.student_id} />
-              </div>
-            </div>
-            <MilestoneForecast studentId={student.student_id} />
+    <div className="min-h-screen bg-slate-50">
+      <Navigation />
+      
+      <main className="max-w-7xl mx-auto py-12 px-6">
+        <header className="mb-12 flex justify-between items-end">
+          <div>
+            <h2 className="text-4xl font-black uppercase tracking-tighter text-[#003366]">Command Center</h2>
+            <p className="text-[#10B981] text-xs font-black uppercase tracking-[0.3em]">Adaptive Learning Algorithm Active</p>
           </div>
-        ))}
-      </div>
+          <div className="bg-white px-6 py-3 rounded-2xl shadow-sm border border-slate-100">
+             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Cohort</span>
+             <p className="text-xl font-black text-[#003366]">{students.length} Students</p>
+          </div>
+        </header>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {students.map((student) => (
+            <div key={student.id} className="bg-white rounded-[3rem] shadow-xl border border-slate-100 overflow-hidden flex flex-col md:flex-row">
+              
+              {/* Left Side: Stats & Forecast */}
+              <div className="flex-1 p-10">
+                <div className="mb-6">
+                  <h3 className="text-2xl font-black uppercase tracking-tighter text-[#003366]">{student.full_name || 'Vocational Student'}</h3>
+                  <p className="text-[#10B981] text-[10px] font-bold uppercase tracking-widest">{student.technical_domain || 'General Technical'}</p>
+                </div>
+                
+                <MilestoneForecast studentId={student.id} />
+              </div>
+
+              {/* Right Side: QR Access Badge */}
+              <div className="w-full md:w-64 bg-[#003366]/5 border-l border-slate-100 p-10 flex flex-col items-center justify-center">
+                <p className="text-[9px] font-black uppercase tracking-widest text-[#003366] mb-4">Mobile Access</p>
+                <StudentQR studentId={student.id} />
+              </div>
+
+            </div>
+          ))}
+        </div>
+      </main>
     </div>
   );
 }
