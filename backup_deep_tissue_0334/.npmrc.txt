@@ -1,9 +1,0 @@
-# ensures a flat node_modules structure for better compatibility with vercel
-shamefully-hoist=true
-
-# prevents issues with peer dependencies during the build phase
-strict-peer-dependencies=false
-
-# optimization for faster installs in CI/CD environments
-fund=false
-audit=false

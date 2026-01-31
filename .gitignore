@@ -2,3 +2,6 @@
 .next
 .vercel
 .env
+
+# Legacy Backups
+backup_deep_tissue_*/
