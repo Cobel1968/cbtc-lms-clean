@@ -1,0 +1,91 @@
+'use client';
+import React, { useState, useCallback } from 'react';
+
+export default function AssessmentUploader({ userId }: { userId: string }) {
+    const [preview, setPreview] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [data, setData] = useState<any>(null);
+
+    const onFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Reset previous results
+        setData(null);
+        setLoading(true);
+
+        // Generate a persistent URL for this session
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setPreview(reader.result as string);
+            
+            // Simulate Cobel AI Engine Analysis
+            setTimeout(() => {
+                setData({
+                    percentage: "92%",
+                    match: "High",
+                    message: "Technical terms 'Atelier' and 'Maintenance' verified."
+                });
+                setLoading(false);
+            }, 2000);
+        };
+        reader.readAsDataURL(file);
+    }, []);
+
+    return (
+        <div style={{ padding: '20px', background: '#fff', border: '2px solid #2563eb', borderRadius: '12px' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 'bold', color: '#1e293b', marginBottom: '10px' }}>
+                 Analog-to-Digital Bridge
+            </h3>
+            
+            <input 
+                type="file" 
+                onChange={onFileSelect} 
+                accept="image/*"
+                style={{ display: 'block', marginBottom: '15px', width: '100%' }} 
+            />
+
+            {/* FORCED PREVIEW CONTAINER */}
+            {preview && (
+                <div style={{ 
+                    marginTop: '15px', 
+                    padding: '8px', 
+                    background: '#f8fafc', 
+                    border: '1px solid #e2e8f0', 
+                    borderRadius: '8px',
+                    minHeight: '150px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center'
+                }}>
+                    <span style={{ fontSize: '10px', color: '#2563eb', fontWeight: 'bold', alignSelf: 'flex-start', marginBottom: '5px' }}>
+                        LIVE SCAN PREVIEW:
+                    </span>
+                    <img 
+                        src={preview} 
+                        alt="Scanned Work" 
+                        style={{ 
+                            maxWidth: '100%', 
+                            height: 'auto', 
+                            borderRadius: '4px',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                            display: 'block' 
+                        }} 
+                    />
+                </div>
+            )}
+
+            {loading && <p style={{ fontSize: '12px', color: '#2563eb', textAlign: 'center', marginTop: '10px' }}>Analyzing Handwriting...</p>}
+
+            {data && (
+                <div style={{ marginTop: '15px', padding: '12px', background: '#f0fdf4', borderRadius: '8px', border: '1px solid #bbf7d0' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <strong style={{ color: '#166534' }}>Result:</strong>
+                        <span style={{ color: '#15803d', fontWeight: 'bold' }}>{data.percentage}</span>
+                    </div>
+                    <p style={{ fontSize: '11px', color: '#166534', marginTop: '5px', fontStyle: 'italic' }}>{data.message}</p>
+                </div>
+            )}
+        </div>
+    );
+}

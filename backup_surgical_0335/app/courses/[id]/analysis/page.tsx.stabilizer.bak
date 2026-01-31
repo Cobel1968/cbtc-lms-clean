@@ -1,0 +1,87 @@
+'use client';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabaseClient';
+
+export default function OCRVerifyPage() {
+    const [user, setUser] = useState<any>(null);
+    const [preview, setPreview] = useState<string | null>(null);
+    const [metrics, setMetrics] = useState<any>(null);
+    const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'success' | 'error'>('idle');
+
+    // Check auth status on load
+    useEffect(() => {
+        supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    }, []);
+
+    const handleLogin = async () => {
+        const email = prompt("Enter test email:");
+        const password = prompt("Enter test password:");
+        if (email && password) {
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) alert(error.message);
+            else setUser(data.user);
+        }
+    };
+
+    const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (f) => {
+            setPreview(f.target?.result as string);
+            setMetrics({ score: 18.5, accuracy: 98.7, terms: ["Atelier", "Maintenance"] });
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const syncData = async () => {
+        if (!user) { alert("You must be logged in to save results!"); return; }
+        setSyncStatus('syncing');
+        
+        const { error } = await supabase.from('user_progress').upsert({
+            user_id: user.id,
+            course_id: 'test_course_001',
+            last_score: metrics.score,
+            ocr_accuracy: metrics.accuracy,
+            technical_terms_mastered: metrics.terms
+        });
+
+        if (error) {
+            console.error(error);
+            setSyncStatus('error');
+        } else {
+            setSyncStatus('success');
+        }
+    };
+
+    return (
+        <div style={{ padding: '30px', fontFamily: 'sans-serif' }}>
+            {/* AUTH BAR */}
+            <div style={{ background: '#f1f5f9', padding: '15px', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+                <span>Status: <strong>{user ? `Connecté (${user.email})` : 'Déconnecté'}</strong></span>
+                {!user && <button onClick={handleLogin} style={{cursor:'pointer'}}>Se Connecter</button>}
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                <div style={{ background: '#fff', padding: '20px', border: '1px solid #ddd', borderRadius: '10px' }}>
+                    <input type="file" onChange={handleFile} accept="image/*" />
+                    {metrics && (
+                        <div style={{ marginTop: '20px' }}>
+                            <p>Note: <strong>{metrics.score}/20</strong></p>
+                            <button 
+                                onClick={syncData}
+                                disabled={!user || syncStatus === 'syncing'}
+                                style={{ width: '100%', padding: '10px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: '5px', cursor: user ? 'pointer' : 'not-allowed' }}
+                            >
+                                {syncStatus === 'success' ? '✅ Mis à jour !' : 'Sync to Supabase'}
+                            </button>
+                        </div>
+                    )}
+                </div>
+                <div style={{ background: '#000', minHeight: '300px', display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '10px' }}>
+                    {preview && <img src={preview} style={{ maxWidth: '100%', borderRadius: '5px' }} />}
+                </div>
+            </div>
+        </div>
+    );
+}

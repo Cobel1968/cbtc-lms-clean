@@ -1,0 +1,11 @@
+{
+  "construction": {
+    "chantier": "worksite",
+    "buses": "culverts",
+    "pelle": "excavator",
+    "carburant": "fuel",
+    "débroussement": "clearing",
+    "voyage": "trip",
+    "banque": "bank"
+  }
+}

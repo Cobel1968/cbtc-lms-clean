@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; padding: 30px; background: #fff; color: #334; }
+        .header { border-bottom: 2px solid #2563eb; margin-bottom: 20px; padding-bottom: 10px; }
+        .bilingual { color: #64748b; font-style: italic; font-size: 0.9em; }
+        .content-box { background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Vocabulaire Technique Bilingue</h1>
+        <div class="bilingual">Technical Vocabulary</div>
+    </div>
+    <div class="content-box">
+        <p>This module is part of the <strong>Cobel Business Training Center</strong> adaptive learning path.</p>
+        <p>Use the sidebar on the right to upload your assessments for <strong>Handwriting Analysis</strong>.</p>
+    </div>
+</body>
+</html>

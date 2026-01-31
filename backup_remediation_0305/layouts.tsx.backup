@@ -1,0 +1,124 @@
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import Navbar from './components/layout/Navbar';
+
+const inter = Inter({ subsets: ['latin'] });
+
+export const metadata: Metadata = {
+  title: 'COBELBTC - Formation Professionnelle en Ligne',
+  description: 'Plateforme de formation professionnelle bilingue (FR/EN) specialisee en technologie blockchain, intelligence artificielle, anglais IELTS, marketing digital, et gestion d\'entreprise. Formations certifiantes avec Abel Coulibaly.',
+  keywords: 'formation en ligne, e-learning, blockchain, smart contracts, IA, machine learning, IELTS, anglais, marketing digital, e-commerce, business, gestion actifs, Cote d\'Ivoire, Afrique',
+  authors: [{ name: 'Abel Coulibaly' }],
+  creator: 'COBELBTC',
+  publisher: 'COBELBTC',
+  openGraph: {
+    type: 'website',
+    locale: 'fr_FR',
+    alternateLocale: 'en_US',
+    url: 'https://cobelbtc.com',
+    siteName: 'COBELBTC',
+    title: 'COBELBTC - Formation Professionnelle en Ligne',
+    description: 'Plateforme de formation professionnelle bilingue avec 12 cours certifiants',
+    images: [
+      {
+        url: '/images/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'COBELBTC Platform'
+      }
+    ]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'COBELBTC - Formation Professionnelle',
+    description: 'Formations certifiantes en technologie, langues et business',
+    images: ['/images/twitter-image.jpg']
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1
+    }
+  },
+  verification: {
+    google: 'your-google-verification-code',
+    yandex: 'your-yandex-verification-code'
+  }
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="fr">
+      <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#2563eb" />
+      </head>
+      <body className={inter.className}>
+        <div className="min-h-screen flex flex-col bg-gray-50">
+          <Navbar />
+          <main className="flex-grow">
+            {children}
+          </main>
+          <footer className="bg-gray-900 text-white py-8 mt-auto">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                  <h3 className="text-lg font-bold mb-4">COBELBTC</h3>
+                  <p className="text-gray-400 text-sm">
+                    Plateforme de formation professionnelle bilingue (FR/EN) avec des cours certifiants.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="text-lg font-bold mb-4">Liens Rapides</h3>
+                  <ul className="space-y-2 text-sm">
+                    <li><a href="/courses" className="text-gray-400 hover:text-white transition-colors">Nos Cours</a></li>
+                    <li><a href="/about" className="text-gray-400 hover:text-white transition-colors">A Propos</a></li>
+                    <li><a href="/contact" className="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                    <li><a href="/faq" className="text-gray-400 hover:text-white transition-colors">FAQ</a></li>
+                  </ul>
+                </div>
+                
+                <div>
+                  <h3 className="text-lg font-bold mb-4">Categories</h3>
+                  <ul className="space-y-2 text-sm">
+                    <li><a href="/courses?category=technology" className="text-gray-400 hover:text-white transition-colors">Technologie</a></li>
+                    <li><a href="/courses?category=languages" className="text-gray-400 hover:text-white transition-colors">Langues</a></li>
+                    <li><a href="/courses?category=business" className="text-gray-400 hover:text-white transition-colors">Business</a></li>
+                    <li><a href="/courses?category=marketing" className="text-gray-400 hover:text-white transition-colors">Marketing</a></li>
+                  </ul>
+                </div>
+                
+                <div>
+                  <h3 className="text-lg font-bold mb-4">Contact</h3>
+                  <ul className="space-y-2 text-sm text-gray-400">
+                    <li>Email: contact@cobelbtc.com</li>
+                    <li>Tel: +225 XX XX XX XX XX</li>
+                    <li>Abidjan, Cote d\'Ivoire</li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
+                <p>&copy; {new Date().getFullYear()} COBELBTC. Tous droits reserves. Forme par Abel Coulibaly.</p>
+              </div>
+            </div>
+          </footer>
+        </div>
+      </body>
+    </html>
+  );
+}
+

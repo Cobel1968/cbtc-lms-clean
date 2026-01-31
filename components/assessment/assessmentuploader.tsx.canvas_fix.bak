@@ -1,0 +1,73 @@
+'use client';
+import React, { useState } from 'react';
+
+export default function AssessmentUploader({ userId }: { userId: string }) {
+    const [imgData, setImgData] = useState<string | null>(null);
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
+    const [finalNote, setFinalNote] = useState<any>(null);
+
+    const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setIsAnalyzing(true);
+        const reader = new FileReader();
+        reader.onload = (f) => {
+            setImgData(f.target?.result as string);
+            
+            // Simulate Cobel AI Engine: Technical Problem Solving
+            setTimeout(() => {
+                setFinalNote({
+                    score: "17.5 / 20",
+                    comment: "Excellent transcription of technical terms: 'Atelier' and 'Maintenance'. Handwriting is clear and valid."
+                });
+                setIsAnalyzing(false);
+            }, 2000);
+        };
+        reader.readAsDataURL(file);
+    };
+
+    return (
+        <div style={{ padding: '15px', border: '2px solid #2563eb', borderRadius: '12px', background: '#fff' }}>
+            <h3 style={{ margin: '0 0 10px 0', fontSize: '16px' }}> Analog-to-Digital Bridge</h3>
+            <p style={{ fontSize: '11px', color: '#64748b' }}>Upload your handwritten work to see your note.</p>
+            
+            <input type="file" onChange={handleFile} accept="image/*" style={{ margin: '15px 0', width: '100%' }} />
+
+            {/* THE ANALYSIS RESULT */}
+            {finalNote && (
+                <div style={{ padding: '10px', background: '#f0fdf4', border: '1px solid #16a34a', borderRadius: '8px', marginBottom: '10px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ fontWeight: 'bold' }}>Note:</span>
+                        <span style={{ color: '#16a34a', fontWeight: '900' }}>{finalNote.score}</span>
+                    </div>
+                    <p style={{ fontSize: '11px', marginTop: '5px' }}>{finalNote.comment}</p>
+                </div>
+            )}
+
+            {/* FORCED IMAGE PREVIEW (Using a fixed-position overlay if needed) */}
+            {imgData && (
+                <div style={{ marginTop: '10px' }}>
+                    <p style={{ fontSize: '10px', fontWeight: 'bold', color: '#2563eb' }}>EVIDENCE OF HANDWRITING:</p>
+                    <div style={{ 
+                        border: '2px solid #f97316', 
+                        padding: '5px', 
+                        background: '#fafafa', 
+                        borderRadius: '4px',
+                        boxShadow: '0 10px 15px -3px rgba(0,0,0,0.2)'
+                    }}>
+                        <img 
+                            src={imgData} 
+                            alt="Scan Preview" 
+                            style={{ width: '100%', height: 'auto', display: 'block' }} 
+                            onLoad={() => console.log("Image Loaded Successfully")}
+                            onError={() => alert("Image Display Error")}
+                        />
+                    </div>
+                </div>
+            )}
+
+            {isAnalyzing && <p style={{ fontSize: '12px', color: '#2563eb', textAlign: 'center' }}>Analyzing scanned assessment...</p>}
+        </div>
+    );
+}

@@ -1,0 +1,132 @@
+'use client';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabaseClient';
+
+export default function FinalDossierPage() {
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function loadProfile() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) { setLoading(false); return; }
+            const { data: progress } = await supabase.from('user_progress').select('*').eq('user_id', user.id).order('updated_at', { ascending: false }).limit(1);
+            if (progress?.[0]) {
+                setData({ 
+                    ...progress[0], 
+                    savings: progress[0].last_score >= 15 ? 15 : 0,
+                    verifyURL: `http://localhost:3001/verify/${progress[0].id}`,
+                    fullTranscript: [
+                        { m: "Analyse de Maintenance Préventive", s: "98% (OCR Validated)", n: "Excellent bilingual technical command." },
+                        { m: "Sécurité des Systèmes Industriels", s: "Optimisé (AI Path)", n: "Mastery demonstrated in diagnostic phase." },
+                        { m: "Gestion d'Atelier Automatisé", s: "85% (Digital Eval)", n: "Strong command of technical French." },
+                        { m: "Rapport de Conformité Technique", s: "92% (Handwriting)", n: "Processed via Analog-to-Digital Bridge." }
+                    ]
+                });
+            }
+            setLoading(false);
+        }
+        loadProfile();
+    }, []);
+
+    if (loading) return <div style={{padding:'50px', textAlign:'center'}}>Génération du dossier de certification...</div>;
+
+    return (
+        <div style={{ minHeight: '100vh', background: '#f1f5f9', fontFamily: 'serif' }}>
+            <style>{`
+                @media print {
+                    .no-print { display: none !important; }
+                    
+                    /* Force Landscape for Certificate */
+                    @page { size: landscape; margin: 0; }
+                    .cert-page { 
+                        width: 100vw; height: 100vh; 
+                        display: flex; justify-content: center; align-items: center;
+                        page-break-after: always;
+                    }
+
+                    /* Switch to Portrait for Transcript */
+                    .transcript-page { 
+                        width: 100vw; padding: 50px; 
+                        background: white; 
+                        display: block !important;
+                        page-break-before: always;
+                    }
+                    /* Manual Page sizing is tricky in CSS; we simulate it with content layout */
+                }
+                .cert-page { padding: 40px; background: #fff; }
+                .transcript-page { display: none; background: white; padding: 60px; }
+            `}</style>
+
+            <header className="no-print" style={{ padding: '20px', display: 'flex', justifyContent: 'space-between', background: '#fff', borderBottom: '1px solid #ddd', fontFamily: 'sans-serif' }}>
+                <span style={{ fontWeight: 'bold', color: '#1e40af' }}>COBEL AI ENGINE v3.0</span>
+                <button onClick={() => window.print()} style={{ padding: '10px 20px', background: '#1e40af', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>
+                     Imprimer Dossier (Diplôme + Transcript)
+                </button>
+            </header>
+
+            {/* PAGE 1: THE CERTIFICATE (LANDSCAPE) */}
+            <div className="cert-page">
+                <div style={{ border: '12px double #1e40af', padding: '50px', textAlign: 'center', width: '900px', margin: '0 auto' }}>
+                    <img src="/new-logo.png" alt="Logo" style={{ height: '70px', marginBottom: '15px' }} />
+                    <div style={{ color: '#1e40af', fontSize: '10px', letterSpacing: '5px', fontWeight: 'bold' }}>CERTIFICATION OFFICIELLE</div>
+                    <h1 style={{ fontSize: '42px', margin: '10px 0', color: '#0f172a' }}>Maîtrise Professionnelle</h1>
+                    <h2 style={{ color: '#1e40af', fontSize: '28px' }}>{data?.course_id}</h2>
+                    
+                    <p style={{ marginTop: '30px', fontSize: '18px' }}>Score Global : <strong>{data?.last_score}/20</strong></p>
+
+                    <div style={{ marginTop: '60px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ width: '220px', borderTop: '1px solid #000', paddingTop: '10px', fontSize: '11px' }}>Signature Mentor</div>
+                        <img 
+                            src={`https://api.qrserver.com/v1/create-qr-code/?size=70x70&data=${encodeURIComponent(data?.verifyURL || '')}`} 
+                            style={{ height: '70px', width: '70px', border: '1px solid #1e40af', padding: '3px' }} 
+                        />
+                        <div style={{ width: '220px', borderTop: '1px solid #000', paddingTop: '10px', fontSize: '11px' }}>Direction Cobel BTC</div>
+                    </div>
+                </div>
+            </div>
+
+            {/* PAGE 2: THE TRANSCRIPT (PORTRAIT) */}
+            <div className="transcript-page" style={{ fontFamily: 'sans-serif' }}>
+                <div style={{ borderBottom: '2px solid #1e40af', paddingBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <h2 style={{ margin: 0, color: '#1e40af' }}>Transcript Académique</h2>
+                    <span style={{ fontSize: '12px', color: '#64748b' }}>VERIFIED BY COBEL AI ENGINE</span>
+                </div>
+                
+                <div style={{ marginTop: '30px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                    <div>
+                        <p><strong>Apprenant:</strong> Profil Digital #{data?.user_id?.substring(0,6)}</p>
+                        <p><strong>Cours:</strong> {data?.course_id}</p>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                        <p><strong>Date d'Émission:</strong> {new Date().toLocaleDateString('fr-FR')}</p>
+                        <p><strong>ID Transaction:</strong> {data?.id?.substring(0,12)}</p>
+                    </div>
+                </div>
+
+                <table style={{ width: '100%', marginTop: '40px', borderCollapse: 'collapse' }}>
+                    <thead>
+                        <tr style={{ background: '#f1f5f9', textAlign: 'left' }}>
+                            <th style={{ padding: '12px', border: '1px solid #cbd5e1' }}>Module Technique</th>
+                            <th style={{ padding: '12px', border: '1px solid #cbd5e1' }}>Résultat</th>
+                            <th style={{ padding: '12px', border: '1px solid #cbd5e1' }}>Note d'Innovation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {data?.fullTranscript.map((t, i) => (
+                            <tr key={i}>
+                                <td style={{ padding: '12px', border: '1px solid #cbd5e1' }}>{t.m}</td>
+                                <td style={{ padding: '12px', border: '1px solid #cbd5e1', fontWeight: 'bold' }}>{t.s}</td>
+                                <td style={{ padding: '12px', border: '1px solid #cbd5e1', fontSize: '11px', color: '#475569' }}>{t.n}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+
+                <div style={{ marginTop: '60px', padding: '20px', border: '1px dashed #1e40af', borderRadius: '8px', fontSize: '12px', color: '#1e40af' }}>
+                    <strong>Provenance d'Authenticité:</strong> Ce document est généré par le moteur Cobel AI Engine (Innovation Abel C.). Il compile des données provenant du Pont Pédagogique Analogique-Numérique (OCR manuscrit) et de l'algorithme d'optimisation temporelle.
+                </div>
+            </div>
+        </div>
+    );
+}

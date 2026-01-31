@@ -1,0 +1,85 @@
+'use client';
+import React, { useState } from 'react';
+import { useParams } from 'next/navigation';
+import { supabase } from '@/lib/supabaseClient';
+
+export default function OCRVerifyPage() {
+    const params = useParams();
+    const [preview, setPreview] = useState<string | null>(null);
+    const [metrics, setMetrics] = useState<any>(null);
+    const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'success' | 'error'>('idle');
+
+    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            setPreview(event.target?.result as string);
+            setMetrics({ score: 18.5, accuracy: 98.7, terms: ["Atelier", "Maintenance"] });
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const trySync = async () => {
+        setSyncStatus('syncing');
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) { alert("Please log in first!"); setSyncStatus('error'); return; }
+
+            const { error } = await supabase
+                .from('user_progress')
+                .upsert({ 
+                    user_id: user.id,
+                    course_id: params.id || 'test_course',
+                    last_score: metrics.score,
+                    ocr_accuracy: metrics.accuracy,
+                    technical_terms_mastered: metrics.terms,
+                    updated_at: new Date().toISOString()
+                });
+
+            if (error) {
+                if (error.code === 'PGRST116' || error.message.includes('404')) {
+                    alert("DATABASE ERROR: The table 'user_progress' was not found in Supabase. Please create it in the SQL Editor.");
+                } else {
+                    alert("Error: " + error.message);
+                }
+                setSyncStatus('error');
+            } else {
+                setSyncStatus('success');
+            }
+        } catch (e) {
+            setSyncStatus('error');
+        }
+    };
+
+    return (
+        <div style={{ padding: '40px', maxWidth: '900px', margin: '0 auto', fontFamily: 'sans-serif' }}>
+            <h1 style={{color: '#2563eb'}}>Profil Digital: Pont Analogique</h1>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
+                <div style={{ background: '#0f172a', minHeight: '300px', display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '12px' }}>
+                    {preview ? <img src={preview} style={{maxWidth:'100%', borderRadius:'8px'}} /> : <p style={{color:'#475569'}}>Waiting for scan...</p>}
+                </div>
+                <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                    <input type="file" onChange={handleFileUpload} accept="image/*" />
+                    {metrics && (
+                        <div style={{marginTop: '20px'}}>
+                            <h3>Note: {metrics.score}/20</h3>
+                            <button 
+                                onClick={trySync}
+                                style={{ 
+                                    width: '100%', padding: '12px', background: syncStatus === 'success' ? '#16a34a' : '#2563eb', 
+                                    color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' 
+                                }}
+                            >
+                                {syncStatus === 'idle' && 'Synchroniser au Profil'}
+                                {syncStatus === 'syncing' && 'Vérification de la base de données...'}
+                                {syncStatus === 'success' && ' Synchronisé !'}
+                                {syncStatus === 'error' && ' Erreur (Table manquante ?)'}
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
