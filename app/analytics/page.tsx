@@ -19,22 +19,13 @@ export default function AnalyticsPage() {
     setTitle(localStorage.getItem('last_scanned_title') || "Assessment");
     setStudentId(localStorage.getItem('assigned_student_id') || "");
     setCourseId(localStorage.getItem('assigned_course_id') || "");
-    
-    console.log("Bridge Check:", { 
-      student: localStorage.getItem('assigned_student_id'), 
-      course: localStorage.getItem('assigned_course_id') 
-    });
   }, []);
 
   const handleSave = async () => {
-    if (!studentId || !courseId) {
-      alert(" Error: Enrollment data is missing. Please go back and re-select the student/course.");
-      return;
-    }
-
+    if (!studentId || !courseId) return alert("Enrollment data missing.");
     setIsSaving(true);
-    console.log("Attempting Commit...");
 
+    // Attempting insert with explicit column mapping
     const { error } = await supabase.from('student_evidence').insert({ 
       student_id: studentId,
       course_id: courseId,
@@ -45,11 +36,15 @@ export default function AnalyticsPage() {
     });
 
     if (error) {
-      console.error("Supabase Insert Error:", error.message);
-      alert("Database Error: " + error.message);
+      console.error("Critical Sync Error:", error);
+      // If schema cache is still broken, we alert the user
+      if (error.message.includes("course_id")) {
+        alert("Database Sync Issue: The 'course_id' column is still being cached. Please refresh your Supabase dashboard and try again in 60 seconds.");
+      } else {
+        alert("Error: " + error.message);
+      }
       setIsSaving(false);
     } else {
-      console.log("Commit Successful!");
       localStorage.clear();
       router.push('/admin-dashboard'); 
     }
@@ -58,40 +53,27 @@ export default function AnalyticsPage() {
   return (
     <div className="p-8 max-w-6xl mx-auto">
       <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-black text-slate-900">{title}</h1>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Verification Phase</p>
-        </div>
+        <h1 className="text-3xl font-black">{title}</h1>
         <button 
           onClick={handleSave} 
           disabled={isSaving}
-          className={`${isSaving ? 'bg-slate-400' : 'bg-emerald-600 hover:bg-emerald-700'} text-white px-10 py-4 rounded-2xl font-black shadow-xl transition-all`}
+          className="bg-emerald-600 text-white px-10 py-4 rounded-2xl font-black shadow-xl disabled:bg-slate-300"
         >
-          {isSaving ? "SYNCING TO LMS..." : "COMMIT TO LMS"}
+          {isSaving ? "SYNCING..." : "COMMIT TO LMS"}
         </button>
       </div>
-
+      {/* ... Rest of your UI for sliders and image preview ... */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         <div className="bg-white p-4 rounded-3xl border shadow-sm">
-          {evidence ? (
-            <img src={evidence} className="w-full rounded-2xl shadow-inner" />
-          ) : (
-            <div className="h-64 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 font-bold">No Image Found</div>
-          )}
+          {evidence && <img src={evidence} className="w-full rounded-2xl" />}
         </div>
         <div className="bg-slate-50 p-10 rounded-3xl border space-y-10">
-          <h2 className="text-xl font-black text-slate-400 uppercase tracking-widest">Adjust Fluency</h2>
-          
-          <div>
-            <label className="block text-xs font-black mb-2 text-blue-600">ENGLISH FLUENCY (%)</label>
-            <input type="range" min="0" max="100" value={englishScore} onChange={(e) => setEnglishScore(Number(e.target.value))} className="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
-            <p className="text-right font-black text-2xl text-blue-600">{englishScore}%</p>
-          </div>
-
-          <div>
-            <label className="block text-xs font-black mb-2 text-rose-500">FRENCH FLUENCY (%)</label>
-            <input type="range" min="0" max="100" value={frenchScore} onChange={(e) => setFrenchScore(Number(e.target.value))} className="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-rose-500" />
-            <p className="text-right font-black text-2xl text-rose-500">{frenchScore}%</p>
+          <div className="space-y-4">
+            <label className="block text-xs font-black text-blue-600 uppercase">English Mastery: {englishScore}%</label>
+            <input type="range" min="0" max="100" value={englishScore} onChange={(e) => setEnglishScore(Number(e.target.value))} className="w-full accent-blue-600" />
+            
+            <label className="block text-xs font-black text-rose-500 uppercase">French Mastery: {frenchScore}%</label>
+            <input type="range" min="0" max="100" value={frenchScore} onChange={(e) => setFrenchScore(Number(e.target.value))} className="w-full accent-rose-500" />
           </div>
         </div>
       </div>
