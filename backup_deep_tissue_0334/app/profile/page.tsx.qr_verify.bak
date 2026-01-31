@@ -1,0 +1,119 @@
+'use client';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabaseClient';
+
+export default function MasterCertificatePage() {
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function loadProfile() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) { setLoading(false); return; }
+            const { data: progress } = await supabase.from('user_progress').select('*').eq('user_id', user.id).order('updated_at', { ascending: false }).limit(1);
+            if (progress?.[0]) {
+                setData({ 
+                    ...progress[0], 
+                    savings: progress[0].last_score >= 15 ? 15 : 0,
+                    transcript: [
+                        { module: "Analyse Technique de Chantier", status: "Validé (OCR)", lang: "FR" },
+                        { module: "Advanced Maintenance Protocol", status: "Validé (Adaptive)", lang: "EN" },
+                        { module: "Sécurité et Conformité", status: "Optimisé (Skipped)", lang: "FR" }
+                    ]
+                });
+            }
+            setLoading(false);
+        }
+        loadProfile();
+    }, []);
+
+    if (loading) return <div style={{padding:'50px', textAlign:'center'}}>Génération du Certificat de Maîtrise...</div>;
+
+    return (
+        <div style={{ minHeight: '100vh', background: '#f1f5f9', padding: '20px', fontFamily: 'serif' }}>
+            <style>{`
+                @media print {
+                    @page { size: landscape; margin: 0; }
+                    body { margin: 0; padding: 0; background: #fff !important; }
+                    .no-print { display: none !important; }
+                    .cert-wrapper { 
+                        width: 100vw !important; 
+                        height: 100vh !important; 
+                        display: flex !important;
+                        justify-content: center !important;
+                        align-items: center !important;
+                        background: #fff !important;
+                    }
+                    .certificate-frame { 
+                        width: 90% !important;
+                        height: 85% !important;
+                        border: 12px double #1e40af !important;
+                        padding: 40px !important;
+                        box-shadow: none !important;
+                    }
+                }
+            `}</style>
+
+            <header className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '1100px', margin: '0 auto 20px auto', fontFamily: 'sans-serif' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                    <div style={{ fontSize: '24px' }}>⚙️</div>
+                    <span style={{ fontWeight: 'bold', color: '#1e40af' }}>COBEL AI ENGINE</span>
+                </div>
+                <button onClick={() => window.print()} style={{ padding: '10px 25px', background: '#1e40af', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Imprimer le Certificat</button>
+            </header>
+
+            <div className="cert-wrapper">
+                <div className="certificate-frame" style={{ background: '#fff', padding: '50px', border: '10px double #1e40af', textAlign: 'center', position: 'relative', maxWidth: '1000px', margin: '0 auto' }}>
+                    
+                    {/* LOGO PLACED INSIDE THE FRAME */}
+                    <div style={{ marginBottom: '20px' }}>
+                        <img src="/new-logo.png" alt="Cobel Logo" style={{ height: '70px', width: 'auto' }} onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/200x70?text=COBEL+BUSINESS'; }} />
+                    </div>
+
+                    <div style={{ color: '#1e40af', fontSize: '12px', letterSpacing: '5px', fontWeight: 'bold' }}>CERTIFICAT DE COMPÉTENCE TECHNIQUE</div>
+                    
+                    <h1 style={{ fontSize: '42px', margin: '15px 0' }}>Attestation de Réussite</h1>
+                    <p style={{ fontSize: '18px', fontStyle: 'italic' }}>Décerné pour avoir complété avec succès le parcours complet :</p>
+                    
+                    {/* FULL COURSE TITLE DISPLAY */}
+                    <h2 style={{ color: '#1e40af', fontSize: '32px', borderBottom: '2px solid #e2e8f0', display: 'inline-block', paddingBottom: '10px', marginBottom: '30px' }}>
+                        {data?.course_id || "Professional Business Training (LMS)"}
+                    </h2>
+
+                    {/* TRANSCRIPT SECTION */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px', textAlign: 'left', marginTop: '20px' }}>
+                        <div>
+                            <h4 style={{ borderBottom: '1px solid #000', paddingBottom: '5px' }}>Détails de l'Évaluation</h4>
+                            <p><strong>Score Global:</strong> {data?.last_score}/20</p>
+                            <p><strong>Temps Optimisé:</strong> -{data?.savings} Jours</p>
+                            <p><strong>Termes Maîtrisés:</strong> {data?.technical_terms_mastered?.join(', ')}</p>
+                        </div>
+                        <div>
+                            <h4 style={{ borderBottom: '1px solid #000', paddingBottom: '5px' }}>Transcript Académique</h4>
+                            {data?.transcript.map((item, idx) => (
+                                <div key={idx} style={{ fontSize: '12px', marginBottom: '5px', display: 'flex', justifyContent: 'space-between' }}>
+                                    <span>[{item.lang}] {item.module}</span>
+                                    <span style={{ color: '#16a34a' }}>{item.status}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div style={{ marginTop: '50px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                        <div style={{ textAlign: 'center', width: '200px' }}>
+                            <div style={{ borderBottom: '1px solid #000', height: '30px' }}></div>
+                            <p style={{ fontSize: '10px' }}>Signature du Mentor</p>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                            <p style={{ fontSize: '10px', color: '#94a3b8' }}>Vérifié par Cobel AI Engine v3.0</p>
+                        </div>
+                        <div style={{ textAlign: 'center', width: '200px' }}>
+                            <div style={{ borderBottom: '1px solid #000', height: '30px' }}></div>
+                            <p style={{ fontSize: '10px' }}>Direction Cobel BTC</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}

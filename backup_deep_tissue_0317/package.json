@@ -1,0 +1,67 @@
+{
+  "name": "cbtc-lms",
+  "version": "0.1.1",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "check": "node scripts/check-case.js",
+    "fix-case": "node scripts/fix-filenames.js",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^3.3.4",
+    "@supabase/auth-helpers-nextjs": "^0.15.0",
+    "@supabase/ssr": "^0.5.2",
+    "@supabase/supabase-js": "^2.48.0",
+    "canvas-confetti": "^1.9.4",
+    "clsx": "^2.1.0",
+    "dompurify": "^3.2.4",
+    "framer-motion": "^11.0.8",
+    "glob": "^11.0.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.2",
+    "lucide-react": "^0.344.0",
+    "next": "14.2.35",
+    "qrcode.react": "^3.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.51.0",
+    "react-signature-canvas": "1.0.5",
+    "resend": "^3.2.0",
+    "rimraf": "^6.0.1",
+    "tailwind-merge": "^2.2.1",
+    "tesseract.js": "^7.0.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/canvas-confetti": "^1.9.0",
+    "@types/node": "^20.11.24",
+    "@types/react": "^18.2.61",
+    "@types/react-dom": "^18.2.19",
+    "@types/react-signature-canvas": "^1.0.5",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "14.2.35",
+    "postcss": "^8.4.35",
+    "supabase": "^1.145.4",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.3.3"
+  },
+  "description": "**Author:** Abel C.  \r **Innovation Type:** Computer-Implemented Pedagogical Logic / Adaptive Learning Algorithm  \r **Market Focus:** Vocational Training (Hospitality/Trade) - Côte d'Ivoire (XOF)",
+  "main": "doctor.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cobel1968/cbtc-lms-clean.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Cobel1968/cbtc-lms-clean/issues"
+  },
+  "homepage": "https://github.com/Cobel1968/cbtc-lms-clean#readme"
+}

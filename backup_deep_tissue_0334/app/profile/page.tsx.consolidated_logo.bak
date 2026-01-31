@@ -1,0 +1,86 @@
+'use client';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabaseClient';
+
+export default function MilestoneForecastingPage() {
+    const [audit, setAudit] = useState(null);
+    const [forecast, setForecast] = useState(null);
+
+    useEffect(() => {
+        const generateForecast = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            const { data } = await supabase
+                .from('user_progress')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('updated_at', { ascending: false })
+                .limit(1);
+
+            if (data && data[0]) {
+                const latest = data[0];
+                setAudit(latest);
+                
+                // COBEL AI ENGINE: Forecasting Logic (Temporal Optimization)
+                const baseDurationDays = 90; // Standard Course
+                const timeSaved = latest.last_score >= 15 ? 15 : 0; // Days saved by skipping basics
+                const projectedDays = baseDurationDays - timeSaved;
+                
+                const completionDate = new Date();
+                completionDate.setDate(completionDate.getDate() + projectedDays);
+
+                setForecast({
+                    originalDays: baseDurationDays,
+                    optimizedDays: projectedDays,
+                    savings: timeSaved,
+                    projectedDate: completionDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }),
+                    confidence: latest.ocr_accuracy
+                });
+            }
+        };
+        generateForecast();
+    }, []);
+
+    return (
+        <div style={{ padding: '40px', maxWidth: '1000px', margin: '0 auto', fontFamily: 'sans-serif', color: '#0f172a' }}>
+            <h1 style={{ color: '#1e40af' }}>Feature 3: Automated Milestone Forecasting</h1>
+            <p style={{ color: '#64748b' }}>Prédiction de complétion basée sur l'optimisation temporelle de l'IA.</p>
+
+            {forecast && (
+                <div style={{ marginTop: '30px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                    {/* STATS CARD */}
+                    <div style={{ background: '#0f172a', color: 'white', padding: '30px', borderRadius: '20px' }}>
+                        <h3 style={{ margin: '0 0 20px 0', color: '#3b82f6' }}>Optimisation de la Durée</h3>
+                        <div style={{ fontSize: '48px', fontWeight: 'bold' }}>-{forecast.savings} Jours</div>
+                        <p style={{ opacity: 0.8 }}>Temps gagné grâce à votre score de {audit.last_score}/20</p>
+                        
+                        <div style={{ marginTop: '30px', borderTop: '1px solid #334155', paddingTop: '20px' }}>
+                            <p>Confiance de l'Analyse : <strong>{forecast.confidence}%</strong></p>
+                        </div>
+                    </div>
+
+                    {/* MILESTONE CARD */}
+                    <div style={{ background: '#fff', padding: '30px', borderRadius: '20px', border: '2px solid #e2e8f0', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}>
+                        <h3 style={{ margin: '0 0 10px 0' }}>Date de Fin Projetée</h3>
+                        <div style={{ fontSize: '28px', color: '#16a34a', fontWeight: 'bold' }}>{forecast.projectedDate}</div>
+                        
+                        <div style={{ marginTop: '25px' }}>
+                            <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'space-between' }}>
+                                <span>Progression Réelle</span>
+                                <span>{Math.round((forecast.savings / forecast.originalDays) * 100)}%</span>
+                            </div>
+                            <div style={{ width: '100%', height: '12px', background: '#f1f5f9', borderRadius: '10px' }}>
+                                <div style={{ width: `${(forecast.savings / forecast.originalDays) * 100}%`, height: '100%', background: '#16a34a', borderRadius: '10px' }}></div>
+                            </div>
+                        </div>
+
+                        <p style={{ marginTop: '20px', fontSize: '13px', color: '#64748b', fontStyle: 'italic' }}>
+                            Note: Cette prédiction s'ajuste dynamiquement à chaque évaluation validée par le Pont Analogique.
+                        </p>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}

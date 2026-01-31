@@ -1,0 +1,499 @@
+# Lire le contenu actuel
+$pageFile = "E:\CBTC-FINAL\cbtc-fresh\app\courses\[id]\page.tsx"
+$content = Get-Content $pageFile -Raw
+
+# Ajouter generateStaticParams avant le composant
+$newContent = @"
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { getCourseById, courses } from '../../lib/courses-data';
+import { getTranslations, getCurrentLanguage } from '../../lib/translations';
+import type { Course } from '../../lib/types';
+
+// Générer les pages statiques pour tous les cours
+export async function generateStaticParams() {
+  return courses.map((course) => ({
+    id: course.id,
+  }));
+}
+
+"@ + $content.Substring($content.IndexOf("export default"))
+
+$newContent | Out-File $pageFile -Encoding UTF8 -Force
+Write-Host "✅ generateStaticParams ajouté" -ForegroundColor Green
+
+﻿'use client';
+
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { 
+  coursesData, 
+  getCoursesByCategory, 
+  getCoursesByLevel,
+  sortCourses,
+  courseCategories,
+  courseLevels 
+} from './lib/courses-data';
+import { getTranslations, getCurrentLanguage } from './lib/translations';
+import type { Course } from './lib/types';
+
+export default function HomePage() {
+  const [currentLang, setCurrentLang] = useState<'fr' | 'en'>('fr');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedLevel, setSelectedLevel] = useState('all');
+  const [sortBy, setSortBy] = useState<'price' | 'rating' | 'duration' | 'popularity'>('popularity');
+  const [filteredCourses, setFilteredCourses] = useState<Course[]>(coursesData);
+  const [mounted, setMounted] = useState(false);
+  
+  const t = getTranslations(currentLang);
+
+  useEffect(() => {
+    setMounted(true);
+    const lang = getCurrentLanguage();
+    setCurrentLang(lang);
+  }, []);
+
+  useEffect(() => {
+    let courses = coursesData;
+    
+    if (selectedCategory !== 'all') {
+      courses = getCoursesByCategory(selectedCategory);
+    }
+    
+    if (selectedLevel !== 'all') {
+      courses = getCoursesByLevel(selectedLevel);
+    }
+    
+    courses = sortCourses(courses, sortBy);
+    
+    setFilteredCourses(courses);
+  }, [selectedCategory, selectedLevel, sortBy]);
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('fr-FR').format(price);
+  };
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Chargement...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero Section */}
+      <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">
+              {currentLang === 'fr' 
+                ? 'Formations Professionnelles Certifiantes'
+                : 'Certified Professional Training'}
+            </h1>
+            <p className="text-xl md:text-2xl mb-8 text-blue-100">
+              {currentLang === 'fr'
+                ? 'Developpez vos competences avec nos 12 cours en ligne'
+                : 'Develop your skills with our 12 online courses'}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/courses"
+                className="px-8 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg"
+              >
+                {t.common.exploreCourses}
+              </Link>
+              <Link
+                href="/register"
+                className="px-8 py-3 bg-transparent border-2 border-white text-white rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors"
+              >
+                {t.nav.register}
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-12 bg-white border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div>
+              <div className="text-4xl font-bold text-blue-600 mb-2">12</div>
+              <div className="text-gray-600">
+                {currentLang === 'fr' ? 'Cours Disponibles' : 'Available Courses'}
+              </div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-blue-600 mb-2">3,000+</div>
+              <div className="text-gray-600">
+                {currentLang === 'fr' ? 'Etudiants Actifs' : 'Active Students'}
+              </div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-blue-600 mb-2">4.8/5</div>
+              <div className="text-gray-600">
+                {currentLang === 'fr' ? 'Note Moyenne' : 'Average Rating'}
+              </div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-blue-600 mb-2">100%</div>
+              <div className="text-gray-600">
+                {currentLang === 'fr' ? 'En Ligne' : 'Online'}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Filters Section */}
+      <section className="py-8 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium text-gray-700">
+                {currentLang === 'fr' ? 'Categorie:' : 'Category:'}
+              </label>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                {courseCategories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.label[currentLang]}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium text-gray-700">
+                {currentLang === 'fr' ? 'Niveau:' : 'Level:'}
+              </label>
+              <select
+                value={selectedLevel}
+                onChange={(e) => setSelectedLevel(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                {courseLevels.map((level) => (
+                  <option key={level.id} value={level.id}>
+                    {level.label[currentLang]}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium text-gray-700">
+                {currentLang === 'fr' ? 'Trier par:' : 'Sort by:'}
+              </label>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="popularity">
+                  {currentLang === 'fr' ? 'Popularite' : 'Popularity'}
+                </option>
+                <option value="price">
+                  {currentLang === 'fr' ? 'Prix' : 'Price'}
+                </option>
+                <option value="rating">
+                  {currentLang === 'fr' ? 'Note' : 'Rating'}
+                </option>
+                <option value="duration">
+                  {currentLang === 'fr' ? 'Duree' : 'Duration'}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Courses Grid */}
+      <section className="py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              {currentLang === 'fr' ? 'Nos Formations' : 'Our Courses'}
+            </h2>
+            <p className="text-lg text-gray-600">
+              {filteredCourses.length} {currentLang === 'fr' ? 'cours disponibles' : 'courses available'}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredCourses.map((course) => (
+              <div
+                key={course.id}
+                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300"
+              >
+                <div className="relative h-48 bg-gradient-to-br from-blue-500 to-purple-600">
+                  <div className="absolute top-4 right-4">
+                    {false && (
+                      <span className="px-3 py-1 bg-yellow-400 text-yellow-900 text-xs font-bold rounded-full">
+                        {currentLang === 'fr' ? 'POPULAIRE' : 'POPULAR'}
+                      </span>
+                    )}
+                  </div>
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <div className="flex items-center gap-2 text-white text-sm">
+                      <span className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded">
+                        {course.level === 'beginner' && (currentLang === 'fr' ? 'Debutant' : 'Beginner')}
+                        {course.level === 'intermediate' && (currentLang === 'fr' ? 'Intermediaire' : 'Intermediate')}
+                        {course.level === 'advanced' && (currentLang === 'fr' ? 'Avance' : 'Advanced')}
+                      </span>
+                      <span className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded">
+                        {course.duration_weeks} {currentLang === 'fr' ? 'semaines' : 'weeks'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-6">
+                  <div className="mb-4">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                      {course.name[currentLang]}
+                    </h3>
+                    <p className="text-gray-600 text-sm line-clamp-3">
+                      {course.description[currentLang]}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-3 mb-4 pb-4 border-b">
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                      AC
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-gray-900">
+                        {course.instructor_name}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {"Formateur Expert"}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between mb-4 text-sm text-gray-600">
+                    <div className="flex items-center gap-1">
+                      <svg className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                      <span className="font-medium">{4.8}</span>
+                      <span>({150})</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                      </svg>
+                      <span>{1200} {currentLang === 'fr' ? 'etudiants' : 'students'}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-2xl font-bold text-blue-600">
+                        {formatPrice(course.price)} XOF
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {currentLang === 'fr' ? 'Paiement unique' : 'One-time payment'}
+                      </div>
+                    </div>
+                    <Link
+                      href={`/courses/${course.id}`}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                    >
+                      {currentLang === 'fr' ? 'Voir' : 'View'}
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {filteredCourses.length === 0 && (
+            <div className="text-center py-12">
+              <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <h3 className="text-xl font-medium text-gray-900 mb-2">
+                {currentLang === 'fr' ? 'Aucun cours trouve' : 'No courses found'}
+              </h3>
+              <p className="text-gray-600 mb-6">
+                {currentLang === 'fr' 
+                  ? 'Essayez de modifier vos filtres' 
+                  : 'Try adjusting your filters'}
+              </p>
+              <button
+                onClick={() => {
+                  setSelectedCategory('all');
+                  setSelectedLevel('all');
+                }}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                {currentLang === 'fr' ? 'Reinitialiser les filtres' : 'Reset filters'}
+              </button>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              {currentLang === 'fr' ? 'Pourquoi COBELBTC ?' : 'Why COBELBTC?'}
+            </h2>
+            <p className="text-lg text-gray-600">
+              {currentLang === 'fr' 
+                ? 'Une plateforme complete pour votre reussite professionnelle'
+                : 'A complete platform for your professional success'}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-2">
+                {currentLang === 'fr' ? 'Certifications Reconnues' : 'Recognized Certifications'}
+              </h3>
+              <p className="text-gray-600 text-sm">
+                {currentLang === 'fr' 
+                  ? 'Obtenez des certificats valorises par les employeurs'
+                  : 'Get certificates valued by employers'}
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-2">
+                {currentLang === 'fr' ? 'Contenu de Qualite' : 'Quality Content'}
+              </h3>
+              <p className="text-gray-600 text-sm">
+                {currentLang === 'fr' 
+                  ? 'Cours mis a jour regulierement par des experts'
+                  : 'Courses regularly updated by experts'}
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-2">
+                {currentLang === 'fr' ? 'Apprentissage Flexible' : 'Flexible Learning'}
+              </h3>
+              <p className="text-gray-600 text-sm">
+                {currentLang === 'fr' 
+                  ? 'Etudiez a votre rythme, ou et quand vous voulez'
+                  : 'Study at your own pace, where and when you want'}
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-2">
+                {currentLang === 'fr' ? 'Support Personnalise' : 'Personalized Support'}
+              </h3>
+              <p className="text-gray-600 text-sm">
+                {currentLang === 'fr' 
+                  ? 'Accompagnement individuel tout au long de votre parcours'
+                  : 'Individual support throughout your journey'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            {currentLang === 'fr' 
+              ? 'Pret a commencer votre formation ?'
+              : 'Ready to start your training?'}
+          </h2>
+          <p className="text-xl mb-8 text-blue-100">
+            {currentLang === 'fr'
+              ? 'Rejoignez plus de 3,000 etudiants qui ont deja transforme leur carriere'
+              : 'Join over 3,000 students who have already transformed their careers'}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/register"
+              className="px-8 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg"
+            >
+              {currentLang === 'fr' ? 'Creer un compte gratuit' : 'Create free account'}
+            </Link>
+            <Link
+              href="/courses"
+              className="px-8 py-3 bg-transparent border-2 border-white text-white rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors"
+            >
+              {currentLang === 'fr' ? 'Explorer les cours' : 'Explore courses'}
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Instructor Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-lg shadow-lg p-8 md:flex items-center gap-8">
+            <div className="md:w-1/3 mb-6 md:mb-0">
+              <div className="w-32 h-32 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full mx-auto flex items-center justify-center text-white text-4xl font-bold">
+                AC
+              </div>
+            </div>
+            <div className="md:w-2/3">
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">Abel Coulibaly</h3>
+              <p className="text-blue-600 font-medium mb-4">
+                {currentLang === 'fr' 
+                  ? 'Entrepreneur & Formateur Expert'
+                  : 'Entrepreneur & Expert Trainer'}
+              </p>
+              <p className="text-gray-600 mb-4">
+                {currentLang === 'fr'
+                  ? 'Avec plus de 15 ans d\'experience en technologie, finance et business, Abel a forme des milliers d\'etudiants a travers l\'Afrique. Sa passion pour l\'education et son expertise pratique font de COBELBTC une reference en formation professionnelle.'
+                  : 'With over 15 years of experience in technology, finance and business, Abel has trained thousands of students across Africa. His passion for education and practical expertise make COBELBTC a reference in professional training.'}
+              </p>
+              <div className="flex items-center gap-6 text-sm text-gray-600">
+                <div className="flex items-center gap-1">
+                  <svg className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                  <span className="font-medium">4.9/5</span>
+                </div>
+                <div>3,000+ {currentLang === 'fr' ? 'etudiants' : 'students'}</div>
+                <div>12 {currentLang === 'fr' ? 'cours' : 'courses'}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+

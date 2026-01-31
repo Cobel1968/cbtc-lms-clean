@@ -1,0 +1,14 @@
+{
+    "rewrites":  [
+                     {
+                         "destination":  "/Food_Hygiene_Hospitality_Luxe.html",
+                         "source":  "/hygiene"
+                     },
+                     {
+                         "destination":  "/Hospitality_Communication_Course.html",
+                         "source":  "/communication"
+                     }
+                 ],
+    "cleanUrls":  true,
+    "framework":  "nextjs"
+}
