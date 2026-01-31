@@ -31,7 +31,7 @@ export default function AdminDashboard() {
             onClick={() => setIsBatchModalOpen(true)}
             className="bg-emerald-500 hover:bg-emerald-400 text-slate-900 text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest transition-all"
           >
-            + Batch Scan Assessments
+            + Batch Scan Assessments</button><button onClick={() => window.print()} className='ml-2 bg-white border border-slate-200 text-slate-900 text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest hover:bg-slate-50 transition-all'>Print Class Reports
           </button>
         </div>
       </div>

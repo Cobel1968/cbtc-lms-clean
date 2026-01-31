@@ -21,4 +21,15 @@ body {
 
 .cbtc-gradient-text {
   @apply bg-clip-text text-transparent bg-gradient-to-r from-[#00629B] to-[#E91E63];
+}@media print {
+  nav, button, .no-print {
+    display: none !important;
+  }
+  .print-page-break {
+    page-break-after: always;
+  }
+  body {
+    background: white !important;
+    padding: 0 !important;
+  }
 }
